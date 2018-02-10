@@ -3,5 +3,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="lib/commons-csv-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/jsqlparser-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/evallib-1.0.jar"/>
 </classpath>
 
