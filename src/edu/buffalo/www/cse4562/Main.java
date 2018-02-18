@@ -33,7 +33,7 @@ public class Main {
         Statement statement = parser.Statement();
 
         while (statement != null) {
-            System.out.println(statement.toString());
+            helper.print(statement.toString());
             statement = parser.Statement();
         }
 
