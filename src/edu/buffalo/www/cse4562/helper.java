@@ -1,6 +1,6 @@
 package edu.buffalo.www.cse4562;
 
-public class helper {
+public class Helper {
 
     /**
      * Always call <code>flsuh()</code> after <code>println()</code>
