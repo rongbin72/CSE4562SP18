@@ -10,4 +10,8 @@ public class SelectObject {
 	public SelectObject(List<SelectItem> list) {
 		this.items = list;
 	}
+	
+	public List<String> Result(List<String> tuple) {
+		
+	}
 }

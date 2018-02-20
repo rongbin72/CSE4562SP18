@@ -11,4 +11,8 @@ public class helper {
         System.out.println(str);
         System.out.flush();
     }
+    
+    public static void output(List<List<String>> output) {
+    	
+    }
 }
