@@ -32,14 +32,14 @@ public class Iterator {
 		List<String> tuple = null;
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
-			if(this.whereOB.equals(null)) {
+			if(!this.whereOB.equals(null)) {
 				if(this.whereOB.Result(tuple)) {
-					List<String> u;
-					this.output.add(u = this.selectOB.Result(tuple));
+					this.output.add(this.selectOB.Result(tuple));
 				}
 			}
 			else {
 				this.output.add(this.selectOB.Result(tuple));
+				
 			}
 			selectOB = new SelectObject(((PlainSelect) this.body).getSelectItems(),schema);
 		}

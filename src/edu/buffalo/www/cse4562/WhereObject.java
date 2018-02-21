@@ -25,7 +25,7 @@ public class WhereObject {
 	public boolean Result(List<String> tuple) throws SQLException{
 	    Evaluation eval = new Evaluation(this.schema, tuple);
 	    PrimitiveValue result = eval.eval(this.where);
-	    if(result.toString().equals("true")) {
+	    if(result.toString().equals("TRUE")) {
 	        return true;
         } else {
 	        return false;
