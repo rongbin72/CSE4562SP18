@@ -5,6 +5,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.csv.*;
 
@@ -23,7 +24,7 @@ public class Iterator {
 		this.selectOB = new SelectObject(((PlainSelect) body).getSelectItems(),schema);
 	}
 	
-	public java.util.Iterator<List<String>> Result() throws IOException {
+	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
 		java.util.Iterator<List<String>> tempIters = this.fromOB.GetTable(schema);
 		List<String> tuple = null;
 		for(;tempIters.hasNext();) {

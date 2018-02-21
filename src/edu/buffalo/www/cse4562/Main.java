@@ -2,6 +2,9 @@ package edu.buffalo.www.cse4562;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,17 +24,19 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException{
 
         System.out.println("Hello, World");
-
-        // Test CommonsCSV lib
-        BufferedReader in = new BufferedReader(new FileReader("data/R.csv"));
-//        Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().withDelimiter('|').parse(in);
-//        for (CSVRecord record : records) {
-//            System.out.println(record.toString());
-//        }
-        String str;
+        
+		BufferedReader in = new BufferedReader(new FileReader("data/R.csv"));
+		String str;
+		List<List<String>> tempIter = new ArrayList<List<String>>();
+		java.util.Iterator<List<String>> iter;
 		while((str = in.readLine())!=null) {
-			System.out.println(str.split("|")[0]);
+			tempIter.add(Arrays.asList(str.split("\\|")));
 		}
+		iter = tempIter.iterator();
+		for(;iter.hasNext();) {
+			System.out.println(iter.next());
+		}
+        
         // Test Jsqlparser
         Reader input = new StringReader("SELECT S+E as N as n FROM i as I where A = 4");
         CCJSqlParser parser = new CCJSqlParser(input);  

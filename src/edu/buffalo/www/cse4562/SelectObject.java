@@ -39,13 +39,15 @@ public class SelectObject implements SelectItemVisitor{
 	}
 
 	@Override
-	public void visit(SelectExpressionItem exp) {
+	public void visit(SelectExpressionItem exp){
 		Expression e = exp.getExpression();
 		Evaluation eval = new Evaluation(this.schema,this.tuple);
 		try {
 			this.evalResult = eval.eval(e);
+			this.tempResult.add(this.evalResult.toRawString());
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+
 	}
 }
