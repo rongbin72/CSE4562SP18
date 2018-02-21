@@ -13,6 +13,8 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.parser.*;
 
+import edu.buffalo.www.cse4562.*;
+
 public class Main {
     public static void main(String[] args) throws IOException, ParseException{
 
@@ -33,6 +35,8 @@ public class Main {
         Reader input = new StringReader("SELECT a+b as n FROM R left join S where a = 4");
         CCJSqlParser parser = new CCJSqlParser(input);  
         Statement statement = parser.Statement();
+
+        Schema schema;
         while(statement != null) {
             //system out
         	//.....
@@ -51,6 +55,8 @@ public class Main {
         	}
         	else if(statement instanceof CreateTable) {
         		// do something with create table
+				CreateTable create = (CreateTable) statement;
+				schema = new Schema(create);
         	}
         	else {
         		//cannot handle
