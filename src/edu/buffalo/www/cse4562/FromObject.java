@@ -8,9 +8,13 @@ import org.apache.commons.csv.CSVRecord;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.select.*;
+
+import java.util.Arrays;
 import java.util.List;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringReader;
 
 public class FromObject implements FromItemVisitor {
@@ -25,17 +29,22 @@ public class FromObject implements FromItemVisitor {
 		this.body.accept(this);
 	}
 	
-	public Reader GetTable(Schema S) throws FileNotFoundException {
+	public java.util.Iterator<List<String>> GetTable(Schema S) throws IOException {//iterators
 		if(!this.ifsubselect) {
 			//there's not subselect
-			Reader in = new FileReader(S.getPath());
-			return in;
+			BufferedReader in = new BufferedReader(new FileReader(S.getPath()));
+			String str;
+			List<List<String>> tempIter = null;
+			java.util.Iterator<List<String>> iter;
+			while((str = in.readLine())!=null) {
+				tempIter.add(Arrays.asList(str.split("|"))); 
+			}
+			iter = tempIter.iterator();
+			return iter;
 		}
 		else {
-			Iterator iterator = new Iterator((PlainSelect)this.subbody);
-			String output = iterator.Output();
-			Reader in = new StringReader(output);
-			return in;
+			Iterator iterator = new Iterator((PlainSelect)this.subbody,S);
+			return iterator.Result();
 		}
 	}
 	public String GetTableName() {
