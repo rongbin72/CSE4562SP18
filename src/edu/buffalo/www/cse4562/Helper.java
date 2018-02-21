@@ -25,13 +25,13 @@ public class Helper {
     /**
      * Print out result
      * 
-     * @param output two dimentional list of output table
+     * @param table two dimentional list of output table
      */
-    public static void output(java.util.Iterator<List<String>> output) {
+    public static void output(java.util.Iterator<List<String>> table) {
 
-        for(List<String> row : output) {
-            String line ="";
-            for(String cell : row) {
+        for(;table.hasNext();) {
+            String line = "";
+            for(String cell : table.next()) {
                 line = line + cell + " ";
             }
             line = line.trim().replace(" ", "|");
