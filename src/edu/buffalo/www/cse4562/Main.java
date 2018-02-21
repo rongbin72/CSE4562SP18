@@ -21,8 +21,19 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-    	Reader r = new InputStreamReader(System.in);
-//        Reader r = new StringReader("Create Table R(A int,B int);select * from R;");
+//    	Reader r = new InputStreamReader(System.in);
+        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
+                                            "ID string, " +
+                                            "FIRSTNAME string, " +
+                                            "LASTNAME string, " +
+                                            "FIRSTSEASON int, " +
+                                            "LASTSEASON int, " +
+                                            "WEIGHT int, " +
+                                            "BIRTHDATE date);" +
+                                            "SELECT ID, LASTNAME, WEIGHT, BIRTHDATE " +
+                                            "FROM PLAYER " +
+                                            "WHERE WEIGHT>200;");
+
         CCJSqlParser parser = new CCJSqlParser(r);
          
         Statement statement = parser.Statement();
