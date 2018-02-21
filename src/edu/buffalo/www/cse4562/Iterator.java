@@ -16,5 +16,11 @@ public class Iterator {
 		SelectObject selectOB = new SelectObject(((PlainSelect) body).getSelectItems());
 	}
 	
-	//return table
+	public List<List<String>> Result() {
+		return this.output;
+	}
+	
+	public String Output() {
+		return null;
+	}
 }
