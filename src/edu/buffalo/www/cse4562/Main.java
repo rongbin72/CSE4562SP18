@@ -22,7 +22,7 @@ public class Main {
 
     	Helper.prompt();
     	Reader r = new InputStreamReader(System.in);
-//        Reader r = new StringReader("Create Table R(A int,B int);select A from R where A>2;");
+//        Reader r = new StringReader("Create Table R(A int,B int);select * from R;");
         CCJSqlParser parser = new CCJSqlParser(r);
          
         Statement statement = parser.Statement();
