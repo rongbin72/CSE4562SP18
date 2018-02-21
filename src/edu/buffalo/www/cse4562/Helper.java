@@ -1,5 +1,7 @@
 package edu.buffalo.www.cse4562;
 
+import java.util.List;
+
 public class Helper {
 
     /**
@@ -12,12 +14,28 @@ public class Helper {
         System.out.flush();
     }
 
+    /**
+     * Print the prompt <code>$> </code>
+     */
     public static void prompt() {
         System.out.println("$> ");
         System.out.flush();
     }
     
+    /**
+     * Print out result
+     * 
+     * @param output two dimentional list of output table
+     */
     public static void output(List<List<String>> output) {
-    	
+
+        for(List<String> row : output) {
+            String line ="";
+            for(String cell : row) {
+                line = line + cell + " ";
+            }
+            line = line.trim().replace(" ", "|");
+            print(line);
+        }
     }
 }
