@@ -32,7 +32,7 @@ public class Main {
 //        }
 
         // Test Jsqlparser
-        Reader input = new StringReader("SELECT a+b as n FROM R left join S where a = 4");
+        Reader input = new StringReader("SELECT A+B*C as n FROM i as I where A = 4");
         CCJSqlParser parser = new CCJSqlParser(input);  
         Statement statement = parser.Statement();
 
@@ -44,7 +44,7 @@ public class Main {
         		Select select = (Select)statement;
         		SelectBody body = select.getSelectBody();
         		if(body instanceof PlainSelect) {
-        			//iterator
+        			Iterator iterator = new Iterator((PlainSelect)body);
         		}
         		else if(body instanceof Union) {
         			//do something with union
