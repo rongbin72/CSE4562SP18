@@ -8,10 +8,10 @@ import java.util.HashMap;
 public class Schema {
     private String tableName;
     private String tablePath;
-    private HashMap<String, Integer> colIndex;
-    private HashMap<String, String> colType;
+    private HashMap<String, Integer> colIndex = new HashMap<String, Integer>();
+    private HashMap<String, String> colType = new HashMap<String, String>();
 
-    public Schema(CreateTable schema) {
+    public void init(CreateTable schema) throws NullPointerException {
         this.tableName = schema.getTable().getName();
         this.tablePath = "data/" + this.tableName + ".dat";
         int columnIndex = 0;  // column index, starting from 0
@@ -21,6 +21,7 @@ public class Schema {
             columnIndex++;
         }
     }
+    
 
     /**
      *

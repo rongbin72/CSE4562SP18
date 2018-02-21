@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.csv.*;
 
@@ -15,13 +16,15 @@ public class Iterator {
 	private WhereObject whereOB;
 	private SelectObject selectOB;
 	private Schema schema;
-	private List<List<String>> output = null;
+	private List<List<String>> output = new ArrayList<List<String>>();
+	private PlainSelect body;
 	
 	public Iterator(PlainSelect body,Schema schema) {
 		this.schema = schema;
 		this.fromOB = new FromObject(((PlainSelect) body).getFromItem()); 
 		this.whereOB = new WhereObject(((PlainSelect) body).getWhere(),schema);
 		this.selectOB = new SelectObject(((PlainSelect) body).getSelectItems(),schema);
+		this.body = body;
 	}
 	
 	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
@@ -29,9 +32,16 @@ public class Iterator {
 		List<String> tuple = null;
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
-			if(this.whereOB.Result(tuple)) {
+			if(this.whereOB.equals(null)) {
+				if(this.whereOB.Result(tuple)) {
+					List<String> u;
+					this.output.add(u = this.selectOB.Result(tuple));
+				}
+			}
+			else {
 				this.output.add(this.selectOB.Result(tuple));
 			}
+			selectOB = new SelectObject(((PlainSelect) this.body).getSelectItems(),schema);
 		}
 		return this.output.iterator();
 	}

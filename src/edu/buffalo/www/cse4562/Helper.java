@@ -27,8 +27,7 @@ public class Helper {
      * 
      * @param table two dimentional list of output table
      */
-    public static void output(java.util.Iterator<List<String>> table) {
-
+    public void output(java.util.Iterator<List<String>> table) {
         for(;table.hasNext();) {
             String line = "";
             for(String cell : table.next()) {
@@ -36,6 +35,7 @@ public class Helper {
             }
             line = line.trim().replace(" ", "|");
             print(line);
+            //break;
         }
     }
 }
