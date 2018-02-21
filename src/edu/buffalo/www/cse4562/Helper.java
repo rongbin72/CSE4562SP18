@@ -27,7 +27,7 @@ public class Helper {
      * 
      * @param output two dimentional list of output table
      */
-    public static void output(List<List<String>> output) {
+    public static void output(java.util.Iterator<List<String>> output) {
 
         for(List<String> row : output) {
             String line ="";

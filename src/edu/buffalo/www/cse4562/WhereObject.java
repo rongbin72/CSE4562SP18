@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import net.sf.jsqlparser.expression.*;
@@ -14,16 +15,20 @@ import net.sf.jsqlparser.eval.*;
 
 public class WhereObject {
 	private Expression where;
-	private boolean bool;
-	private Iterable<String> tuple;
+	private Schema schema;
 	
-	public WhereObject(Expression where){
+	public WhereObject(Expression where, Schema schema) {
 		this.where = where;
-		this.tuple = tuple;
+		this.schema = schema;
 	}
 
-	public boolean Result(Iterable<String> tuple) {
-		return bool;
+	public boolean Result(List<String> tuple) throws SQLException{
+	    Evaluation eval = new Evaluation(this.schema, tuple);
+	    PrimitiveValue result = eval.eval(this.where);
+	    if(result.toString().equals("true")) {
+	        return true;
+        } else {
+	        return false;
+        }
 	}
-
 }

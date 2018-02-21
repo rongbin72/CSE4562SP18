@@ -16,7 +16,6 @@ import java.util.List;
 public class Evaluation extends Eval {
     private Schema schema;
     private List<String> tuple;
-    private boolean bool;
 
     public Evaluation(Schema schema, List<String> tuple) {
         this.schema = schema;
