@@ -23,7 +23,6 @@ import edu.buffalo.www.cse4562.*;
 
 public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException{
-        
         Reader r = new StringReader("Create Table R(A int,B int);select A from (Select A,B from R) Q where A>4;");
         CCJSqlParser parser = new CCJSqlParser(r);
          
