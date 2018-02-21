@@ -1,14 +1,10 @@
 package edu.buffalo.www.cse4562;
 
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -22,8 +18,27 @@ import net.sf.jsqlparser.parser.*;
 import edu.buffalo.www.cse4562.*;
 
 public class Main {
+<<<<<<< HEAD
     public static void main(String[] args) throws IOException, ParseException, SQLException{
         Reader r = new StringReader("Create Table R(A int,B int);select A from (Select A,B from R) Q where A>4;");
+=======
+    public static void main(String[] args) throws IOException, ParseException, SQLException {
+
+    	Helper.prompt();
+//    	Reader r = new InputStreamReader(System.in);
+        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
+                                            "ID string, " +
+                                            "FIRSTNAME string, " +
+                                            "LASTNAME string, " +
+                                            "FIRSTSEASON int, " +
+                                            "LASTSEASON int, " +
+                                            "WEIGHT int, " +
+                                            "BIRTHDATE date);" +
+                                            "SELECT ID, LASTNAME, WEIGHT, BIRTHDATE " +
+                                            "FROM PLAYER " +
+                                            "WHERE WEIGHT>200;");
+
+>>>>>>> e460e7ae6c6865293c2c30619ef74ac18e412793
         CCJSqlParser parser = new CCJSqlParser(r);
          
         Statement statement = parser.Statement();
@@ -55,6 +70,7 @@ public class Main {
         	else {
         		//cannot handle
         	}
+        	Helper.prompt();
         	statement = parser.Statement();
         }
 
