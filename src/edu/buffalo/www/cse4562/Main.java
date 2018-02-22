@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import java.io.*;
 import java.sql.SQLException;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.*;
@@ -15,6 +16,7 @@ public class Main {
 
     	Helper.prompt();
     	Reader r = new InputStreamReader(System.in);
+
 
 //        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
 //                                            "ID string, " +
@@ -31,6 +33,7 @@ public class Main {
         CCJSqlParser parser = new CCJSqlParser(r);
          
         Statement statement = parser.Statement();
+		throw new IOException(statement.toString());
         
         Schema schema = new Schema();
         while(statement != null) {
