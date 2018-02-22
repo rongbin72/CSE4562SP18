@@ -36,7 +36,7 @@ public class Main {
                                             "WEIGHT int, " +
                                             "BIRTHDATE date);" +
                                             "SELECT FIRSTNAME,LASTNAME " +
-                                            "FROM (select FIRSTNAME,LASTNAME from PLAYER) Q;" 
+                                            "FROM (select FIRSTNAME,LASTNAME from PLAYERS) Q;" 
                                             );
 
         CCJSqlParser parser = new CCJSqlParser(r);
