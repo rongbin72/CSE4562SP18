@@ -35,36 +35,36 @@ public class Main {
         Statement statement = parser.Statement();
 		throw new IOException(statement.toString());
         
-        Schema schema = new Schema();
-        while(statement != null) {
-            //system out
-        	//.....
-        	if(statement instanceof CreateTable) {
-        		// do something with create table
-				CreateTable create = (CreateTable) statement;
-				schema.init(create);
-        	} else if(statement instanceof Select) {
-        		Select select = (Select)statement;
-        		SelectBody body = select.getSelectBody();
-        		if(body instanceof PlainSelect) {
-        			Iterator iterator = new Iterator((PlainSelect)body, schema);
-        			Helper h = new Helper();
-        			h.output(iterator.Result());
-        		}
-        		else if(body instanceof Union) {
-        			//do something with union
-        		}
-        		else {
-        			System.out.println();
-        		}
-        	}
-
-        	else {
-        		
-        	}
-        	Helper.prompt();
-        	statement = parser.Statement();
-        }
+//        Schema schema = new Schema();
+//        while(statement != null) {
+//            //system out
+//        	//.....
+//        	if(statement instanceof CreateTable) {
+//        		// do something with create table
+//				CreateTable create = (CreateTable) statement;
+//				schema.init(create);
+//        	} else if(statement instanceof Select) {
+//        		Select select = (Select)statement;
+//        		SelectBody body = select.getSelectBody();
+//        		if(body instanceof PlainSelect) {
+//        			Iterator iterator = new Iterator((PlainSelect)body, schema);
+//        			Helper h = new Helper();
+//        			h.output(iterator.Result());
+//        		}
+//        		else if(body instanceof Union) {
+//        			//do something with union
+//        		}
+//        		else {
+//        			System.out.println();
+//        		}
+//        	}
+//
+//        	else {
+//
+//        	}
+//        	Helper.prompt();
+//        	statement = parser.Statement();
+//        }
 
     }
 }
