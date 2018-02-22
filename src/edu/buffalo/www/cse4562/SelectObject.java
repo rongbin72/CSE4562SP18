@@ -16,12 +16,14 @@ public class SelectObject implements SelectItemVisitor{
 	private PrimitiveValue evalResult;
 	private HashMap<String, Integer> colIndex;
     private HashMap<String, String> colType;
+    private String tablename;
 	
-	public SelectObject(List<SelectItem> list,Schema schema) {
+	public SelectObject(List<SelectItem> list,Schema schema,String tablename) {
 		this.items = list;
 		this.schema = schema;
 		this.colIndex = new HashMap<String, Integer>();
 		this.colType = new HashMap<String, String>();
+		this.tablename = tablename;
 	}
 	
 	public List<String> Result(List<String> tuple) {
@@ -36,8 +38,8 @@ public class SelectObject implements SelectItemVisitor{
 		this.tempResult = new ArrayList<String>();
 	}
 	
-	public void setSchema(Schema schema) {
-		this.schema = schema;
+	public void setTable(String newtable) {
+		this.tablename = newtable;
 	}
 	
 	public HashMap<String, Integer> colIndex() {
@@ -50,8 +52,8 @@ public class SelectObject implements SelectItemVisitor{
 	@Override
 	public void visit(AllColumns allColumns) {
 		this.tempResult.addAll(this.tuple);
-		this.colIndex = this.schema.getIndex();
-		this.colType = this.schema.getType();
+		this.colIndex = this.schema.getIndex(this.tablename);
+		this.colType = this.schema.getType(this.tablename);
 		
 	}
 
@@ -66,7 +68,7 @@ public class SelectObject implements SelectItemVisitor{
 		Expression e = exp.getExpression();
 		String col = e.toString();
 		String alias = exp.getAlias();
-		Evaluation eval = new Evaluation(this.schema,this.tuple);//
+		Evaluation eval = new Evaluation(this.schema, this.tablename, this.tuple);//
 		try {
 			this.evalResult = eval.eval(e);
 			int index = this.tempResult.size();

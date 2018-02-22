@@ -10,10 +10,12 @@ import java.util.List;
 public class Evaluation extends Eval {
     private Schema schema;
     private List<String> tuple;
+    private String tablename;
 
-    public Evaluation(Schema schema, List<String> tuple) {
+    public Evaluation(Schema schema, String tablename,List<String> tuple) {
         this.schema = schema;
         this.tuple = tuple;
+        this.tablename = tablename;
     }
 
     @Override

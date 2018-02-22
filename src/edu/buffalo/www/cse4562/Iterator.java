@@ -15,6 +15,7 @@ public class Iterator {
 	private WhereObject whereOB;
 	private SelectObject selectOB;
 	private Schema schema;
+	private String tablename;
 	private List<List<String>> output = new ArrayList<List<String>>();
 	private PlainSelect body;
 	
@@ -27,10 +28,14 @@ public class Iterator {
 	}
 	
 	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
-		java.util.Iterator<List<String>> tempIters = this.fromOB.GetTable(schema);
+		
+		java.util.Iterator<List<String>> tempIters = this.fromOB.GetTable(schema);// the iteratorable table
+		String tableName = this.fromOB.GetTableName();//the table name
+		
 		List<String> tuple = null;
 		if(((PlainSelect) body).getFromItem() instanceof SubSelect){
-			this.schema = this.fromOB.getSch();
+			//set table name
+			//!!!
 			this.whereOB.setSchema(this.schema);
 			this.selectOB.setSchema(this.schema);
 		}
@@ -51,13 +56,13 @@ public class Iterator {
 		return this.output.iterator();
 	}
 	
-	public Schema newSchema() {
+	public Schema newSchema() {/////////////////////
 		Schema s = new Schema();
 		s.init(this.selectOB.colIndex(),this.selectOB.coltype(),this.fromOB.getName());
 		return s;
 	}
 	
-	public void updataSchema(Schema s) {
+	public void updataSchema(Schema s) {///////////////////
 		this.schema = s;
 	}
 	

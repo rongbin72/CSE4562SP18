@@ -32,7 +32,7 @@ public class FromObject implements FromItemVisitor {
 			//there's not subselect
 			//when iterating out of subselect, the table has to change
 			
-			Read reader = new Read(new File(S.getPath()));
+			Read reader = new Read(new File(S.getPath(this.tablenames)));
 			String str;
 			List<List<String>> tempIter = new ArrayList<List<String>>();
 			while((str = reader.ReadLine())!=null) {
@@ -43,7 +43,7 @@ public class FromObject implements FromItemVisitor {
 		else {
 			Iterator iterator = new Iterator((PlainSelect)this.subbody,S);//result of plain select
 			java.util.Iterator<List<String>> iter = iterator.Result();
-			this.sch = iterator.newSchema();
+			this.sch = iterator.newSchema();//getnewtable
 			return iter;
 		}
 	}
