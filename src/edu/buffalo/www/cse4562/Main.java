@@ -23,8 +23,8 @@ public class Main {
                                             "LASTSEASON int, " +
                                             "WEIGHT int, " +
                                             "BIRTHDATE date);" +
-                                            "SELECT FIRSTSEASON + LASTSEASON as C " +
-                                            "FROM PLAYERS;" 
+                                            "SELECT FIRSTSEASON,LASTSEASON " +
+                                            "FROM (SELECT FIRSTSEASON,LASTSEASON, WEIGHT from PLAYERS);" 
                                             );
 
         CCJSqlParser parser = new CCJSqlParser(r);

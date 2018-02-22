@@ -13,6 +13,10 @@ public class WhereObject {
 		this.where = where;
 		this.schema = schema;
 	}
+	
+	public void setSchema(Schema schema) {
+		this.schema = schema;
+	}
 
 	public boolean Result(List<String> tuple) throws SQLException{
 	    Evaluation eval = new Evaluation(this.schema, tuple);
