@@ -14,8 +14,12 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
+<<<<<<< HEAD
 
     	Reader r = new InputStreamReader(System.in);
+=======
+//    	Reader r = new InputStreamReader(System.in);
+>>>>>>> cf8adcae925e938bc629731cfdbd6f0aa336979e
 //        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
 //                                            "ID string, " +
 //                                            "FIRSTNAME string, " +
@@ -24,9 +28,27 @@ public class Main {
 //                                            "LASTSEASON decimal, " +
 //                                            "WEIGHT int, " +
 //                                            "BIRTHDATE date);" +
+<<<<<<< HEAD
 //                                            "SELECT ID,LASTNAME " +
 //                                            "FROM PLAYERS;"
 //                                            );
+=======
+//                                            "SELECT ID, LASTNAME, WEIGHT, BIRTHDATE " +
+//                                            "FROM PLAYER " +
+//                                            "WHERE WEIGHT > 200");
+    	//Reader r = new InputStreamReader(System.in);
+        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
+                                            "ID string, " +
+                                            "FIRSTNAME string, " +
+                                            "LASTNAME string, " +
+                                            "FIRSTSEASON int, " +
+                                            "LASTSEASON int, " +
+                                            "WEIGHT int, " +
+                                            "BIRTHDATE date);" +
+                                            "SELECT FIRSTNAME,LASTNAME " +
+                                            "FROM (select FIRSTNAME,LASTNAME from PLAYERS) Q;" 
+                                            );
+>>>>>>> cf8adcae925e938bc629731cfdbd6f0aa336979e
 
         CCJSqlParser parser = new CCJSqlParser(r);
          
