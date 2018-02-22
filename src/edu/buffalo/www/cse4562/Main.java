@@ -24,8 +24,8 @@ public class Main {
 //                                            "LASTSEASON int, " +
 //                                            "WEIGHT int, " +
 //                                            "BIRTHDATE date);" +
-//                                            "SELECT FIRSTNAME,LASTNAME " +
-//                                            "FROM PLAYERS;"
+//                                            "SELECT ID, LASTSEASON,WEIGHT " +
+//                                            "FROM PLAYERS Q;"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);

@@ -59,7 +59,7 @@ public class SelectObject implements SelectItemVisitor{
 		try {
 			this.evalResult = eval.eval(e);
 			int index = this.tempResult.size();
-			String name = this.evalResult.toRawString();
+			String name = this.evalResult.toString();
 			if(alias == null) {
 				alias = name;
 			}
