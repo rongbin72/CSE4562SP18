@@ -70,11 +70,8 @@ public class SelectObject implements SelectItemVisitor{
 		try {
 			this.evalResult = eval.eval(e);
 			int index = this.tempResult.size();
-<<<<<<< HEAD
-			String name = this.evalResult.toString();
-=======
 			String result = this.evalResult.toString();
->>>>>>> subselect
+
 			if(alias == null) {
 				alias = col;
 			}
