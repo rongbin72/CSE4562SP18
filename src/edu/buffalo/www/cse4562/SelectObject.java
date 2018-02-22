@@ -14,12 +14,14 @@ public class SelectObject implements SelectItemVisitor{
 	private List<String> tempResult = new ArrayList<String>();
 	private Schema schema;
 	private PrimitiveValue evalResult;
-	private HashMap<String, Integer> colIndex = new HashMap<String, Integer>();
-    private HashMap<String, String> colType = new HashMap<String, String>();
+	private HashMap<String, Integer> colIndex;
+    private HashMap<String, String> colType;
 	
 	public SelectObject(List<SelectItem> list,Schema schema) {
 		this.items = list;
 		this.schema = schema;
+		this.colIndex = new HashMap<String, Integer>();
+		this.colType = new HashMap<String, String>();
 	}
 	
 	public List<String> Result(List<String> tuple) {
@@ -28,6 +30,14 @@ public class SelectObject implements SelectItemVisitor{
 			item.accept(this);
 		}
 		return this.tempResult;
+	}
+	
+	public void reset() {
+		this.tempResult = new ArrayList<String>();
+	}
+	
+	public void setSchema(Schema schema) {
+		this.schema = schema;
 	}
 	
 	public HashMap<String, Integer> colIndex() {
@@ -54,23 +64,28 @@ public class SelectObject implements SelectItemVisitor{
 	@Override
 	public void visit(SelectExpressionItem exp){
 		Expression e = exp.getExpression();
+		String col = e.toString();
 		String alias = exp.getAlias();
 		Evaluation eval = new Evaluation(this.schema,this.tuple);//
 		try {
 			this.evalResult = eval.eval(e);
 			int index = this.tempResult.size();
+<<<<<<< HEAD
 			String name = this.evalResult.toString();
+=======
+			String result = this.evalResult.toString();
+>>>>>>> subselect
 			if(alias == null) {
-				alias = name;
+				alias = col;
 			}
-			this.tempResult.add(name);
+			this.tempResult.add(result);
 			this.colIndex.put(alias, index);
 			String type;
 			String temp = this.evalResult.getType().name();
-			if(temp.matches("LongValue")) {type = "int";}
-			else if(temp.matches("DoubleValue")) {type = "decimal";}
-			else if(temp.matches("DateValue")) {type = "date";}
-			else {type = "string";}
+			if(temp.matches("LONG")) {type = "int";}
+			else if(temp.matches("DOUBLE")) {type = "decimal";}
+			else if(temp.matches("DATE")) {type = "date";}
+			else {type = "STRING";}
 			this.colType.put(alias, type);
 		} catch (SQLException e1) {
 			e1.printStackTrace();

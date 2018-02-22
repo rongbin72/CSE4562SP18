@@ -15,7 +15,10 @@ public class Main {
 
     	Helper.prompt();
     	Reader r = new InputStreamReader(System.in);
+<<<<<<< HEAD
 
+=======
+>>>>>>> subselect
 //        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
 //                                            "ID string, " +
 //                                            "FIRSTNAME string, " +
@@ -24,8 +27,13 @@ public class Main {
 //                                            "LASTSEASON int, " +
 //                                            "WEIGHT int, " +
 //                                            "BIRTHDATE date);" +
+<<<<<<< HEAD
 //                                            "SELECT ID, LASTSEASON,WEIGHT " +
 //                                            "FROM PLAYERS Q;"
+=======
+//                                            "SELECT FIRSTSEASON,LASTSEASON " +
+//                                            "FROM (SELECT FIRSTSEASON,LASTSEASON, WEIGHT from PLAYERS);"
+>>>>>>> subselect
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);

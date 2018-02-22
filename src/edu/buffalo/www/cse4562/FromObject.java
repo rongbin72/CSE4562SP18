@@ -16,6 +16,7 @@ public class FromObject implements FromItemVisitor {
 	private String tablenames;
 	private boolean ifsubselect;
 	private SelectBody subbody;
+	private Schema sch = new Schema();
 	
 	public FromObject(FromItem body) {
 		this.body = body;
@@ -42,10 +43,13 @@ public class FromObject implements FromItemVisitor {
 		else {
 			Iterator iterator = new Iterator((PlainSelect)this.subbody,S);//result of plain select
 			java.util.Iterator<List<String>> iter = iterator.Result();
-			Schema s = iterator.newSchema();
-			iterator.updataSchema(s);			
+			this.sch = iterator.newSchema();
 			return iter;
 		}
+	}
+	
+	public Schema getSch() {
+		return this.sch;
 	}
 	public String GetTableName() {
 		return this.tablenames;

@@ -22,7 +22,7 @@ public class Schema {
         }
     }
     
-    public void init(String table, HashMap<String, Integer> colIndex, HashMap<String, String> colType, String name) {
+    public void init(HashMap<String, Integer> colIndex, HashMap<String, String> colType, String name) {
     	this.tableName = name;
     	this.colIndex = colIndex;
     	this.colType = colType;

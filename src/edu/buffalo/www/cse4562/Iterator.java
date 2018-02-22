@@ -5,7 +5,9 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import net.sf.jsqlparser.statement.select.*;
 
 public class Iterator {
 	//deal with each where and select
@@ -27,6 +29,11 @@ public class Iterator {
 	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
 		java.util.Iterator<List<String>> tempIters = this.fromOB.GetTable(schema);
 		List<String> tuple = null;
+		if(((PlainSelect) body).getFromItem() instanceof SubSelect){
+			this.schema = this.fromOB.getSch();
+			this.whereOB.setSchema(this.schema);
+			this.selectOB.setSchema(this.schema);
+		}
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
 			if(this.whereOB.equals(null)) {  //
@@ -38,14 +45,15 @@ public class Iterator {
 				this.output.add(this.selectOB.Result(tuple));
 				
 			}
-			selectOB = new SelectObject(((PlainSelect) this.body).getSelectItems(),schema);
+			this.selectOB.reset();
 		}
+		this.updataSchema(this.newSchema());
 		return this.output.iterator();
 	}
 	
 	public Schema newSchema() {
 		Schema s = new Schema();
-		s.init(this.output(),this.selectOB.colIndex(),this.selectOB.coltype(),this.fromOB.getName());
+		s.init(this.selectOB.colIndex(),this.selectOB.coltype(),this.fromOB.getName());
 		return s;
 	}
 	
