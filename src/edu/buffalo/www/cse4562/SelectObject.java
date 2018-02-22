@@ -70,7 +70,7 @@ public class SelectObject implements SelectItemVisitor{
 		try {
 			this.evalResult = eval.eval(e);
 			int index = this.tempResult.size();
-			String result = this.evalResult.toRawString();
+			String result = this.evalResult.toString();
 			if(alias == null) {
 				alias = col;
 			}
