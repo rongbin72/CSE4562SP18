@@ -14,8 +14,7 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-<<<<<<< HEAD
-    	Reader r = new InputStreamReader(System.in);
+//    	Reader r = new InputStreamReader(System.in);
 //        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
 //                                            "ID string, " +
 //                                            "FIRSTNAME string, " +
@@ -27,7 +26,6 @@ public class Main {
 //                                            "SELECT ID, LASTNAME, WEIGHT, BIRTHDATE " +
 //                                            "FROM PLAYER " +
 //                                            "WHERE WEIGHT > 200");
-=======
     	//Reader r = new InputStreamReader(System.in);
         Reader r = new StringReader("CREATE TABLE PLAYERS(" +
                                             "ID string, " +
@@ -37,10 +35,9 @@ public class Main {
                                             "LASTSEASON int, " +
                                             "WEIGHT int, " +
                                             "BIRTHDATE date);" +
-                                            "SELECT FIRSTSEASON + LASTSEASON as C " +
-                                            "FROM PLAYERS;" 
+                                            "SELECT FIRSTNAME,LASTNAME " +
+                                            "FROM (select FIRSTNAME,LASTNAME from PLAYER) Q;" 
                                             );
->>>>>>> subselect
 
         CCJSqlParser parser = new CCJSqlParser(r);
          
