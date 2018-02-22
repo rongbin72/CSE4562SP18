@@ -22,6 +22,11 @@ public class Schema {
         }
     }
     
+    public void init(String table, HashMap<String, Integer> colIndex, HashMap<String, String> colType, String name) {
+    	this.tableName = name;
+    	this.colIndex = colIndex;
+    	this.colType = colType;
+    }
 
     /**
      *
@@ -55,8 +60,17 @@ public class Schema {
      * @return index of the column
      */
     public int getColIndex(String colName) {
-        
-        return this.colIndex.get(colName);
+        int i = this.colIndex.get(colName);
+        return i;
 
     }
+    
+    public HashMap<String, Integer> getIndex() {
+    	return this.colIndex;
+    }
+    
+    public HashMap<String, String> getType() {
+    	return this.colType;
+    }
+    
 }

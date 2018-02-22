@@ -1,27 +1,18 @@
 package edu.buffalo.www.cse4562;
 
-import java.io.Reader;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.select.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.sql.SQLException;
 
 public class FromObject implements FromItemVisitor {
 	private FromItem body;
-	private Reader tables;
 	private String tablenames;
 	private boolean ifsubselect;
 	private SelectBody subbody;
@@ -31,22 +22,29 @@ public class FromObject implements FromItemVisitor {
 		this.body.accept(this);
 	}
 	
+	public String getName() {
+		return this.tablenames;
+	}
+	
 	public java.util.Iterator<List<String>> GetTable(Schema S) throws IOException, SQLException {//iterators
 		if(!this.ifsubselect) {
 			//there's not subselect
-			BufferedReader in = new BufferedReader(new FileReader(S.getPath()));
+			//when iterating out of subselect, the table has to change
+			
+			Read reader = new Read(new File(S.getPath()));
 			String str;
 			List<List<String>> tempIter = new ArrayList<List<String>>();
-			java.util.Iterator<List<String>> iter;
-			while((str = in.readLine())!=null) {
+			while((str = reader.ReadLine())!=null) {
 				tempIter.add(Arrays.asList(str.split("\\|"))); 
 			}
-			iter = tempIter.iterator();
-			return iter;
+			return tempIter.iterator();
 		}
 		else {
-			Iterator iterator = new Iterator((PlainSelect)this.subbody,S);
-			return iterator.Result();
+			Iterator iterator = new Iterator((PlainSelect)this.subbody,S);//result of plain select
+			java.util.Iterator<List<String>> iter = iterator.Result();
+			Schema s = iterator.newSchema();
+			iterator.updataSchema(s);			
+			return iter;
 		}
 	}
 	public String GetTableName() {
@@ -54,8 +52,13 @@ public class FromObject implements FromItemVisitor {
 	}
 	@Override
 	public void visit(Table table) {
-		this.tablenames = table.getName();
 		String alias = table.getAlias();
+		if(alias == null) {
+			this.tablenames = table.getName();
+		}
+		else {
+			this.tablenames = alias;
+		}
 	}
 	@Override
 	public void visit(SubSelect subselect) {

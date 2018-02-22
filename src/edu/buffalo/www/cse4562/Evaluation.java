@@ -2,13 +2,7 @@ package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.eval.Eval;
-import net.sf.jsqlparser.expression.operators.arithmetic.*;
-import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
-import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.PrimitiveType;
-import net.sf.jsqlparser.statement.select.SubSelect;
 
 import java.sql.SQLException;
 import java.util.List;

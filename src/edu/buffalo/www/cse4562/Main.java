@@ -2,25 +2,19 @@ package edu.buffalo.www.cse4562;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.parser.*;
 
-import edu.buffalo.www.cse4562.*;
 
 public class Main {
+
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
+<<<<<<< HEAD
     	Reader r = new InputStreamReader(System.in);
 //        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
 //                                            "ID string, " +
@@ -33,11 +27,25 @@ public class Main {
 //                                            "SELECT ID, LASTNAME, WEIGHT, BIRTHDATE " +
 //                                            "FROM PLAYER " +
 //                                            "WHERE WEIGHT > 200");
+=======
+    	//Reader r = new InputStreamReader(System.in);
+        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
+                                            "ID string, " +
+                                            "FIRSTNAME string, " +
+                                            "LASTNAME string, " +
+                                            "FIRSTSEASON int, " +
+                                            "LASTSEASON int, " +
+                                            "WEIGHT int, " +
+                                            "BIRTHDATE date);" +
+                                            "SELECT FIRSTSEASON + LASTSEASON as C " +
+                                            "FROM PLAYERS;" 
+                                            );
+>>>>>>> subselect
 
         CCJSqlParser parser = new CCJSqlParser(r);
          
         Statement statement = parser.Statement();
-
+        
         Schema schema = new Schema();
         while(statement != null) {
             //system out
@@ -58,12 +66,12 @@ public class Main {
         			//do something with union
         		}
         		else {
-        			//cannot handle
+        			System.out.println();
         		}
         	}
 
         	else {
-        		//cannot handle
+        		
         	}
         	Helper.prompt();
         	statement = parser.Statement();
