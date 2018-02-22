@@ -10,19 +10,19 @@ import java.util.List;
 public class Evaluation extends Eval {
     private Schema schema;
     private List<String> tuple;
-    private String tablename;
+    private String tableName;
 
-    public Evaluation(Schema schema, String tablename,List<String> tuple) {
+    public Evaluation(Schema schema, String tableName,List<String> tuple) {
         this.schema = schema;
         this.tuple = tuple;
-        this.tablename = tablename;
+        this.tableName = tableName;
     }
 
     @Override
     public PrimitiveValue eval(Column column) throws SQLException {
         String colName = column.getColumnName();
-        String colType = schema.getColType(colName);
-        int colIndex = schema.getColIndex(colName);
+        String colType = schema.getColType(this.tableName, colName);
+        int colIndex = schema.getColIndex(this.tableName, colName);
 
         if(colType.equals("int")) {
             return new LongValue(tuple.get(colIndex));
