@@ -34,7 +34,7 @@ public class Helper {
                 line = line + cell + " ";
             }
             line = line.trim().replace(" ", "|");
-            System.out.println(line);
+            print(line);
         }
     }
     

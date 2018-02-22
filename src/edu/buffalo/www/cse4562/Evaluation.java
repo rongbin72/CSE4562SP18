@@ -24,12 +24,12 @@ public class Evaluation extends Eval {
 
         if(colType.equals("int")) {
             return new LongValue(tuple.get(colIndex));
-        } else if(colType.equals("string") || colType.equals("varchar") || colType.equals("char")) {
-            return new StringValue(tuple.get(colIndex));
+        } else if(colType.equals("decimal")) {
+            return new DoubleValue(tuple.get(colIndex));
         } else if(colType.equals("date")) {
             return new DateValue(tuple.get(colIndex));
         } else {
-            return new DoubleValue(tuple.get(colIndex));
+            return new StringValue(tuple.get(colIndex));
         }
     }
 }
