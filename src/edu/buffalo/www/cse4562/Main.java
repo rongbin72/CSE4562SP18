@@ -25,7 +25,7 @@ public class Main {
 //                                            "WEIGHT int, " +
 //                                            "BIRTHDATE date);" +
 //                                            "SELECT Q.ID, Q.LASTSEASON " +
-//                                            "FROM (SELECT LASTSEASON, ID FROM PLAYERS) Q WHERE Q.LASTSEASON > 100;"
+//                                            "FROM (sELECT LASTSEASON, ID FROM PLAYERS) Q WHERE Q.ID = 'a';"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
