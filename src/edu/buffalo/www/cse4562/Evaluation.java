@@ -24,11 +24,11 @@ public class Evaluation extends Eval {
         String colType = schema.getColType(this.tableName, colName);
         int colIndex = schema.getColIndex(this.tableName, colName);
 
-        if(colType.equals("int")) {
+        if(colType.equals("int") || colType.equals("INT")) {
             return new LongValue(tuple.get(colIndex));
-        } else if(colType.equals("decimal")) {
+        } else if(colType.equals("decimal") || colType.equals("DECIMAL")) {
             return new DoubleValue(tuple.get(colIndex));
-        } else if(colType.equals("date")) {
+        } else if(colType.equals("date") || colType.equals("DATE")) {
             return new DateValue(tuple.get(colIndex));
         } else {
             return new StringValue(tuple.get(colIndex).replace("'", ""));

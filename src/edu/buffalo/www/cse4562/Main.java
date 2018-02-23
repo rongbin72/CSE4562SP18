@@ -17,10 +17,10 @@ public class Main {
     	Reader r = new InputStreamReader(System.in);
 
 //        Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
-//                                            "ID string, " +
-//                                            "FIRSTNAME string, " +
-//                                            "LASTNAME string, " +
-//                                            "FIRSTSEASON decimal, " +
+//                                            "ID STRING, " +
+//                                            "FIRSTNAME STRING, " +
+//                                            "LASTNAME STRING, " +
+//                                            "FIRSTSEASON DECIMAL, " +
 //                                            "LASTSEASON int, " +
 //                                            "WEIGHT int, " +
 //                                            "BIRTHDATE date);" +
