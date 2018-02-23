@@ -1,11 +1,12 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.statement.select.PlainSelect;
-
+import net.sf.jsqlparser.expression.Expression;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sf.jsqlparser.statement.select.*;
 
 public class Iterator {
@@ -17,11 +18,13 @@ public class Iterator {
 	private String tablename;//name of table made with subselect
 	private List<List<String>> output = new ArrayList<List<String>>();
 	private PlainSelect body;
+	private Expression where;
 	
 	public Iterator(PlainSelect body,Schema schema) {
 		this.schema = schema;
+		this.where = ((PlainSelect) body).getWhere();
 		this.fromOB = new FromObject(((PlainSelect) body).getFromItem()); 
-		this.whereOB = new WhereObject(((PlainSelect) body).getWhere(),schema);
+		this.whereOB = new WhereObject(this.where,schema);
 		this.selectOB = new SelectObject(((PlainSelect) body).getSelectItems(),schema);
 		this.body = body;
 	}
@@ -42,7 +45,7 @@ public class Iterator {
 //		}
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
-			if(this.whereOB != null) {
+			if(this.where != null) {
 				if(this.whereOB.Result(tuple)) {
 					this.output.add(this.selectOB.Result(tuple));
 				}
