@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/commons-csv-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/jsqlparser-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/evallib-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
