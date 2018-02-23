@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.schema.Column;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Evaluation extends Eval {
         } else if(colType.equals("date") || colType.equals("DATE")) {
             return new DateValue(tuple.get(colIndex));
         } else {
-            return new StringValue(tuple.get(colIndex).replace("'", ""));
+            return new StringValue(StringUtils.strip(tuple.get(colIndex), "'"));
         }
     }
 }
