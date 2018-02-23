@@ -42,7 +42,7 @@ public class Iterator {
 //		}
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
-			if(!this.whereOB.equals(null)) {
+			if(this.whereOB != null) {
 				if(this.whereOB.Result(tuple)) {
 					this.output.add(this.selectOB.Result(tuple));
 				}
