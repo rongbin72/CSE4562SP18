@@ -1,24 +1,18 @@
 package edu.buffalo.www.cse4562;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class Read {
 	private File f;
-	private DataInputStream dis;
+	private BufferedReader br;
 
 	public Read(File f) throws FileNotFoundException {
 		this.f = f;
-		FileInputStream fis = new FileInputStream(f);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		dis = new DataInputStream(bis);
+		FileReader fr = new FileReader(f);
+		this.br = new BufferedReader(fr);
 	}
 	
 
 	public String ReadLine() throws IOException {
-		return dis.readLine();
+		return this.br.readLine();
 	}
 }

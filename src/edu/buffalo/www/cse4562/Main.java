@@ -24,8 +24,8 @@ public class Main {
 //                                            "LASTSEASON int, " +
 //                                            "WEIGHT int, " +
 //                                            "BIRTHDATE date);" +
-//                                            "SELECT Q.ID, Q.LASTSEASON, Q.FIRSTNAME, Q.FIRSTSEASON " +
-//                                            "FROM (sELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTNAME = 'Alaa';"
+//                                            "SELECT Q.LASTSEASON + Q.FIRSTSEASON AS M " +
+//                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
