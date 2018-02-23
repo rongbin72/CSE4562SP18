@@ -29,16 +29,8 @@ public class Helper {
      */
     public void output(java.util.Iterator<List<String>> table) {
         for(;table.hasNext();) {
-            String line = "";
-            for(String cell : table.next()) {
-                // remove extra '
-//                String temp = cell.replaceAll("'", "");
-//                if(!temp.equals(cell)) cell = "'" + temp + "'";
-
-                line = line + cell + " ";
-            }
-            line = line.trim().replace(" ", "|");
-            print(line);
+            List<String> row = table.next();
+            print(String.join("|", row));
         }
     }
     
