@@ -1,40 +1,67 @@
 package edu.buffalo.www.cse4562;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
+import java.io.*;
+import java.sql.SQLException;
 
 import net.sf.jsqlparser.statement.*;
+import net.sf.jsqlparser.statement.create.table.CreateTable;
+import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.parser.*;
 
+
 public class Main {
-    public static void main(String[] args) throws IOException, ParseException{
 
-        System.out.println("Hello, World");
+    public static void main(String[] args) throws IOException, ParseException, SQLException {
 
-        // Test CommonsCSV lib
-        Reader in = new FileReader("data/FB.csv");
-        Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(in);
-        for (CSVRecord record : records) {
-            String high = record.get("High");
-            String low = record.get("Low");
+    	Helper.prompt();
+    	Reader r = new InputStreamReader(System.in);
 
-            System.out.println(high);
-            System.out.println(low);
-        }
+//        Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
+//                                            "ID STRING, " +
+//                                            "FIRSTNAME STRING, " +
+//                                            "LASTNAME STRING, " +
+//                                            "FIRSTSEASON DECIMAL, " +
+//                                            "LASTSEASON int, " +
+//                                            "WEIGHT int, " +
+//                                            "BIRTHDATE date);" +
+//                                            "SELECT FIRSTNAME, ID, FIRSTSEASON " +
+//                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;"
+//                                            );
 
-        // Test Jsqlparser
-        Reader input = new StringReader("SELECT * FROM A\nSELECT * FROM B");
-        CCJSqlParser parser = new CCJSqlParser(input);
+        CCJSqlParser parser = new CCJSqlParser(r);
+         
         Statement statement = parser.Statement();
+//		throw new IOException(statement.toString());
+        
+        Schema schema = new Schema();
+        while(statement != null) {
+            //system out
+        	//.....
+        	if(statement instanceof CreateTable) {
+        		// do something with create table
+				CreateTable create = (CreateTable) statement;
+				schema.init(create);
+        	} else if(statement instanceof Select) {
+        		Select select = (Select)statement;
+        		SelectBody body = select.getSelectBody();
+        		if(body instanceof PlainSelect) {
+        			Iterator iterator = new Iterator((PlainSelect)body, schema);
+        			Helper h = new Helper();
+        			h.output(iterator.Result());
+        		}
+        		else if(body instanceof Union) {
+        			//do something with union
+        		}
+        		else {
+        			System.out.println();
+        		}
+        	}
 
-        while (statement != null) {
-            helper.print(statement.toString());
-            statement = parser.Statement();
+        	else {
+
+        	}
+        	Helper.prompt();
+        	statement = parser.Statement();
         }
 
     }
