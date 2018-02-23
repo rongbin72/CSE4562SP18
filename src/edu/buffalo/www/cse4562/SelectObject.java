@@ -18,12 +18,11 @@ public class SelectObject implements SelectItemVisitor{
     private HashMap<String, String> colType;
     private String tablename;
 	
-	public SelectObject(List<SelectItem> list,Schema schema,String tablename) {
+	public SelectObject(List<SelectItem> list,Schema schema) {
 		this.items = list;
 		this.schema = schema;
 		this.colIndex = new HashMap<String, Integer>();
 		this.colType = new HashMap<String, String>();
-		this.tablename = tablename;
 	}
 	
 	public List<String> Result(List<String> tuple) {

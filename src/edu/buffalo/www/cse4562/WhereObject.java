@@ -10,10 +10,9 @@ public class WhereObject {
 	private Schema schema;
 	private String tablename;
 	
-	public WhereObject(Expression where, Schema schema, String tablename) {
+	public WhereObject(Expression where, Schema schema) {
 		this.where = where;
 		this.schema = schema;
-		this.tablename = tablename;
 	}
 	
 	public void setTable(String newTable) {

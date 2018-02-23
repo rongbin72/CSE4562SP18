@@ -5,7 +5,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import net.sf.jsqlparser.statement.select.*;
 
@@ -30,18 +29,20 @@ public class Iterator {
 	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
 		
 		java.util.Iterator<List<String>> tempIters = this.fromOB.GetTable(schema);// the iteratorable table
-		String tableName = this.fromOB.GetTableName();//the table name
+		String tableName = this.fromOB.getName();//the table name
 		
 		List<String> tuple = null;
+		
+		this.whereOB.setTable(tableName);
+		this.selectOB.setTable(tableName);
+		
 		if(((PlainSelect) body).getFromItem() instanceof SubSelect){
-			//set table name
-			//!!!
-			this.whereOB.setSchema(this.schema);
-			this.selectOB.setSchema(this.schema);
+			this.whereOB.setTable(this.tablename);
+			this.selectOB.setTable(this.tablename);
 		}
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
-			if(this.whereOB.equals(null)) {  //
+			if(this.whereOB.equals(null)) {  
 				if(this.whereOB.Result(tuple)) {
 					this.output.add(this.selectOB.Result(tuple));
 				}
@@ -52,18 +53,22 @@ public class Iterator {
 			}
 			this.selectOB.reset();
 		}
-		this.updataSchema(this.newSchema());
+		this.addTable();
+		//this.updataSchema(this.newSchema());
+		this.tablename = this.fromOB.getName();
 		return this.output.iterator();
 	}
 	
-	public Schema newSchema() {/////////////////////
-		Schema s = new Schema();
-		s.init(this.selectOB.colIndex(),this.selectOB.coltype(),this.fromOB.getName());
-		return s;
+	public String getTablename() {
+		return this.tablename;
 	}
 	
-	public void updataSchema(Schema s) {///////////////////
-		this.schema = s;
+	public void addTable() {
+		this.schema.init(this.selectOB.colIndex(),this.selectOB.coltype(),this.fromOB.getName());
+	}
+	
+	public void updataTable(String s) {
+		this.tablename = s;
 	}
 	
 	public String output() {
