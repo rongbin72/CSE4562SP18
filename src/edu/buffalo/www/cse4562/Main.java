@@ -24,7 +24,7 @@ public class Main {
 //                                            "LASTSEASON int, " +
 //                                            "WEIGHT int, " +
 //                                            "BIRTHDATE date);" +
-//                                            "SELECT Q.LASTSEASON + Q.FIRSTSEASON AS M " +
+//                                            "SELECT FIRSTNAME, ID, FIRSTSEASON " +
 //                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;"
 //                                            );
 
