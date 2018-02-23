@@ -31,7 +31,7 @@ public class Evaluation extends Eval {
         } else if(colType.equals("date")) {
             return new DateValue(tuple.get(colIndex));
         } else {
-            return new StringValue(tuple.get(colIndex));
+            return new StringValue(tuple.get(colIndex).replace("'", ""));
         }
     }
 }

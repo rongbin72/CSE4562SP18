@@ -32,8 +32,8 @@ public class Helper {
             String line = "";
             for(String cell : table.next()) {
                 // remove extra '
-                String temp = cell.replaceAll("'", "");
-                if(!temp.equals(cell)) cell = "'" + temp + "'";
+//                String temp = cell.replaceAll("'", "");
+//                if(!temp.equals(cell)) cell = "'" + temp + "'";
 
                 line = line + cell + " ";
             }

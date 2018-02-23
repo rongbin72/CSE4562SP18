@@ -45,15 +45,15 @@ public class Iterator {
 //		}
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
-//			if(this.where != null) {
-//				if(this.whereOB.Result(tuple)) {
-//					this.output.add(this.selectOB.Result(tuple));
-//				}
-//			}
-//			else {
+			if(this.where != null) {
+				if(this.whereOB.Result(tuple)) {
+					this.output.add(this.selectOB.Result(tuple));
+				}
+			}
+			else {
 				this.output.add(this.selectOB.Result(tuple));
 				
-//			}
+			}
 			this.selectOB.reset();
 		}
 		this.addTable();
