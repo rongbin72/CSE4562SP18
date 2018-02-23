@@ -14,20 +14,20 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-//    	Reader r = new InputStreamReader(System.in);
+    	Reader r = new InputStreamReader(System.in);
 
 
-        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
-                                            "ID string, " +
-                                            "FIRSTNAME string, " +
-                                            "LASTNAME string, " +
-                                            "FIRSTSEASON int, " +
-                                            "LASTSEASON int, " +
-                                            "WEIGHT int, " +
-                                            "BIRTHDATE date);" +
-                                            "SELECT ID, FIRSTSEASON " +
-                                            "FROM (SELECT ID, FIRSTSEASON, BIRTHDATE FROM PLAYERS) Q;"
-                                            );
+//        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
+//                                            "ID string, " +
+//                                            "FIRSTNAME string, " +
+//                                            "LASTNAME string, " +
+//                                            "FIRSTSEASON int, " +
+//                                            "LASTSEASON int, " +
+//                                            "WEIGHT int, " +
+//                                            "BIRTHDATE date);" +
+//                                            "SELECT ID, FIRSTSEASON, BIRTHDATE " +
+//                                            "FROM (SELECT ID, FIRSTSEASON, BIRTHDATE, WEIGHT FROM PLAYERS) Q;"
+//                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
          
