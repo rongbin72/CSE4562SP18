@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.jsqlparser.statement.select.*;
 
 public class Iterator {
 	//deal with each where and select
@@ -76,6 +75,6 @@ public class Iterator {
 	public Schema getSchema() {
 		return this.schema;
 	}
-	
+
 	
 }
