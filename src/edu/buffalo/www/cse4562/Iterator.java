@@ -77,18 +77,5 @@ public class Iterator {
 		return this.schema;
 	}
 	
-	public String output() {
-		String temp = new String();
-		java.util.Iterator<List<String>> table = this.output.iterator();
-        for(;table.hasNext();) {
-            String line = "";
-            for(String cell : table.next()) {
-                line = line + cell + " ";
-            }
-            line = line.trim().replace(" ", "|");
-            temp = temp + line + '\n';
-        }
-        return temp;
-	}
 	
 }
