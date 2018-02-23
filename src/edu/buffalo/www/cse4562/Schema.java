@@ -20,17 +20,16 @@ public class Schema {
         this.tablePath.put(this.tableName, "data/" + this.tableName + ".dat");
 
         int columnIndex = 0;  // column index, starting from 0
+        HashMap<String, Integer> tempColIndex = new HashMap<String, Integer>();
+        HashMap<String, String> tempColType = new HashMap<String, String>();
         for(ColumnDefinition col : schema.getColumnDefinitions()) {
             // temp variables to be put
-            HashMap<String, Integer> tempColIndex = new HashMap<String, Integer>();
-            tempColIndex.put(col.getColumnName(), columnIndex);
-            HashMap<String, String> tempColType = new HashMap<String, String>();
+            tempColIndex.put(col.getColumnName(), columnIndex);           
             tempColType.put(col.getColumnName(), col.getColDataType().getDataType());
-
-            colIndex.put(col.getColumnName(), tempColIndex);
-            colType.put(col.getColumnName(), tempColType);
             columnIndex++;
         }
+        colIndex.put(tableName, tempColIndex);
+        colType.put(tableName, tempColType);
     }
     
     /**

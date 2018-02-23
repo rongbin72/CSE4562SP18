@@ -16,6 +16,7 @@ public class FromObject implements FromItemVisitor {
 	private String tablenames;
 	private boolean ifsubselect;
 	private SelectBody subbody;
+	private Schema schema;
 	
 	public FromObject(FromItem body) {
 		this.body = body;
@@ -27,6 +28,7 @@ public class FromObject implements FromItemVisitor {
 	}
 	
 	public java.util.Iterator<List<String>> GetTable(Schema S) throws IOException, SQLException {//iterators
+		this.schema = S;
 		if(!this.ifsubselect) {
 			//there's not subselect
 			//when iterating out of subselect, the table has to change
@@ -41,10 +43,16 @@ public class FromObject implements FromItemVisitor {
 		}
 		else {
 			Iterator iterator = new Iterator((PlainSelect)this.subbody,S);//result of plain select
+			iterator.updataTable(tablenames);
 			java.util.Iterator<List<String>> iter = iterator.Result();
-			this.tablenames = iterator.getTablename();//getnewtable
+			//this.tablenames = iterator.getTablename();//getnewtable
+			this.schema = iterator.getSchema();
 			return iter;
 		}
+	}
+	
+	public Schema getSchema() {
+		return this.schema;
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ public class Iterator {
 	private WhereObject whereOB;
 	private SelectObject selectOB;
 	private Schema schema;
-	private String tablename;
+	private String tablename;//name of table made with subselect
 	private List<List<String>> output = new ArrayList<List<String>>();
 	private PlainSelect body;
 	
@@ -27,7 +27,7 @@ public class Iterator {
 	}
 	
 	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
-		
+
 		java.util.Iterator<List<String>> tempIters = this.fromOB.GetTable(schema);// the iteratorable table
 		String tableName = this.fromOB.getName();//the table name
 		
@@ -36,10 +36,10 @@ public class Iterator {
 		this.whereOB.setTable(tableName);
 		this.selectOB.setTable(tableName);
 		
-		if(((PlainSelect) body).getFromItem() instanceof SubSelect){
-			this.whereOB.setTable(this.tablename);
-			this.selectOB.setTable(this.tablename);
-		}
+//		if(((PlainSelect) body).getFromItem() instanceof SubSelect){
+//			this.whereOB.setTable(this.tablename);
+//			this.selectOB.setTable(this.tablename);
+//		}
 		for(;tempIters.hasNext();) {
 			tuple = tempIters.next();
 			if(this.whereOB.equals(null)) {  
@@ -54,8 +54,7 @@ public class Iterator {
 			this.selectOB.reset();
 		}
 		this.addTable();
-		//this.updataSchema(this.newSchema());
-		this.tablename = this.fromOB.getName();
+		this.schema = this.fromOB.getSchema();
 		return this.output.iterator();
 	}
 	
@@ -64,11 +63,15 @@ public class Iterator {
 	}
 	
 	public void addTable() {
-		this.schema.init(this.selectOB.colIndex(),this.selectOB.coltype(),this.fromOB.getName());
+		this.schema.init(this.selectOB.colIndex(),this.selectOB.coltype(),this.tablename);
 	}
 	
 	public void updataTable(String s) {
 		this.tablename = s;
+	}
+	
+	public Schema getSchema() {
+		return this.schema;
 	}
 	
 	public String output() {

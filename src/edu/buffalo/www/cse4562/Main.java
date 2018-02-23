@@ -25,8 +25,8 @@ public class Main {
                                             "LASTSEASON int, " +
                                             "WEIGHT int, " +
                                             "BIRTHDATE date);" +
-                                            "SELECT ID, FIRSTSEASON, BIRTHDATE " +
-                                            "FROM (SELECT ID, FIRSTSEASON,LASTSEASON, BIRTHDATE from PLAYERS) R;"
+                                            "SELECT ID, FIRSTSEASON " +
+                                            "FROM (SELECT ID, FIRSTSEASON, BIRTHDATE FROM PLAYERS) Q;"
                                             );
 
         CCJSqlParser parser = new CCJSqlParser(r);
