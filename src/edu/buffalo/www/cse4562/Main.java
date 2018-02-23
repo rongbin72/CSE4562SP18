@@ -16,17 +16,16 @@ public class Main {
     	Helper.prompt();
     	Reader r = new InputStreamReader(System.in);
 
-
-//        Reader r = new StringReader("CREATE TABLE PLAYERS(" +
+//        Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
 //                                            "ID string, " +
 //                                            "FIRSTNAME string, " +
 //                                            "LASTNAME string, " +
-//                                            "FIRSTSEASON int, " +
+//                                            "FIRSTSEASON decimal, " +
 //                                            "LASTSEASON int, " +
 //                                            "WEIGHT int, " +
-//                                            "BIRTHDATE date);" + "CREATE TABLE R(A int, B int)" +
-//                                            "SELECT Q.FIRSTSEASON + Q.LASTSEASON AS S " +
-//                                            "FROM (SELECT * FROM PLAYERS) Q WHERE Q.FIRSTNAME = 'Alaa';"
+//                                            "BIRTHDATE date);" +
+//                                            "SELECT FIRSTSEASON + LASTSEASON " +
+//                                            "FROM PLAYERS WHERE LASTSEASON > 'a';"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
