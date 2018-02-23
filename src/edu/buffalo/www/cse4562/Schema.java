@@ -54,7 +54,7 @@ public class Schema {
 
     /**
      * Get relative path of the table
-     * @param tableNanme name of table
+     * @param tableName name of table
      * @return table path
      */
     public String getPath(String tableName) {
@@ -63,7 +63,7 @@ public class Schema {
 
     /**
      * Get column type by table name and column name
-     * @param tableNanme name of table
+     * @param tableName name of table
      * @param colName name of the column
      * @return type of the column
      */
@@ -74,7 +74,7 @@ public class Schema {
 
     /**
      * Get column index by table name and column name
-     * @param tableNanme name of table
+     * @param tableName name of table
      * @param colName name of the column
      * @return index of the column
      */
