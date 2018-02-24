@@ -16,16 +16,14 @@ public class Iterator {
 	private Schema schema;
 	private String tablename;//name of table made with subselect
 	private List<List<String>> output = new ArrayList<List<String>>();
-	private PlainSelect body;
 	private Expression where;
 	
 	public Iterator(PlainSelect body,Schema schema) {
 		this.schema = schema;
-		this.where = ((PlainSelect) body).getWhere();
-		this.fromOB = new FromObject(((PlainSelect) body).getFromItem()); 
+		this.where = body.getWhere();
+		this.fromOB = new FromObject(body.getFromItem()); 
 		this.whereOB = new WhereObject(this.where,schema);
-		this.selectOB = new SelectObject(((PlainSelect) body).getSelectItems(),schema);
-		this.body = body;
+		this.selectOB = new SelectObject(body.getSelectItems(),schema);
 	}
 	
 	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
