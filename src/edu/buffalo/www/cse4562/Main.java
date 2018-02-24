@@ -46,8 +46,7 @@ public class Main {
         		SelectBody body = select.getSelectBody();
         		if(body instanceof PlainSelect) {
         			Iterator iterator = new Iterator((PlainSelect)body, schema);
-        			Helper h = new Helper();
-        			h.output(iterator.Result());
+        			Helper.output(iterator.Result());
         		}
         		else if(body instanceof Union) {
         			//do something with union
