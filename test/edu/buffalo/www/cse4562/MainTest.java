@@ -20,15 +20,15 @@ class MainTest {
      */
     private void testFlow(String sql, String expected) throws ParseException, SQLException, IOException {
         String create =
-                "CREATE table R(A INT, B int);" +
-                "create TABLE PLAYERS(" +
-                "ID STRING, " +
-                "FIRSTNAME string, " +
+                "CREATE table R(A INT, B iNt);" +
+                "crEaTe tAbLE PLAYERS(" +
+                "ID STRInG, " +
+                "FIRSTNAME sTriNg, " +
                 "LASTNAME STRING, " +
                 "FIRSTSEASON DECIMAL, " +
-                "LASTSEASON int, " +
-                "WEIGHT decimal, " +
-                "BIRTHDATE date);";
+                "LASTSEASON iNt, " +
+                "WEIGHT deCiMal, " +
+                "BIRTHDATE dATe);";
 
         sql = create + sql;
         // init stdin and stdout
@@ -52,28 +52,27 @@ class MainTest {
     @Test
     @DisplayName("Sample")
     void sample() throws ParseException, SQLException, IOException {
-        // There should be a space at the end of each line except for the last line
+        /*
+        There should be a space at the end of each line except for the last line
+        Each statement keyword(select, from, wHeRe, etc.) should be case insensitive
+        while statement argument should be case sensitive
+         */
         String sql =
                 "select FIRSTNAME, ID, FIRSTSEASON " +
-                "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON from PLAYERS) Q " +
-                "where Q.FIRSTSEASON >= 200;";
+                "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FrOm PLAYERS) Q " +
+                "wHeRe Q.FIRSTSEASON > 1990;";
 
-        // be careful about line separator
+        /*
+        Be careful with space and line separator, keep this format
+        String should be surrounded by ' ' => 'String'
+         */
         String expected =
                 "$> \r\n" +
                 "$> \r\n" +
                 "$> \r\n" +
-                "'Alaa abc'|'ABDELAL01'|1990.0\r\n" +
-                "'Kareem abc'|'ABDULKA01'|1969.0\r\n" +
-                "'M'ahmo abc'|'ABDULMA01'|1990.0\r\n" +
                 "'T;ariq abc'|'ABDULTA01'|1997.0\r\n" +
                 "'S.hareef abc'|'ABDURSH01'|1996.0\r\n" +
-                "'T,om abc'|'ABERNTO01'|1976.0\r\n" +
-                "'J-ohn abc'|'ABRAMJO01'|1946.0\r\n" +
                 "'A=lex abc'|'ACKERAL01'|2005.0\r\n" +
-                "'Donald abc'|'ACKERDO01'|1953.0\r\n" +
-                "'Mark abc'|'ACRESMA01'|1987.0\r\n" +
-                "'Charles abc'|'ACTONCH01'|1967.0\r\n" +
                 "$> \r\n";
 
         testFlow(sql, expected);
