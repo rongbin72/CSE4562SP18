@@ -1,5 +1,8 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.PrimitiveValue;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Helper {
@@ -25,13 +28,25 @@ public class Helper {
     /**
      * Print out result
      * 
-     * @param table two dimentional list of output table
+     * @param table iterator of two dimentional list of output table
      */
     public static void output(java.util.Iterator<List<String>> table) {
         for(;table.hasNext();) {
             List<String> row = table.next();
             print(String.join("|", row));
         }
+    }
+
+    /**
+     *
+     * @param tableName table name of current table
+     * @param line string returned by <code>readline</code>
+     * @return tuple of <code>PrimitiveValue</code>
+     */
+    public static List<PrimitiveValue> toPrimitive(String tableName, String line) {
+        List<PrimitiveValue> tuple = new ArrayList<>();
+
+        return tuple;
     }
     
 }
