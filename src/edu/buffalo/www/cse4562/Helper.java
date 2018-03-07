@@ -48,5 +48,15 @@ public class Helper {
 
         return tuple;
     }
-    
+
+    /**
+     * If two string equals (case insensitive)
+     * <code>abc == ABC</code>
+     * @param a string
+     * @param b string
+     * @return true if equals else false
+     */
+    public static boolean equals(String a, String b) {
+        return a.toLowerCase().equals(b.toLowerCase());
+    }
 }
