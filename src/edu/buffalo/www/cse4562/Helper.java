@@ -1,8 +1,9 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.expression.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Helper {
@@ -43,9 +44,29 @@ public class Helper {
      * @param line string returned by <code>readline</code>
      * @return tuple of <code>PrimitiveValue</code>
      */
-    public static List<PrimitiveValue> toPrimitive(String tableName, String line) {
+    public static List<PrimitiveValue> toPrimitive(String tableName, Schema schema, String line) {
         List<PrimitiveValue> tuple = new ArrayList<>();
-
+        List<String> lineSplit = Arrays.asList(line.split("\\|"));
+        int index = 0;
+        for(String cell : lineSplit) {
+            String type = schema.getColType(tableName, index);
+            // keep the type as lower case
+            switch (type.toLowerCase()) {
+                case "int":
+                    tuple.add(new LongValue(cell));
+                    break;
+                case "string":
+                    tuple.add(new StringValue(cell));
+                    break;
+                case "decimal":
+                    tuple.add(new DoubleValue(cell));
+                    break;
+                case "date":
+                    tuple.add(new DateValue(cell));
+                    break;
+            }
+            index++;
+        }
         return tuple;
     }
 
