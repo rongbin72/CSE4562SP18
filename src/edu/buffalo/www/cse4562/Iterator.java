@@ -2,6 +2,8 @@ package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.PrimitiveValue;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,9 +28,9 @@ public class Iterator {
 		this.selectOB = new SelectObject(body.getSelectItems(),schema);
 	}
 	
-	public java.util.Iterator<List<String>> Result() throws IOException, SQLException {
+	public List<List<PrimitiveValue>> Result() throws IOException, SQLException {
 
-		java.util.Iterator<List<String>> tempIters = this.fromOB.GetTable(schema);// the iteratorable table
+		Read tempIters = this.fromOB.GetTable(schema);// the iteratorable table
 		String tableName = this.fromOB.getName();//the table name
 		
 		List<String> tuple = null;
@@ -36,26 +38,23 @@ public class Iterator {
 		this.whereOB.setTable(tableName);
 		this.selectOB.setTable(tableName);
 		
-//		if(((PlainSelect) body).getFromItem() instanceof SubSelect){
-//			this.whereOB.setTable(this.tablename);
-//			this.selectOB.setTable(this.tablename);
-//		}
-		for(;tempIters.hasNext();) {
-			tuple = tempIters.next();
+		List<PrimitiveValue> line = tempIters.ReadLine();
+		while(line != null) {
 			if(this.where != null) {
-				if(this.whereOB.Result(tuple)) {
-					this.output.add(this.selectOB.Result(tuple));
+				if(this.whereOB.Result(line)) {
+					this.output.add(this.selectOB.Result(line));
 				}
 			}
 			else {
-				this.output.add(this.selectOB.Result(tuple));
+				this.output.add(this.selectOB.Result(line));
 				
 			}
 			this.selectOB.reset();
+			line = tempIters.ReadLine();
 		}
 		this.addTable();
 		this.schema = this.fromOB.getSchema();
-		return this.output.iterator();
+		return this.output;
 	}
 	
 	public String getTablename() {

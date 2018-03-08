@@ -1,6 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
@@ -27,27 +28,23 @@ public class FromObject implements FromItemVisitor {
 		return this.tablenames;
 	}
 	
-	public java.util.Iterator<List<String>> GetTable(Schema S) throws IOException, SQLException {//iterators
+	public Read GetTable(Schema S) throws IOException, SQLException {//iterators
 		this.schema = S;
 		if(!this.ifsubselect) {
 			//there's not subselect
 			//when iterating out of subselect, the table has to change
 			
-			Read reader = new Read(new File(S.getPath(this.tablenames)));
-			String str;
-			List<List<String>> tempIter = new ArrayList<List<String>>();
-			while((str = reader.ReadLine())!=null) {
-				tempIter.add(Arrays.asList(str.split("\\|"))); 
-			}
-			return tempIter.iterator();
+			Read reader = new Read(new File(S.getPath(this.tablenames)),this.schema, this.tablenames);
+			return reader;
 		}
 		else {
 			Iterator iterator = new Iterator((PlainSelect)this.subbody,S);//result of plain select
 			iterator.updataTable(tablenames);
-			java.util.Iterator<List<String>> iter = iterator.Result();
+			List<List<PrimitiveValue>> iterTable = iterator.Result();
 			//this.tablenames = iterator.getTablename();//getnewtable
 			this.schema = iterator.getSchema();
-			return iter;
+			Read reader = new Read(iterTable, this.tablenames);
+			return reader;
 		}
 	}
 	
