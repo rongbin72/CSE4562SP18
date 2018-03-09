@@ -11,18 +11,18 @@ public class Read {
 	private int itor;
 	private int length;
 	private Schema schema;
+	private String path;
 
-	public Read(File f,Schema schema, String tablename) throws FileNotFoundException {
+	public Read(File f, String tablename) throws FileNotFoundException {
 		FileReader fr = new FileReader(f);
 		this.br = new BufferedReader(fr);
 		this.isFile = true;
 		this.tableName = tablename;
-		this.schema = schema;
 	}
 	
-	public Read(List<List<PrimitiveValue>> table, String tablename) {
+	public Read(String tablename) {
 		this.isFile = false;
-		this.table = table;
+		this.table = Schema.getTableContent(tablename);
 		this.tableName = tablename;
 		this.itor = 0;
 		this.length = table.size();
@@ -35,7 +35,7 @@ public class Read {
 			if(line == null) {
 				return null;
 			}
-			return Helper.toPrimitive(this.tableName, this.schema, line);
+			return Helper.toPrimitive(this.tableName, line);
 		}
 		else {
 			if(this.itor <= this.length) {
