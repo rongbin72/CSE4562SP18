@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.PrimitiveValue;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class Iterator {
 			List<Integer> selectResult = this.selectOB.Result(line);
 			line = this.selectOB.getTuple();
 			if(this.whereOB.Result(line)) {
-				List<PrimitiveValue> tempResult = null;
+				List<PrimitiveValue> tempResult = new ArrayList<>();
 				for(int i = 0;i < selectResult.size();i++) {
 					tempResult.add(line.get(selectResult.get(i)));
 				}

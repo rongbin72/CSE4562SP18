@@ -11,7 +11,7 @@ import net.sf.jsqlparser.schema.Column;
 public class SelectObject implements SelectItemVisitor{
 	private List<SelectItem> items;
 	private List<PrimitiveValue> tuple;
-	private List<Integer> indexResult;
+	private List<Integer> indexResult = new ArrayList<>();
     private String tablename;
 	
 	public SelectObject(List<SelectItem> list) {
