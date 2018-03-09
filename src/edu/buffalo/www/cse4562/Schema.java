@@ -21,20 +21,23 @@ public class Schema {
      * @param table
      */
     public static void addTable(CreateTable table) {
-        TableDef t = new TableDef(table);
-        schema.put(t.getTableName(), t);
+        schema.put(table.getTable().getName(), new TableDef(table));
     }
 
     public static void addTable(String tableName, HashMap<String, Integer> colIndex, List<List<PrimitiveValue>> table) {
-        TableDef t = new TableDef(tableName, colIndex, table);
+        schema.put(tableName, new TableDef(tableName, colIndex, table));
+    }
+
+    public static void addTable(String oldName, String newName) {
+
     }
 
     public static void addColumn(String tableName, String colName) {
-
+        schema.get(tableName).addColumn(colName);
     }
 
     public static HashMap<String, Integer> getIndxHash(String tableName) {
-
+        return schema.get(tableName).getIndexHash();
     }
 
     public static List<List<PrimitiveValue>> getTableContent(String tableName) {

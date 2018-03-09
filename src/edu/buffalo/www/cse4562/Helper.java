@@ -44,7 +44,7 @@ public class Helper {
      * @param line string returned by <code>readline</code>
      * @return tuple of <code>PrimitiveValue</code>
      */
-    public static List<PrimitiveValue> toPrimitive(String tableName, Schema schema, String line) {
+    public static List<PrimitiveValue> toPrimitive(String tableName, String line) {
         List<PrimitiveValue> tuple = new ArrayList<>();
         List<String> lineSplit = Arrays.asList(line.split("\\|"));
         int index = 0;
