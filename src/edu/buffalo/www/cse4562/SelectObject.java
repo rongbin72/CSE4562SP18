@@ -2,23 +2,20 @@ package edu.buffalo.www.cse4562;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.schema.Column;
 
 public class SelectObject implements SelectItemVisitor{
 	private List<SelectItem> items;
 	private List<PrimitiveValue> tuple;
-	private List<PrimitiveValue> tempTuple;
-	private List<Integer> indexResult = new ArrayList<Integer>();
-	private HashMap<String, Integer> colIndex;
+	private List<Integer> indexResult;
     private String tablename;
 	
-	public SelectObject(List<SelectItem> list,Schema schema) {
+	public SelectObject(List<SelectItem> list) {
 		this.items = list;
-		this.colIndex = new HashMap<String, Integer>();
 	}
 	
 	//return a list include index of a the tuple should be selected
@@ -34,8 +31,8 @@ public class SelectObject implements SelectItemVisitor{
 		this.indexResult = new ArrayList<Integer>();
 	}
 	
-	public HashMap<String, Integer> colIndex() {
-		return this.colIndex;
+	public void setTable(String tablename) {
+		this.tablename = tablename;
 	}
 	
 	@Override
@@ -43,7 +40,6 @@ public class SelectObject implements SelectItemVisitor{
 		for(int i = 0;i<this.tuple.size();i++) {
 			this.indexResult.add(i);
 		}
-		this.colIndex = Schema.getIndxHash(this.tablename);		
 	}
 
 	@Override
@@ -62,14 +58,16 @@ public class SelectObject implements SelectItemVisitor{
 			//get index
 			//renew tuple
 			//add column
-			this.evalResult = eval.eval(e);
-			int index = this.tempResult.size();
-
-			if(alias == null) {
-				alias = col;
+			if((!(e instanceof Column)) || (alias != null)){
+				//add column into table and tuple
+				this.tuple.add(eval.eval(e));
+				if(alias != null) {
+					col = alias;
+				}
+				Schema.addColumn(this.tablename, col);
 			}
-			this.tempResult.add(result);
-			this.colIndex.put(alias, index);
+			this.indexResult.add(Schema.getColIndex(this.tablename, col));
+
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
