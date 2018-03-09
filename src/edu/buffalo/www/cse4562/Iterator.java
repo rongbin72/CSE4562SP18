@@ -19,11 +19,11 @@ public class Iterator {
 	private List<List<String>> output = new ArrayList<List<String>>();
 	private Expression where;
 	
-	public Iterator(PlainSelect body,Schema schema) {
+	public Iterator(PlainSelect body) {
 		this.where = body.getWhere();
 		this.fromOB = new FromObject(body.getFromItem()); 
 		this.whereOB = new WhereObject(this.where);
-		this.selectOB = new SelectObject(body.getSelectItems(),schema);
+		this.selectOB = new SelectObject(body.getSelectItems());
 	}
 	
 	public List<List<PrimitiveValue>> Result() throws IOException, SQLException {

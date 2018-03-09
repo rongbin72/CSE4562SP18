@@ -10,50 +10,40 @@ import net.sf.jsqlparser.statement.select.*;
 
 public class SelectObject implements SelectItemVisitor{
 	private List<SelectItem> items;
-	private List<String> tuple;
-	private List<String> tempResult = new ArrayList<String>();
-	private Schema schema;
-	private PrimitiveValue evalResult;
+	private List<PrimitiveValue> tuple;
+	private List<PrimitiveValue> tempTuple;
+	private List<Integer> indexResult = new ArrayList<Integer>();
 	private HashMap<String, Integer> colIndex;
-    private HashMap<String, String> colType;
     private String tablename;
 	
 	public SelectObject(List<SelectItem> list,Schema schema) {
 		this.items = list;
-		this.schema = schema;
 		this.colIndex = new HashMap<String, Integer>();
-		this.colType = new HashMap<String, String>();
 	}
 	
-	public List<String> Result(List<String> tuple) {
+	//return a list include index of a the tuple should be selected
+	public List<Integer> Result(List<PrimitiveValue> tuple) {
 		this.tuple = tuple;
 		for(SelectItem item:this.items) {
 			item.accept(this);
 		}
-		return this.tempResult;
+		return this.indexResult;
 	}
 	
 	public void reset() {
-		this.tempResult = new ArrayList<String>();
-	}
-	
-	public void setTable(String newtable) {
-		this.tablename = newtable;
+		this.indexResult = new ArrayList<Integer>();
 	}
 	
 	public HashMap<String, Integer> colIndex() {
 		return this.colIndex;
 	}
 	
-	public HashMap<String, String> coltype() {
-		return this.colType;
-	}
 	@Override
 	public void visit(AllColumns allColumns) {
-		this.tempResult.addAll(this.tuple);
-		this.colIndex = this.schema.getIndex(this.tablename);
-		this.colType = this.schema.getType(this.tablename);
-		
+		for(int i = 0;i<this.tuple.size();i++) {
+			this.indexResult.add(i);
+		}
+		this.colIndex = Schema.getIndxHash(this.tablename);		
 	}
 
 	@Override
@@ -67,24 +57,16 @@ public class SelectObject implements SelectItemVisitor{
 		Expression e = exp.getExpression();
 		String col = e.toString();
 		String alias = exp.getAlias();
-		Evaluation eval = new Evaluation(this.schema, this.tablename, this.tuple);//
+		Evaluation eval = new Evaluation(this.tablename, this.tuple);
 		try {
 			this.evalResult = eval.eval(e);
 			int index = this.tempResult.size();
-			String result = this.evalResult.toString();
 
 			if(alias == null) {
 				alias = col;
 			}
 			this.tempResult.add(result);
 			this.colIndex.put(alias, index);
-			String type;
-			String temp = this.evalResult.getType().name();
-			if(temp.matches("LONG")) {type = "int";}
-			else if(temp.matches("DOUBLE")) {type = "decimal";}
-			else if(temp.matches("DATE")) {type = "date";}
-			else {type = "STRING";}
-			this.colType.put(alias, type);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
