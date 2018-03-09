@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import javafx.scene.Scene;
 import net.sf.jsqlparser.expression.*;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class Helper {
         List<String> lineSplit = Arrays.asList(line.split("\\|"));
         int index = 0;
         for(String cell : lineSplit) {
-            String type = schema.getColType(tableName, index);
+            String type = Schema.getColType(tableName, index);
             // keep the type as lower case
             switch (type.toLowerCase()) {
                 case "int":

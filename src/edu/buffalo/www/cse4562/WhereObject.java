@@ -7,20 +7,18 @@ import net.sf.jsqlparser.expression.*;
 
 public class WhereObject {
 	private Expression where;
-	private Schema schema;
-	private String tableName;
+	private String tablename;
 
-	public WhereObject(Expression where, Schema schema) {
+	public WhereObject(Expression where) {
 		this.where = where;
-		this.schema = schema;
 	}
 
 	public void setTable(String newTable) {
-		this.tableName = newTable;
+		this.tablename = newTable;
 	}
 
 	public boolean Result(List<PrimitiveValue> tuple) throws SQLException {
-		Evaluation eval = new Evaluation(this.schema, this.tableName, tuple);
+		Evaluation eval = new Evaluation(this.tablename, tuple);
 		PrimitiveValue result = eval.eval(this.where);
 		return result.toBool();
 	}
