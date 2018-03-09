@@ -36,7 +36,7 @@ public class Read {
 			return Helper.toPrimitive(this.tableName, line);
 		}
 		else {
-			if(this.itor <= this.length) {
+			if(this.itor < this.length) {
 				result = this.table.get(this.itor);
 				this.itor ++;
 				return result;

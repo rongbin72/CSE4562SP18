@@ -18,6 +18,9 @@ public class WhereObject {
 	}
 
 	public boolean Result(List<PrimitiveValue> tuple) throws SQLException {
+		if(this.where == null) {
+			return true;
+		}
 		Evaluation eval = new Evaluation(this.tableName, tuple);
 		PrimitiveValue result = eval.eval(this.where);
 		return result.toBool();
