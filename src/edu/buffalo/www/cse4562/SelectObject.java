@@ -59,6 +59,9 @@ public class SelectObject implements SelectItemVisitor{
 		String alias = exp.getAlias();
 		Evaluation eval = new Evaluation(this.tablename, this.tuple);
 		try {
+			//get index
+			//renew tuple
+			//add column
 			this.evalResult = eval.eval(e);
 			int index = this.tempResult.size();
 
