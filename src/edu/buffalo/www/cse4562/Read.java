@@ -10,8 +10,6 @@ public class Read {
 	private String tableName;
 	private int itor;
 	private int length;
-	private Schema schema;
-	private String path;
 
 	public Read(File f, String tablename) throws FileNotFoundException {
 		FileReader fr = new FileReader(f);

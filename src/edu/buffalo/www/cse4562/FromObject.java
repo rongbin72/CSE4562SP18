@@ -5,8 +5,6 @@ import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +37,10 @@ public class FromObject implements FromItemVisitor {
 			Read reader = new Read(this.tablenames);//when visiting subselect, this.tablenames have been fleshed
 			return reader;
 		}
+	}
+	
+	public String getName() {
+		return this.tablenames;
 	}
 	
 	@Override

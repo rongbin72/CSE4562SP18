@@ -6,7 +6,6 @@ import net.sf.jsqlparser.expression.PrimitiveValue;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class Iterator {
 	private FromObject fromOB; 
 	private WhereObject whereOB;
 	private SelectObject selectOB;
-	private List<List<String>> output = new ArrayList<List<String>>();
+	private List<List<PrimitiveValue>> resultTuples;
 	private Expression where;
 	
 	public Iterator(PlainSelect body) {
@@ -28,38 +27,37 @@ public class Iterator {
 	
 	public List<List<PrimitiveValue>> Result() throws IOException, SQLException {
 
-		Read tempIters = this.fromOB.GetTable(schema);// the iteratorable table
+		Read tempIters = this.fromOB.GetTable();// the iteratorable table
 		String tableName = this.fromOB.getName();//the table name
-		
-		List<String> tuple = null;
 
 		this.selectOB.setTable(tableName);
+		this.whereOB.setTableName(tableName);
 		//pass value to select
 		//get value 
 		//pass value to where
 		//select
 		List<PrimitiveValue> line = tempIters.ReadLine();
 		while(line != null) {
-			if(this.where != null) {
-				if(this.whereOB.Result(line)) {
-					this.output.add(this.selectOB.Result(line));
+			List<Integer> selectResult = this.selectOB.Result(line);
+			line = this.selectOB.getTuple();
+			if(this.whereOB.Result(line)) {
+				List<PrimitiveValue> tempResult = null;
+				for(int i = 0;i < selectResult.size();i++) {
+					tempResult.add(line.get(selectResult.get(i)));
 				}
+				this.resultTuples.add(tempResult);
 			}
-			else {
-				this.output.add(this.selectOB.Result(line));
-				
-			}
+			
 			this.selectOB.reset();
 			line = tempIters.ReadLine();
 		}
-		this.addTable();
-		this.schema = this.fromOB.getSchema();
-		return this.output;
+		return this.resultTuples;
 	}
 	
 	public HashMap<String, Integer> getNewColindex(){
 		return this.selectOB.colIndex();
 	}
+	
 
 
 	
