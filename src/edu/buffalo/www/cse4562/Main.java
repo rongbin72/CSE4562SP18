@@ -32,8 +32,7 @@ public class Main {
          
         Statement statement = parser.Statement();
 //		throw new IOException(statement.toString());
-        
-        Schema schema = new Schema();
+
         while(statement != null) {
             //system out
         	//.....
