@@ -31,8 +31,7 @@ public class Main {
         CCJSqlParser parser = new CCJSqlParser(r);
          
         Statement statement = parser.Statement();
-//		throw new IOException(statement.toString());
-        
+
         while(statement != null) {
             //system out
         	//.....

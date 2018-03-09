@@ -13,6 +13,8 @@ public class SelectObject implements SelectItemVisitor{
 	private List<PrimitiveValue> tuple;
 	private List<Integer> indexResult = new ArrayList<>();
     private String tablename;
+    private HashMap<String, Integer> newIndex = new HashMap<String, Integer>();
+    private int position = 0;
 	
 	public SelectObject(List<SelectItem> list) {
 		this.items = list;
@@ -23,16 +25,18 @@ public class SelectObject implements SelectItemVisitor{
 		this.tuple = tuple;
 		for(SelectItem item:this.items) {
 			item.accept(this);
+			this.position ++;
 		}
 		return this.indexResult;
 	}
 	
 	public HashMap<String, Integer> colIndex(){
-		return Schema.getIndxHash(this.tablename);
+		return this.newIndex;
 	}
 	
 	public void reset() {
 		this.indexResult = new ArrayList<Integer>();
+		this.position = 0;
 	}
 	
 	public List<PrimitiveValue> getTuple(){
@@ -48,6 +52,7 @@ public class SelectObject implements SelectItemVisitor{
 		for(int i = 0;i<this.tuple.size();i++) {
 			this.indexResult.add(i);
 		}
+		this.newIndex = Schema.getIndxHash(this.tablename);
 	}
 
 	@Override
@@ -75,6 +80,7 @@ public class SelectObject implements SelectItemVisitor{
 				Schema.addColumn(this.tablename, col);
 			}
 			this.indexResult.add(Schema.getColIndex(this.tablename, col));
+			this.newIndex.put(col, this.position);
 
 		} catch (SQLException e1) {
 			e1.printStackTrace();
