@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.PrimitiveIterator;
 
 public class Helper {
 
@@ -32,10 +33,13 @@ public class Helper {
      * 
      * @param table iterator of two dimentional list of output table
      */
-    public static void output(java.util.Iterator<List<String>> table) {
-        for(;table.hasNext();) {
-            List<String> row = table.next();
-            print(String.join("|", row));
+    public static void output(List<List<PrimitiveValue>> table) {
+        for(List<PrimitiveValue> row : table) {
+            List<String> line = new ArrayList<>();
+            for (PrimitiveValue cell : row) {
+                line.add(cell.toString());
+            }
+            print(String.join("|", line));
         }
     }
 
