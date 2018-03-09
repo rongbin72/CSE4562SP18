@@ -9,26 +9,24 @@ import java.util.List;
 import java.util.PrimitiveIterator;
 
 public class Schema {
-    private String tableName;
-    private HashMap<String, String> tablePath = new HashMap<>();
-    private HashMap<String, HashMap<String, Integer>> colIndex = new HashMap<>();
-    private HashMap<String, HashMap<Integer, String>> typeByIndex = new HashMap<>();
-    private HashMap<String, HashMap<String, String>> typeByName = new HashMap<>();
-    //===============================================
-//    private static HashMap<String, TableDef> schema = new HashMap<>();
-//
-//    /**
-//     * Add a table definition to schema
-//     * @param table
-//     */
+//    private String tableName;
+//    private HashMap<String, String> tablePath = new HashMap<>();
+//    private HashMap<String, HashMap<String, Integer>> colIndex = new HashMap<>();
+//    private HashMap<String, HashMap<Integer, String>> typeByIndex = new HashMap<>();
+//    private HashMap<String, HashMap<String, String>> typeByName = new HashMap<>();
+    private static HashMap<String, TableDef> schema = new HashMap<>();
 
+    /**
+     * Add a table definition to schema
+     * @param table
+     */
     public static void addTable(CreateTable table) {
         TableDef t = new TableDef(table);
         schema.put(t.getTableName(), t);
     }
 
     public static void addTable(String tableName, HashMap<String, Integer> colIndex, List<List<PrimitiveValue>> table) {
-
+        TableDef t = new TableDef(tableName, colIndex, table);
     }
 
     public static void addColumn(String tableName, String colName) {
@@ -49,8 +47,8 @@ public class Schema {
      * @param tableName name of table
      * @return table path
      */
-    public String getPath(String tableName) {
-        return this.tablePath.get(tableName);
+    public static String getPath(String tableName) {
+        return schema.get(tableName).getTablePath();
     }
 
 
