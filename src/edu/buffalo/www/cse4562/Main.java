@@ -14,19 +14,19 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-    	Reader r = new InputStreamReader(System.in);
+    	//Reader r = new InputStreamReader(System.in);
 
-//        Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
-//                                            "ID STRING, " +
-//                                            "FIRSTNAME STRING, " +
-//                                            "LASTNAME STRING, " +
-//                                            "FIRSTSEASON DECIMAL, " +
-//                                            "LASTSEASON int, " +
-//                                            "WEIGHT int, " +
-//                                            "BIRTHDATE date);" +
-//                                            "SELECT FIRSTNAME, ID, FIRSTSEASON " +
-//                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;"
-//                                            );
+        Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
+                                            "ID STRING, " +
+                                            "FIRSTNAME STRING, " +
+                                            "LASTNAME STRING, " +
+                                            "FIRSTSEASON DECIMAL, " +
+                                            "LASTSEASON int, " +
+                                            "WEIGHT int, " +
+                                            "BIRTHDATE date);" +
+                                            "SELECT FIRSTNAME, ID, FIRSTSEASON " +
+                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;"
+                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
          

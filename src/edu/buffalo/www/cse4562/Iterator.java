@@ -16,13 +16,11 @@ public class Iterator {
 	private FromObject fromOB; 
 	private WhereObject whereOB;
 	private SelectObject selectOB;
-	private List<List<PrimitiveValue>> resultTuples;
-	private Expression where;
+	private List<List<PrimitiveValue>> resultTuples = new ArrayList<List<PrimitiveValue>>();
 	
 	public Iterator(PlainSelect body) {
-		this.where = body.getWhere();
 		this.fromOB = new FromObject(body.getFromItem()); 
-		this.whereOB = new WhereObject(this.where);
+		this.whereOB = new WhereObject(body.getWhere());
 		this.selectOB = new SelectObject(body.getSelectItems());
 	}
 	
@@ -42,7 +40,7 @@ public class Iterator {
 			List<Integer> selectResult = this.selectOB.Result(line);
 			line = this.selectOB.getTuple();
 			if(this.whereOB.Result(line)) {
-				List<PrimitiveValue> tempResult = new ArrayList<>();
+				List<PrimitiveValue> tempResult = new ArrayList<PrimitiveValue>();
 				for(int i = 0;i < selectResult.size();i++) {
 					tempResult.add(line.get(selectResult.get(i)));
 				}
