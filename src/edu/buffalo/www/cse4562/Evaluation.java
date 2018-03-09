@@ -5,24 +5,28 @@ import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.schema.Column;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PrimitiveIterator;
 
 public class Evaluation extends Eval {
-    private Schema schema;
     private List<PrimitiveValue> tuple;
-    private String tableName;
+    private HashMap<String, Integer> colIndex;
 
     public Evaluation(Schema schema, String tableName,List<PrimitiveValue> tuple) {
-        this.schema = schema;
+        this.colIndex = schema.getIndex(tableName);
         this.tuple = tuple;
-        this.tableName = tableName;
     }
-
+    
+    public Evaluation(HashMap<String, Integer> index, List<PrimitiveValue> tuple) {
+    	this.tuple = tuple;
+    	this.colIndex = index;
+    }
+    
     @Override
     public PrimitiveValue eval(Column column) {
         String colName = column.getColumnName();
-        int colIndex = schema.getColIndex(this.tableName, colName);
-        return tuple.get(colIndex);
+        int index = colIndex.get(colName);
+        return tuple.get(index);
     }
 }
