@@ -40,12 +40,12 @@ public class Main {
         	if(statement instanceof CreateTable) {
         		// do something with create table
 				CreateTable create = (CreateTable) statement;
-				schema.init(create);
+				Schema.addTable(create);
         	} else if(statement instanceof Select) {
         		Select select = (Select)statement;
         		SelectBody body = select.getSelectBody();
         		if(body instanceof PlainSelect) {
-        			Iterator iterator = new Iterator((PlainSelect)body, schema);
+        			Iterator iterator = new Iterator((PlainSelect)body);
         			Helper.output(iterator.Result());
         		}
         		else if(body instanceof Union) {
