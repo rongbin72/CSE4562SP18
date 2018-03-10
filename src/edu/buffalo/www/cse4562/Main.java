@@ -27,7 +27,8 @@ public class Main {
                                             "SELECT FIRSTNAME, ID, FIRSTSEASON " +
                                             "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200 ORDER BY Q.FIRSTSEASON LIMIT 3;" +
                                              "SELECT A+B as C from R where C > 6;" +
-                                            "SELECT A as C FROM R where C > 4;"
+                                            "SELECT A as C FROM R where C > 4;" +
+                                             "SELECT S.A from R as S;" 
                                             );
 
         CCJSqlParser parser = new CCJSqlParser(r);

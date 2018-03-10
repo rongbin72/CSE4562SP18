@@ -17,8 +17,12 @@ public class Evaluation extends Eval {
     
     @Override
     public PrimitiveValue eval(Column column) {
+    	String table = column.getTable().getName();
         String colName = column.getColumnName();
-        int index = Schema.getColIndex(tableName, colName);
+        if(table == null) {
+        	table = this.tableName;
+        }
+        int index = Schema.getColIndex(table, colName);
         return tuple.get(index);
     }
 }

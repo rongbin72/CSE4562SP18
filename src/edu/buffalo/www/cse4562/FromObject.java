@@ -45,12 +45,9 @@ public class FromObject implements FromItemVisitor {
 	
 	@Override
 	public void visit(Table table) {
+		this.tablenames = table.getName();
 		String alias = table.getAlias();
-		if(alias == null) {
-			this.tablenames = table.getName();
-		}
-		else {
-			//should add a new table here
+		if(alias != null) {
 			Schema.addTable(this.tablenames, alias);
 			this.tablenames = alias;
 		}
