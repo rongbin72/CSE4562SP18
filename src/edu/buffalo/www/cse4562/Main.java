@@ -45,8 +45,9 @@ public class Main {
         		Select select = (Select)statement;
         		SelectBody body = select.getSelectBody();
         		if(body instanceof PlainSelect) {
-        			Iterator iterator = new Iterator((PlainSelect)body);
-        			Helper.output(iterator.Result());
+        			PlainSelect sel = (PlainSelect) body;
+        			Iterator iterator = new Iterator(sel);
+        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
         			Schema.reset(1);
         		}
         		else if(body instanceof Union) {
