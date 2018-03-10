@@ -25,7 +25,9 @@ public class Main {
                                             "WEIGHT int, " +
                                             "BIRTHDATE date);" +
                                             "SELECT FIRSTNAME, ID, FIRSTSEASON " +
-                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;"
+                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;" +
+                                             "SELECT A+B as C from R where C > 6;" +
+                                            "SELECT A as C FROM R where C > 4;"
                                             );
 
         CCJSqlParser parser = new CCJSqlParser(r);
@@ -45,6 +47,7 @@ public class Main {
         		if(body instanceof PlainSelect) {
         			Iterator iterator = new Iterator((PlainSelect)body);
         			Helper.output(iterator.Result());
+        			Schema.reset(1);
         		}
         		else if(body instanceof Union) {
         			//do something with union

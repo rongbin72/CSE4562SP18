@@ -45,7 +45,7 @@ public class Iterator {
 				}
 				this.resultTuples.add(tempResult);
 			}
-			
+			Schema.reset(2);
 			this.selectOB.reset();
 			line = tempIters.ReadLine();
 		}

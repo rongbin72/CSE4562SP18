@@ -66,15 +66,18 @@ public class Schema {
     /**
      * Reset schema, remove extra table and extra column
      */
-    public static void reset() {
-        for (String t : extraTable) {
-            schema.remove(t);
-        }
-
-        for (String c : extraCol.keySet()) {
-            schema.get(c).removeCol(extraCol.get(c));
-        }
-        extraTable.clear();
-        extraCol.clear();
+    public static void reset(int i) {
+    	if(i == 1) {//remove table
+    		for (String t : extraTable) {
+                schema.remove(t);
+            }
+    		extraTable.clear();
+    	}        
+    	else {
+            for (String c : extraCol.keySet()) {
+                schema.get(c).removeCol(extraCol.get(c));
+            } 
+            extraCol.clear();
+    	}
     }
 }
