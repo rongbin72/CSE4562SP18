@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
+import sun.rmi.server.InactiveGroupException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,10 @@ public class Schema {
     public static void addTable(String oldName, String newName) {
         schema.put(newName, schema.get(oldName));
         extraTable.add(newName);
+    }
+
+    public static void addTable(String tableName, HashMap<String, Integer> colIndex) {
+        schema.put(tableName, new TableDef(tableName, colIndex));
     }
 
     public static void addColumn(String tableName, String colName) {

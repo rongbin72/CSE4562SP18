@@ -4,6 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+
+import com.sun.org.apache.xerces.internal.impl.xs.SchemaGrammar;
+import javafx.scene.Scene;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.schema.Column;
@@ -27,6 +30,7 @@ public class SelectObject implements SelectItemVisitor{
 			item.accept(this);
 			this.position ++;
 		}
+		Schema.addTable("*", newIndex);
 		return this.indexResult;
 	}
 	
@@ -81,6 +85,7 @@ public class SelectObject implements SelectItemVisitor{
 			}
 			this.indexResult.add(Schema.getColIndex(this.tablename, col));
 			this.newIndex.put(col, this.position);
+
 
 		} catch (SQLException e1) {
 			e1.printStackTrace();
