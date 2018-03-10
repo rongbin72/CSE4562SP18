@@ -24,10 +24,10 @@ public class Main {
                                             "LASTSEASON int, " +
                                             "WEIGHT int, " +
                                             "BIRTHDATE date);" +
-                                            "SELECT FIRSTNAME, ID, FIRSTSEASON " +
-                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;" +
-                                             "SELECT A+B as C from R where C > 6;" +
-                                            "SELECT A as C FROM R where C > 4;"
+                                            //"SELECT FIRSTNAME, ID, FIRSTSEASON " +
+                                            //"FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;" +
+                                             "SELECT S.A from R as S;" 
+                                            //"SELECT A as C FROM R where C > 4;"
                                             );
 
         CCJSqlParser parser = new CCJSqlParser(r);

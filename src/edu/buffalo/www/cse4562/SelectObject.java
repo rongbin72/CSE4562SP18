@@ -7,6 +7,7 @@ import java.util.HashMap;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 
 public class SelectObject implements SelectItemVisitor{
 	private List<SelectItem> items;
@@ -66,20 +67,33 @@ public class SelectObject implements SelectItemVisitor{
 		Expression e = exp.getExpression();
 		String col = e.toString();
 		String alias = exp.getAlias();
+		String table;
 		Evaluation eval = new Evaluation(this.tablename, this.tuple);
 		try {
 			//get index
 			//renew tuple
 			//add column
-			if((!(e instanceof Column)) || (alias != null)){
-				//add column into table and tuple
-				this.tuple.add(eval.eval(e));
+			if(e instanceof Column) {
+				table = ((Column) e).getTable().getName();
+				col = ((Column) e).getColumnName();
+				if(table == null) {
+					table = this.tablename;
+				}
+				if(alias != null) {
+					col = alias;
+					this.tuple.add(eval.eval(e));
+					Schema.addColumn(table, col);
+				}
+			}
+			else {
 				if(alias != null) {
 					col = alias;
 				}
-				Schema.addColumn(this.tablename, col);
+				table = this.tablename;
+				this.tuple.add(eval.eval(e));
+				Schema.addColumn(table, col);
 			}
-			this.indexResult.add(Schema.getColIndex(this.tablename, col));
+			this.indexResult.add(Schema.getColIndex(table, col));
 			this.newIndex.put(col, this.position);
 
 		} catch (SQLException e1) {
