@@ -75,46 +75,8 @@ public class Helper {
             Column col = (Column) orderBy.get(0).getExpression();
             String colName = col.getColumnName();
             int colIndex = Schema.getColIndex("*", colName);
-            // if no tableName, how to get column index
-            // add variable in Schema currentTableName, and method getCurrentTableName
-            table.sort(new Comparator<List<PrimitiveValue>>() {
-                @Override
-                public int compare(List<PrimitiveValue> a, List<PrimitiveValue> b) {
-                    PrimitiveValue lhs = a.get(colIndex);
-                    PrimitiveValue rhs = b.get(colIndex);
-                    String type = a.get(colIndex).getType().name();
-                    switch (type) {
-                        case "LONG":
-                            try {
-                                Long left = lhs.toLong();
-                                Long right = rhs.toLong();
-                                return left.compareTo(right);
-                            } catch (PrimitiveValue.InvalidPrimitive throwables) {
-                                throwables.printStackTrace();
-                            }
 
-                        case "STRING":
-                            String left = lhs.toString();
-                            String right = rhs.toString();
-                            return left.compareTo(right);
-
-                        case "DOUBLE":
-                            try {
-                                Double l = lhs.toDouble();
-                                Double r = rhs.toDouble();
-                                return l.compareTo(r);
-                            } catch (PrimitiveValue.InvalidPrimitive throwables) {
-                                throwables.printStackTrace();
-                            }
-
-                        case "DATE":
-                            Date leftDate = ((DateValue) lhs).getValue();
-                            Date rightDate = ((DateValue) rhs).getValue();
-                            return leftDate.compareTo(rightDate);
-                    }
-                    return 0;
-                }
-            });
+            cmp(table, colIndex, isAsc);
             printTable(table);
 
             Helper.print("amd");
@@ -128,47 +90,65 @@ public class Helper {
             Column col = (Column) orderBy.get(0).getExpression();
             String colName = col.getColumnName();
             int colIndex = Schema.getColIndex("*", colName);
-            table.sort(new Comparator<List<PrimitiveValue>>() {
-                @Override
-                public int compare(List<PrimitiveValue> a, List<PrimitiveValue> b) {
-                    PrimitiveValue lhs = a.get(colIndex);
-                    PrimitiveValue rhs = b.get(colIndex);
-                    String type = a.get(colIndex).getType().name();
-                    switch (type) {
-                        case "LONG":
-                            try {
-                                Long left = lhs.toLong();
-                                Long right = rhs.toLong();
-                                return left.compareTo(right);
-                            } catch (PrimitiveValue.InvalidPrimitive throwables) {
-                                throwables.printStackTrace();
-                            }
 
-                        case "STRING":
-                            String left = lhs.toString();
-                            String right = rhs.toString();
-                            return left.compareTo(right);
-
-                        case "DOUBLE":
-                            try {
-                                Double l = lhs.toDouble();
-                                Double r = rhs.toDouble();
-                                return l.compareTo(r);
-                            } catch (PrimitiveValue.InvalidPrimitive throwables) {
-                                throwables.printStackTrace();
-                            }
-
-                        case "DATE":
-                            Date leftDate = ((DateValue) lhs).getValue();
-                            Date rightDate = ((DateValue) rhs).getValue();
-                            return leftDate.compareTo(rightDate);
-                    }
-                    return 0;
-                }
-            });
+            cmp(table, colIndex, isAsc);
             printTable(table, (int) limit.getRowCount());
 
         }
+    }
+
+    private static void cmp(List<List<PrimitiveValue>> table, int colIndex, boolean isAsc) {
+        table.sort((a, b) -> {
+            PrimitiveValue lhs = a.get(colIndex);
+            PrimitiveValue rhs = b.get(colIndex);
+            String type = a.get(colIndex).getType().name();
+            switch (type) {
+                case "LONG":
+                    try {
+                        Long left = lhs.toLong();
+                        Long right = rhs.toLong();
+                        if (isAsc) {
+                            return left.compareTo(right);
+                        } else {
+                            return right.compareTo(left);
+                        }
+                    } catch (PrimitiveValue.InvalidPrimitive throwables) {
+                        throwables.printStackTrace();
+                    }
+
+                case "STRING":
+                    String left = lhs.toString();
+                    String right = rhs.toString();
+                    if (isAsc) {
+                        return left.compareTo(right);
+                    } else {
+                        return right.compareTo(left);
+                    }
+
+                case "DOUBLE":
+                    try {
+                        Double l = lhs.toDouble();
+                        Double r = rhs.toDouble();
+                        if (isAsc) {
+                            return l.compareTo(r);
+                        } else {
+                            return r.compareTo(l);
+                        }
+                    } catch (PrimitiveValue.InvalidPrimitive throwables) {
+                        throwables.printStackTrace();
+                    }
+
+                case "DATE":
+                    Date l = ((DateValue) lhs).getValue();
+                    Date r = ((DateValue) rhs).getValue();
+                    if (isAsc) {
+                        return l.compareTo(r);
+                    } else {
+                        return r.compareTo(l);
+                    }
+            }
+            return 0;
+        });
     }
 
     /**
