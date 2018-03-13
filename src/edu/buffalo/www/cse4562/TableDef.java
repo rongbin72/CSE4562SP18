@@ -79,7 +79,7 @@ public class TableDef {
     public List<List<PrimitiveValue>> getTableContent() {
         return this.table;
     }
-
+    
     /**
      * Return colIndex
      * @return colIndex

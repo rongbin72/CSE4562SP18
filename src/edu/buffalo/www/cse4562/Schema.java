@@ -41,7 +41,7 @@ public class Schema {
         extraCol.put(tableName, colName);
     }
 
-    public static void addTableContent(String tableName, List<List<PrimitiveValue>> tableContent) {
+    public static void setTableContent(String tableName, List<List<PrimitiveValue>> tableContent) {
 
     }
 
