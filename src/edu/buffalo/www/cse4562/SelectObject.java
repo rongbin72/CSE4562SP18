@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-import com.sun.org.apache.xerces.internal.impl.xs.SchemaGrammar;
 import javafx.scene.Scene;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.statement.select.*;

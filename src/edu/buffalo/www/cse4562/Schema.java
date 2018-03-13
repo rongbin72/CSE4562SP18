@@ -3,7 +3,6 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
-import sun.rmi.server.InactiveGroupException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
