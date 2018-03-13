@@ -14,22 +14,22 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-    	//Reader r = new InputStreamReader(System.in);
+    	Reader r = new InputStreamReader(System.in);
 
-        Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
-                                            "ID STRING, " +
-                                            "FIRSTNAME STRING, " +
-                                            "LASTNAME STRING, " +
-                                            "FIRSTSEASON DECIMAL, " +
-                                            "LASTSEASON int, " +
-                                            "WEIGHT int, " +
-                                            "BIRTHDATE date);" +
-                                            "SELECT FIRSTNAME, ID, FIRSTSEASON " +
-                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" +
-                                             "SELECT A+B as C from R where C > 6;" +
-                                            "SELECT A as C FROM R where C > 4;" +
-                                             "SELECT S.A from R as S;" 
-                                            );
+//        Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
+//                                            "ID STRING, " +
+//                                            "FIRSTNAME STRING, " +
+//                                            "LASTNAME STRING, " +
+//                                            "FIRSTSEASON DECIMAL, " +
+//                                            "LASTSEASON int, " +
+//                                            "WEIGHT int, " +
+//                                            "BIRTHDATE date);" +
+//                                            "SELECT FIRSTNAME, ID, FIRSTSEASON " +
+//                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" +
+//                                             "SELECT A+B as C from R where C > 6 ORDER BY C LIMIT 3;" +
+//                                            "SELECT A as C FROM R where C > 4;" +
+//                                             "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
+//                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
          

@@ -164,13 +164,13 @@ public class Helper {
             String type = Schema.getColType(tableName, index);
             // keep the type as lower case
             switch (type.toLowerCase()) {
-                case "int":
+                case "integer":
                     tuple.add(new LongValue(cell));
                     break;
                 case "string":
                     tuple.add(new StringValue(cell));
                     break;
-                case "decimal":
+                case "double":
                     tuple.add(new DoubleValue(cell));
                     break;
                 case "date":

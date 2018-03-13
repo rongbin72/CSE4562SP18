@@ -21,25 +21,25 @@ public class TableDef {
      * @param def CreateTable instance
      */
     public TableDef(CreateTable def) {
-        this.tableName = def.getTable().getName();
+        this.tableName = def.getTable().getName().toUpperCase();
         this.tablePath = "data/" + this.tableName + ".dat";
 
         int columnIndex = 0;
         for (ColumnDefinition col : def.getColumnDefinitions()) {
-            this.colIndex.put(col.getColumnName(), columnIndex);
+            this.colIndex.put(col.getColumnName().toUpperCase(), columnIndex);
             this.colType.put(columnIndex, col.getColDataType().getDataType());
             columnIndex++;
         }
     }
 
     public TableDef(String tableName, HashMap<String, Integer> colIndex, List<List<PrimitiveValue>> table) {
-        this.tableName = tableName;
+        this.tableName = tableName.toUpperCase();
         this.table = table;
         this.colIndex = colIndex;
     }
 
     public TableDef(String tableName, HashMap<String, Integer> colIndex) {
-        this.tableName = tableName;
+        this.tableName = tableName.toUpperCase();
         this.colIndex = colIndex;
     }
 
@@ -69,7 +69,7 @@ public class TableDef {
      * @return column index
      */
     public int getColIndex(String colName) {
-        return this.colIndex.get(colName);
+        return this.colIndex.get(colName.toUpperCase());
     }
 
     public String getColType(int index) {
@@ -93,11 +93,11 @@ public class TableDef {
      * @param colName name of new column
      */
     public void addColumn(String colName) {
-        this.colIndex.put(colName, this.colIndex.size());
+        this.colIndex.put(colName.toUpperCase(), this.colIndex.size());
     }
 
     public void removeCol(String colName) {
-        this.colIndex.remove(colName);
+        this.colIndex.remove(colName.toUpperCase());
     }
 
 }

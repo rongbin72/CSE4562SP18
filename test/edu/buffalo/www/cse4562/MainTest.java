@@ -5,11 +5,28 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MainTest {
+    private String getSchema() throws IOException {
+        List<String> schema = Files.readAllLines(Paths.get("data/schema.sql"));
+        String creatTable = "";
+        for(String line : schema) {
+            creatTable += line;
+        }
+        return creatTable;
+    }
+
+    private String getQuery(int index) throws IOException {
+        List<String> queries = Files.readAllLines(Paths.get("data/queries.sql"));
+        return queries.get(index);
+    }
+
     /**
      *
      * @param sql SQL queries except create table
@@ -19,18 +36,9 @@ class MainTest {
      * @throws IOException
      */
     private void testFlow(String sql, String expected) throws ParseException, SQLException, IOException {
-        String create =
-                "CREATE table R(A INT, B iNt);" +
-                "crEaTe tAbLE PLAYERS(" +
-                "ID STRInG, " +
-                "FIRSTNAME sTriNg, " +
-                "LASTNAME STRING, " +
-                "FIRSTSEASON DECIMAL, " +
-                "LASTSEASON iNt, " +
-                "WEIGHT deCiMal, " +
-                "BIRTHDATE dATe);";
-
+        String create = getSchema();
         sql = create + sql;
+
         // init stdin and stdout
         ByteArrayInputStream in = new ByteArrayInputStream(sql.getBytes());
         OutputStream out = new ByteArrayOutputStream();
@@ -57,10 +65,8 @@ class MainTest {
         Each statement keyword(select, from, wHeRe, etc.) should be case insensitive
         while statement argument should be case sensitive
          */
-        String sql =
-                "select FIRSTNAME, ID, FIRSTSEASON " +
-                "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FrOm PLAYERS) Q " +
-                "wHeRe Q.FIRSTSEASON > 1990;";
+
+        String sql = getQuery(0);
 
         /*
         Be careful with space and line separator, keep this format
@@ -70,9 +76,33 @@ class MainTest {
                 "$> \r\n" +
                 "$> \r\n" +
                 "$> \r\n" +
-                "'T;ariq abc'|'ABDULTA01'|1997.0\r\n" +
-                "'S.hareef abc'|'ABDURSH01'|1996.0\r\n" +
-                "'A=lex abc'|'ACKERAL01'|2005.0\r\n" +
+                "$> \r\n" +
+                "$> \r\n" +
+                "$> \r\n" +
+                "$> \r\n" +
+                "$> \r\n" +
+                "$> \r\n" +
+                "$> \r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "3.0|7.0|43.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
+                "4.0|7.0|40.0\r\n" +
                 "$> \r\n";
 
         testFlow(sql, expected);
