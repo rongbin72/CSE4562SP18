@@ -41,6 +41,14 @@ public class Schema {
         extraCol.put(tableName, colName);
     }
 
+    public static void addTableContent(String tableName, List<List<PrimitiveValue>> tableContent) {
+
+    }
+
+    public static List<PrimitiveValue> getLine(String tableName) {
+        return schema.get(tableName).getTableContent().iterator().next();
+    }
+
     public static HashMap<String, Integer> getIndxHash(String tableName) {
         return schema.get(tableName).getIndexHash();
     }

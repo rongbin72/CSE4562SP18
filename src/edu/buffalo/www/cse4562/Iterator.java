@@ -29,7 +29,6 @@ public class Iterator {
 		String tableName = this.fromOB.getName();//the table name
 
 		this.selectOB.setTable(tableName);
-		this.whereOB.setTableName(tableName);
 		//pass value to select
 		//get value 
 		//pass value to where
