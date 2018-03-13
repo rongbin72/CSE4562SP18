@@ -26,7 +26,7 @@ public class Main {
                                             "BIRTHDATE date);" +
                                             //"SELECT FIRSTNAME, ID, FIRSTSEASON " +
                                             //"FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;" +
-                                             "SELECT A,B from R where A > 3 and B < 4 and A+B<2;" 
+                                             "SELECT A,B from R,S,(select C,D from Z) N;" 
                                             //"SELECT A as C FROM R where C > 4;"
                                             );
 
@@ -47,7 +47,8 @@ public class Main {
         		if(body instanceof PlainSelect) {
         			PlainSelect sel = (PlainSelect) body;
         			Iterator iterator = new Iterator(sel);
-        			Helper.output(iterator.Result());
+        			Helper.output(iterator.Result(), 
+        					((PlainSelect) body).getOrderByElements(), ((PlainSelect) body).getLimit());
         			Schema.reset(1);
         		}
         		else if(body instanceof Union) {

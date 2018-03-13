@@ -18,7 +18,7 @@ public class Iterator {
 	private List<List<PrimitiveValue>> resultTuples = new ArrayList<List<PrimitiveValue>>();
 	
 	public Iterator(PlainSelect body) {
-		this.fromOB = new FromObject(body.getFromItem()); 
+		this.fromOB = new FromObject(body.getFromItem(),body.getJoins()); 
 		this.whereOB = new WhereObject(body.getWhere());
 		this.selectOB = new SelectObject(body.getSelectItems());
 	}

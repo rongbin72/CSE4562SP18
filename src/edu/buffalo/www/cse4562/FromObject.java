@@ -5,6 +5,7 @@ import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 import java.io.IOException;
@@ -12,13 +13,18 @@ import java.sql.SQLException;
 
 public class FromObject implements FromItemVisitor {
 	private FromItem body;
-	private String tablenames;
+	private List<String> tablenames = new ArrayList<String>();
 	private boolean ifsubselect;
 	private SelectBody subbody;
+	private List<Join> joins;
 	
-	public FromObject(FromItem body) {
+	public FromObject(FromItem body,List<Join> joins) {
 		this.body = body;
+		this.joins = joins;
 		this.body.accept(this);
+		for(Join Items:this.joins) {
+			Items.getRightItem().accept(this);
+		}
 	}
 	
 	public Read GetTable() throws IOException, SQLException {//iterators
