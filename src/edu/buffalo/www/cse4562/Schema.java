@@ -32,6 +32,10 @@ public class Schema {
         extraTable.add(newName);
     }
 
+    public static void addTable(String tableName, HashMap<String, Integer> colIndex) {
+        schema.put(tableName, new TableDef(tableName, colIndex));
+    }
+
     public static void addColumn(String tableName, String colName) {
         schema.get(tableName).addColumn(colName);
         extraCol.put(tableName, colName);

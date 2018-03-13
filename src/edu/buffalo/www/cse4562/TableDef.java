@@ -38,6 +38,11 @@ public class TableDef {
         this.colIndex = colIndex;
     }
 
+    public TableDef(String tableName, HashMap<String, Integer> colIndex) {
+        this.tableName = tableName;
+        this.colIndex = colIndex;
+    }
+
     /**
      * Get table name
      *
