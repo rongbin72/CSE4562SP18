@@ -12,6 +12,7 @@ import net.sf.jsqlparser.statement.select.Union;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.sql.SQLException;
 
 
@@ -30,11 +31,12 @@ public class Main {
 //                                            "LASTSEASON integer, " +
 //                                            "WEIGHT integer, " +
 //                                            "BIRTHDATE date);" +
-//											"SELECT S.* from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS;"
-////                                            "FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" +
-////                                             "SELECT A+B as C from R where C > 6 ORDER BY C LIMIT 3;" +
-////                                            "SELECT A as C FROM R where C > 4;" +
-////                                             "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
+//											"SELECT S.*, PLAYERS.ID from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS ORDER BY S.C DESC;" +
+//                                            "SELECT Q.FIRSTSEASON, Q.ID FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q " +
+//											"WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" +
+//                                             "SELECT A+B as C from R where C > 6 ORDER BY C LIMIT 3;" +
+//                                            "SELECT A as C FROM R where C > 4;" +
+//                                             "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);

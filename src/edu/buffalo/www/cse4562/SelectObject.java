@@ -25,6 +25,7 @@ public class SelectObject implements SelectItemVisitor {
     //return a list include index of a the tuple should be selected
     public List<Integer> Result(HashMap<String, List<PrimitiveValue>> tuple) {
         this.tuple = tuple;
+
         for (SelectItem item : this.items) {
             item.accept(this);
             this.position++;
@@ -45,7 +46,11 @@ public class SelectObject implements SelectItemVisitor {
 
     public HashMap<String, List<PrimitiveValue>> getTuple() {
         HashMap<String, List<PrimitiveValue>> ret = new HashMap<>();
-        ret.put("*", this.line);
+//        if (this.tuple.size() == 1) {
+//            ret.put(this.tuple.keySet().iterator().next(), this.line);
+//        } else {
+            ret.put("*" , this.line);
+//        }
         return ret;
     }
 

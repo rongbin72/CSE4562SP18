@@ -44,7 +44,7 @@ public class Iterator {
 			if(this.whereOB.Result(line)) {
 				List<PrimitiveValue> tempResult = new ArrayList<PrimitiveValue>();
 				for(int i = 0;i < selectResult.size();i++) {
-					tempResult.add(line.get("*").get(selectResult.get(i)));
+					tempResult.add(line.get(line.keySet().iterator().next()).get(selectResult.get(i)));
 				}
 				this.resultTuples.add(tempResult);
 			}

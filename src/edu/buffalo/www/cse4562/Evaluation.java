@@ -19,12 +19,11 @@ public class Evaluation extends Eval {
     public PrimitiveValue eval(Column column) {
     	String tableName = column.getTable().getName();
         String colName = column.getColumnName();
-        if (tableName == null) {
-            // in this case, tuple size has to be 1
-            assert tuple.size() == 1;
-            tableName = tuple.keySet().iterator().next();
+        if (tableName == null || tuple.size() == 1) {
+            tableName = this.tuple.keySet().iterator().next();
         }
+
         int index = Schema.getColIndex(tableName, colName);
-        return tuple.get(tableName).get(index);
+        return this.tuple.get(tableName).get(index);
     }
 }
