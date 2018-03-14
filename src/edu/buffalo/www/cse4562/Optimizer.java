@@ -58,7 +58,9 @@ public class Optimizer implements ExpressionVisitor{
 	public Optimizer(Expression exp, List<List<List<PrimitiveValue>>> tables, List<String> tablenames) {
 		this.tables = tables;
 		this.tablenames = tablenames;
-		exp.accept(this);
+		if(exp!=null) {
+			exp.accept(this);
+		}
 	}
 	
 	public List<List<List<PrimitiveValue>>> getOptimizedTable() throws SQLException {
@@ -191,15 +193,15 @@ public class Optimizer implements ExpressionVisitor{
 	}
 
 	@Override
-	public void visit(EqualsTo equ) {
-		Expression eL = equ.getLeftExpression();
-		Expression eR = equ.getRightExpression();
+	public void visit(EqualsTo ex) {
+		Expression eL = ex.getLeftExpression();
+		Expression eR = ex.getRightExpression();
 		if(eL instanceof Column) {
 			if(!(eR instanceof Column)) {
-				Column c = (Column) eR;
+				Column c = (Column) eL;
 				String name = c.getTable().getName();
 				if(name != null) {
-					this.filter.add(equ);
+					this.filter.add(ex);
 					this.filtedTables.add(name);
 				}			
 			}
@@ -208,21 +210,47 @@ public class Optimizer implements ExpressionVisitor{
 	}
 
 	@Override
-	public void visit(GreaterThan arg0) {
-		// TODO Auto-generated method stub
+	public void visit(GreaterThan ex) {
+		Expression eL = ex.getLeftExpression();
+		Expression eR = ex.getRightExpression();
+		if(eL instanceof Column) {
+			if(!(eR instanceof Column)) {
+				Column c = (Column) eL;
+				String name = c.getTable().getName();
+				if(name != null) {
+					this.filter.add(ex);
+					this.filtedTables.add(name);
+				}			
+			}
+		}
 		
 	}
 
 	@Override
-	public void visit(GreaterThanEquals arg0) {
-		// TODO Auto-generated method stub
+	public void visit(GreaterThanEquals ex) {
+		Expression eL = ex.getLeftExpression();
+		Expression eR = ex.getRightExpression();
+		if(eL instanceof Column) {
+			if(!(eR instanceof Column)) {
+				Column c = (Column) eL;
+				String name = c.getTable().getName();
+				if(name != null) {
+					this.filter.add(ex);
+					this.filtedTables.add(name);
+				}			
+			}
+		}
 		
 	}
 
 	@Override
-	public void visit(InExpression arg0) {
-		// TODO Auto-generated method stub
-		
+	public void visit(InExpression ex) {
+		Column c = (Column) ex.getLeftExpression();
+		String name = c.getTable().getName();
+		if(name != null) {
+			this.filter.add(ex);
+			this.filtedTables.add(name);
+		}	
 	}
 
 	@Override
@@ -238,20 +266,53 @@ public class Optimizer implements ExpressionVisitor{
 	}
 
 	@Override
-	public void visit(MinorThan arg0) {
-		// TODO Auto-generated method stub
+	public void visit(MinorThan ex) {
+		Expression eL = ex.getLeftExpression();
+		Expression eR = ex.getRightExpression();
+		if(eL instanceof Column) {
+			if(!(eR instanceof Column)) {
+				Column c = (Column) eL;
+				String name = c.getTable().getName();
+				if(name != null) {
+					this.filter.add(ex);
+					this.filtedTables.add(name);
+				}			
+			}
+		}
 		
 	}
 
 	@Override
-	public void visit(MinorThanEquals arg0) {
-		// TODO Auto-generated method stub
+	public void visit(MinorThanEquals ex) {
+		Expression eL = ex.getLeftExpression();
+		Expression eR = ex.getRightExpression();
+		if(eL instanceof Column) {
+			if(!(eR instanceof Column)) {
+				Column c = (Column) eL;
+				String name = c.getTable().getName();
+				if(name != null) {
+					this.filter.add(ex);
+					this.filtedTables.add(name);
+				}			
+			}
+		}
 		
 	}
 
 	@Override
-	public void visit(NotEqualsTo arg0) {
-		// TODO Auto-generated method stub
+	public void visit(NotEqualsTo ex) {
+		Expression eL = ex.getLeftExpression();
+		Expression eR = ex.getRightExpression();
+		if(eL instanceof Column) {
+			if(!(eR instanceof Column)) {
+				Column c = (Column) eL;
+				String name = c.getTable().getName();
+				if(name != null) {
+					this.filter.add(ex);
+					this.filtedTables.add(name);
+				}			
+			}
+		}
 		
 	}
 
