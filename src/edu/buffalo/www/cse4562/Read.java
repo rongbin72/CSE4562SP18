@@ -7,7 +7,7 @@ import net.sf.jsqlparser.expression.*;
 
 
 public class Read {
-	private List<List<List<PrimitiveValue>>> tables;
+	private List<List<List<PrimitiveValue>>> tables = new ArrayList<>();
 	private List<String> tableNames;
 	private java.util.Iterator<List<Integer>> itor;
 	private List<Integer> length = new ArrayList<Integer>();
@@ -70,7 +70,8 @@ public class Read {
 			List<List<Integer>> result = new ArrayList<List<Integer>>();
 			for(int i = 0;i < ans.size();i++) {
 				for(int j = 0;j < ret.size();j++) {
-					List<Integer> tmp = ans.get(i);
+					List<Integer> tmp = new ArrayList<>();
+					tmp.addAll(ans.get(i));
 					tmp.addAll(ret.get(j));
 					result.add(tmp);
 				}

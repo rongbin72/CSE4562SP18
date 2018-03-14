@@ -13,6 +13,7 @@ public class Evaluation extends Eval {
     public Evaluation(HashMap<String, List<PrimitiveValue>> tuple) {
         this.tuple = tuple;
     }
+
     
     @Override
     public PrimitiveValue eval(Column column) {

@@ -28,7 +28,7 @@ public class Main {
                                             "BIRTHDATE date);" +
                                             //"SELECT FIRSTNAME, ID, FIRSTSEASON " +
                                             //"FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q WHERE Q.FIRSTSEASON >= 200;" +
-                                             "SELECT A,B from R,S,(select C,D from Z) N;" 
+                                             "SELECT S.* from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS;"
                                             //"SELECT A as C FROM R where C > 4;"
                                             );
 

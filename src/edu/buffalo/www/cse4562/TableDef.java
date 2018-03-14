@@ -13,7 +13,7 @@ public class TableDef {
     private String tablePath;
     private HashMap<String, Integer> colIndex = new HashMap<>();
     private HashMap<Integer, String> colType = new HashMap<>();
-    private List<List<PrimitiveValue>> table = new ArrayList<>();
+    private List<List<PrimitiveValue>> table;
     private java.util.Iterator<List<PrimitiveValue>> tableIter;
 
     /**
