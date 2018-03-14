@@ -58,7 +58,9 @@ public class Optimizer implements ExpressionVisitor{
 	public Optimizer(Expression exp, List<List<List<PrimitiveValue>>> tables, List<String> tablenames) {
 		this.tables = tables;
 		this.tablenames = tablenames;
-		exp.accept(this);
+		if (exp != null) {
+            exp.accept(this);
+		}
 	}
 	
 	public List<List<List<PrimitiveValue>>> getOptimizedTable() throws SQLException {
@@ -196,7 +198,7 @@ public class Optimizer implements ExpressionVisitor{
 		Expression eR = equ.getRightExpression();
 		if(eL instanceof Column) {
 			if(!(eR instanceof Column)) {
-				Column c = (Column) eR;
+				Column c = (Column) eL;
 				String name = c.getTable().getName();
 				if(name != null) {
 					this.filter.add(equ);
