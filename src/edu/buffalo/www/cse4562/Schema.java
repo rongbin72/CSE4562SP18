@@ -42,7 +42,7 @@ public class Schema {
     }
 
     public static void setTableContent(String tableName, List<List<PrimitiveValue>> tableContent) {
-        schema.get(tableName).setTableContent(tableContent);
+        schema.get(tableName.toUpperCase()).setTableContent(tableContent);
     }
 
     public static List<PrimitiveValue> getLine(String tableName) {
