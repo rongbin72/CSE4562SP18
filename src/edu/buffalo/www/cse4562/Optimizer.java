@@ -58,8 +58,8 @@ public class Optimizer implements ExpressionVisitor{
 	public Optimizer(Expression exp, List<List<List<PrimitiveValue>>> tables, List<String> tablenames) {
 		this.tables = tables;
 		this.tablenames = tablenames;
-		if(exp!=null) {
-			exp.accept(this);
+		if (exp != null) {
+            exp.accept(this);
 		}
 	}
 	

@@ -4,7 +4,6 @@ import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

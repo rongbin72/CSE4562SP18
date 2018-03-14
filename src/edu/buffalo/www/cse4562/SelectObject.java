@@ -4,13 +4,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import javafx.scene.Scene;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
 
 public class SelectObject implements SelectItemVisitor {
     private List<SelectItem> items;
