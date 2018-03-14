@@ -19,8 +19,11 @@ public class FromObject implements FromItemVisitor {
 		this.body = body;
 		this.joins = joins;
 		this.body.accept(this);
-		for(Join Items:this.joins) {
-			Items.getRightItem().accept(this);
+		
+		if (joins != null) {
+            for(Join Items:this.joins) {
+                Items.getRightItem().accept(this);
+            }
 		}
 	}
 	
