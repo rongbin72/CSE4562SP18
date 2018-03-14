@@ -42,11 +42,11 @@ public class Schema {
     }
 
     public static void setTableContent(String tableName, List<List<PrimitiveValue>> tableContent) {
-
+        schema.get(tableName).setTableContent(tableContent);
     }
 
     public static List<PrimitiveValue> getLine(String tableName) {
-        return schema.get(tableName).getTableContent().iterator().next();
+        return schema.get(tableName).getLine();
     }
 
     public static HashMap<String, Integer> getIndxHash(String tableName) {

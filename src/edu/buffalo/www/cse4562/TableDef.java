@@ -14,6 +14,7 @@ public class TableDef {
     private HashMap<String, Integer> colIndex = new HashMap<>();
     private HashMap<Integer, String> colType = new HashMap<>();
     private List<List<PrimitiveValue>> table = new ArrayList<>();
+    private java.util.Iterator<List<PrimitiveValue>> tableIter;
 
     /**
      * Construction method
@@ -79,7 +80,21 @@ public class TableDef {
     public List<List<PrimitiveValue>> getTableContent() {
         return this.table;
     }
-    
+
+    public void setTableContent(List<List<PrimitiveValue>> table) {
+        this.table = table;
+        this.tableIter = table.iterator();
+    }
+
+    public List<PrimitiveValue> getLine() {
+        if (this.tableIter.hasNext()) {
+            return this.tableIter.next();
+        } else {
+            this.tableIter = table.iterator();
+            return null;
+        }
+    }
+
     /**
      * Return colIndex
      * @return colIndex
