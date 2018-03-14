@@ -2,10 +2,13 @@ package edu.buffalo.www.cse4562;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.parser.*;
 
 
@@ -15,7 +18,6 @@ public class Main {
 
     	Helper.prompt();
     	//Reader r = new InputStreamReader(System.in);
-
         Reader r = new StringReader("CREATE TABLE R(A int, B int);" + "CREATE TABLE PLAYERS(" +
                                             "ID STRING, " +
                                             "FIRSTNAME STRING, " +
