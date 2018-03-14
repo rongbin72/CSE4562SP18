@@ -1,13 +1,11 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.PrimitiveValue;
-import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.PrimitiveIterator;
 
 public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();

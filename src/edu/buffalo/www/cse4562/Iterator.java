@@ -1,6 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 
 import java.io.IOException;
@@ -15,11 +16,13 @@ public class Iterator {
 	private FromObject fromOB; 
 	private WhereObject whereOB;
 	private SelectObject selectOB;
+	private Expression where;
 	private List<List<PrimitiveValue>> resultTuples = new ArrayList<List<PrimitiveValue>>();
 	
 	public Iterator(PlainSelect body) {
 		this.fromOB = new FromObject(body.getFromItem(),body.getJoins()); 
-		this.whereOB = new WhereObject(body.getWhere());
+		this.where = body.getWhere();
+		this.whereOB = new WhereObject(this.where);
 		this.selectOB = new SelectObject(body.getSelectItems());
 	}
 	
@@ -27,6 +30,7 @@ public class Iterator {
 
 		Read tempIters = this.fromOB.GetTable();// the iteratorable table
 		List<String> tableName = this.fromOB.getName();//the table name
+		tempIters.optimizeTables(this.where);
 
 		this.selectOB.setTable(tableName);
 		//pass value to select

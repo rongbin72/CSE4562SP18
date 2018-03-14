@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,12 @@ public class Read {
 			this.length.add(this.tables.get(i).size());
 		}
 		this.itor = this.getRowIndex(this.length).iterator();
+		
+	}
+	
+	public void optimizeTables(Expression e) throws SQLException {
+		Optimizer opt = new Optimizer(e,this.tables,this.tableNames);
+		this.tables = opt.getOptimizedTable();
 		
 	}
 	

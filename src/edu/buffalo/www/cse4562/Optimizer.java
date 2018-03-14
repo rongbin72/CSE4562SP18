@@ -1,6 +1,8 @@
 package edu.buffalo.www.cse4562;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sf.jsqlparser.expression.AllComparisonExpression;
@@ -48,25 +50,38 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class Optimizer implements ExpressionVisitor{
 	
-	private Expression exp;
 	private List<List<List<PrimitiveValue>>> tables;
 	private List<String> tablenames;
 	private List<Expression> filter = new ArrayList<Expression>();
+	private List<String> filtedTables = new ArrayList<>();
 	
 	public Optimizer(Expression exp, List<List<List<PrimitiveValue>>> tables, List<String> tablenames) {
-		this.exp = exp;
 		this.tables = tables;
 		this.tablenames = tablenames;
-		exp.accept(this);
+		if (exp != null) {
+            exp.accept(this);
+		}
 	}
 	
-	public List<List<List<PrimitiveValue>>> getOptimizedTable() {
+	public List<List<List<PrimitiveValue>>> getOptimizedTable() throws SQLException {
+		if(this.filter.size()!=0) {
+			for(int i = 0;i < filter.size();i++) {
+				String tablename = this.filtedTables.get(i);
+				Expression e = this.filter.get(i);
+				int index = this.tablenames.indexOf(tablename);
+				for(int j = 0;j < this.tables.get(index).size();j++) {
+					HashMap <String, List<PrimitiveValue>> h = new HashMap<String, List<PrimitiveValue>>();
+					h.put(tablename, this.tables.get(index).get(j));
+					Evaluation ev = new Evaluation(h);
+					if(!ev.eval(e).toBool()) {
+						this.tables.get(index).remove(j);
+					}
+				}
+			}
+		}
 		return this.tables;
 	}
 	
-	public Expression getOptimizedExp() {
-		return this.exp;
-	}
 	@Override
 	public void visit(NullValue arg0) {
 		// TODO Auto-generated method stub
@@ -183,12 +198,12 @@ public class Optimizer implements ExpressionVisitor{
 		Expression eR = equ.getRightExpression();
 		if(eL instanceof Column) {
 			if(!(eR instanceof Column)) {
-				this.filter.add(equ);
-			}
-		}
-		else {
-			if(eR instanceof Column) {
-				this.filter.add(equ);
+				Column c = (Column) eL;
+				String name = c.getTable().getName();
+				if(name != null) {
+					this.filter.add(equ);
+					this.filtedTables.add(name);
+				}			
 			}
 		}
 		
