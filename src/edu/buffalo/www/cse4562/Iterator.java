@@ -18,7 +18,7 @@ public class Iterator {
 	private List<List<PrimitiveValue>> resultTuples = new ArrayList<List<PrimitiveValue>>();
 	
 	public Iterator(PlainSelect body) {
-		this.fromOB = new FromObject(body.getFromItem()); 
+		this.fromOB = new FromObject(body.getFromItem(),body.getJoins()); 
 		this.whereOB = new WhereObject(body.getWhere());
 		this.selectOB = new SelectObject(body.getSelectItems());
 	}
@@ -26,22 +26,21 @@ public class Iterator {
 	public List<List<PrimitiveValue>> Result() throws IOException, SQLException {
 
 		Read tempIters = this.fromOB.GetTable();// the iteratorable table
-		String tableName = this.fromOB.getName();//the table name
+		List<String> tableName = this.fromOB.getName();//the table name
 
 		this.selectOB.setTable(tableName);
-		this.whereOB.setTableName(tableName);
 		//pass value to select
 		//get value 
 		//pass value to where
 		//select
-		List<PrimitiveValue> line = tempIters.ReadLine();
+		HashMap<String, List<PrimitiveValue>> line = tempIters.ReadLine();
 		while(line != null) {
 			List<Integer> selectResult = this.selectOB.Result(line);
 			line = this.selectOB.getTuple();
 			if(this.whereOB.Result(line)) {
 				List<PrimitiveValue> tempResult = new ArrayList<PrimitiveValue>();
 				for(int i = 0;i < selectResult.size();i++) {
-					tempResult.add(line.get(selectResult.get(i)));
+					tempResult.add(line.get("*").get(selectResult.get(i)));
 				}
 				this.resultTuples.add(tempResult);
 			}

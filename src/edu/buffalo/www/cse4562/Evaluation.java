@@ -4,25 +4,27 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.schema.Column;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Evaluation extends Eval {
-    private List<PrimitiveValue> tuple = new ArrayList<PrimitiveValue>();
-    private String tableName;
+    private HashMap<String, List<PrimitiveValue>> tuple;
 
-    public Evaluation(String tableName,List<PrimitiveValue> tuple) {
-        this.tableName = tableName;
+    public Evaluation(HashMap<String, List<PrimitiveValue>> tuple) {
         this.tuple = tuple;
     }
+
     
     @Override
     public PrimitiveValue eval(Column column) {
-    	String table = column.getTable().getName();
+    	String tableName = column.getTable().getName();
         String colName = column.getColumnName();
-        if(table == null) {
-        	table = this.tableName;
+        if (tableName == null) {
+            // in this case, tuple size has to be 1
+            assert tuple.size() == 1;
+            tableName = tuple.keySet().iterator().next();
         }
-        int index = Schema.getColIndex(table, colName);
-        return tuple.get(index);
+        int index = Schema.getColIndex(tableName, colName);
+        return tuple.get(tableName).get(index);
     }
 }

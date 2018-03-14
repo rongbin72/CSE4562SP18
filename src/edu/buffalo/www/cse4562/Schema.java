@@ -41,6 +41,14 @@ public class Schema {
         extraCol.put(tableName.toUpperCase(), colName.toUpperCase());
     }
 
+    public static void setTableContent(String tableName, List<List<PrimitiveValue>> tableContent) {
+        schema.get(tableName).setTableContent(tableContent);
+    }
+
+    public static List<PrimitiveValue> getLine(String tableName) {
+        return schema.get(tableName).getLine();
+    }
+
     public static HashMap<String, Integer> getIndxHash(String tableName) {
         return schema.get(tableName.toUpperCase()).getIndexHash();
     }
