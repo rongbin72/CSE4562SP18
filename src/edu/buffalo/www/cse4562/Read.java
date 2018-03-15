@@ -1,9 +1,8 @@
 package edu.buffalo.www.cse4562;
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 import net.sf.jsqlparser.expression.*;
 
 
@@ -93,7 +92,8 @@ public class Read {
 			List<Integer> tmp = this.itor.next();
 			for(int i = 0;i < tmp.size();i++) {
 				int line = tmp.get(i);
-				result.put(this.tableNames.get(i), this.tables.get(i).get(line));
+				// put deep copy into result
+				result.put(this.tableNames.get(i), new ArrayList<>(this.tables.get(i).get(line)));
 			}
 			return result;
 		}
