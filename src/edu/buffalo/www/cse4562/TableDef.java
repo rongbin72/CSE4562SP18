@@ -4,6 +4,7 @@ import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class TableDef {
     private HashMap<String, Integer> colIndex = new HashMap<>();
     private HashMap<Integer, String> colType = new HashMap<>();
     private List<List<PrimitiveValue>> table;
+    private List<String> extraCol = new ArrayList<>();
     private java.util.Iterator<List<PrimitiveValue>> tableIter;
 
     /**
@@ -41,6 +43,13 @@ public class TableDef {
     public TableDef(String tableName, HashMap<String, Integer> colIndex) {
         this.tableName = tableName.toUpperCase();
         this.colIndex = colIndex;
+    }
+
+    public TableDef(String tableName, String tablePath, HashMap<String, Integer> colIndex, HashMap<Integer, String> colType) {
+        this.tableName = tableName.toUpperCase();
+        this.tablePath = tablePath;
+        this.colIndex = colIndex;
+        this.colType = colType;
     }
 
     /**
@@ -95,23 +104,41 @@ public class TableDef {
     }
 
     /**
-     * Return colIndex
+     * Return deep copy of Index hash
      * @return colIndex
      */
-    public HashMap<String, Integer> getIndexHash() {
-        return this.colIndex;
+    public HashMap<String, Integer> getIndexHash()
+    {
+        return new HashMap<String, Integer>(this.colIndex);
+    }
+
+    /**
+     * Return deep copy of Type Hash
+     * @return colType
+     */
+    public HashMap<Integer, String> getTypeHash() {
+        return new HashMap<Integer, String>(this.colType);
     }
 
     /**
      * Add a new column, update colIndex
      * @param colName name of new column
      */
-    public void addColumn(String colName) {
+    public void addColumn(String colName)
+    {
         this.colIndex.put(colName.toUpperCase(), this.colIndex.size());
+        extraCol.add(colName);
     }
 
-    public void removeCol(String colName) {
-        this.colIndex.remove(colName.toUpperCase());
+    /**
+     * Delete all column in extraCol
+     */
+    public void removeCol() {
+        if (!extraCol.isEmpty()) {
+            for (String n : extraCol) {
+                this.colIndex.remove(n);
+            }
+            extraCol.clear();
+        }
     }
-
 }
