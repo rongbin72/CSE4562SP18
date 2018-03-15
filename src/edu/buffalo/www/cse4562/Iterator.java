@@ -30,7 +30,7 @@ public class Iterator {
 
 		Read tempIters = this.fromOB.GetTable();// the iteratorable table
 		List<String> tableName = this.fromOB.getName();//the table name
-		tempIters.optimizeTables(this.where);
+//		tempIters.optimizeTables(this.where);
 
 		this.selectOB.setTable(tableName);
 		//pass value to select
@@ -40,7 +40,7 @@ public class Iterator {
 		HashMap<String, List<PrimitiveValue>> line = tempIters.ReadLine();
 		while(line != null) {
 			HashMap<Integer, HashMap<String, Integer>> selectResult = this.selectOB.Result(line);
-			HashMap<String, List<PrimitiveValue>> lineline = this.selectOB.getTuple();
+			line = this.selectOB.getTuple();
 			if(this.whereOB.Result(line)) {
 				List<PrimitiveValue> tempResult = new ArrayList<PrimitiveValue>();
 				int index = 0;

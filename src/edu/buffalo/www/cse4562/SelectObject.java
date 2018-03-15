@@ -103,9 +103,10 @@ public class SelectObject implements SelectItemVisitor {
         String table;
         Evaluation eval = new Evaluation(this.tuple);
         try {
-            //get index
-            //renew tuple
-            //add column
+            /*
+              Update tuple and add column
+              Example: <R.A>, <R.A AS R_A>
+             */
             if (e instanceof Column) {
                 table = ((Column) e).getTable().getName();
                 col = ((Column) e).getColumnName();
@@ -118,7 +119,11 @@ public class SelectObject implements SelectItemVisitor {
                     this.tuple.get(table).add(eval.eval(e));
                     Schema.addColumn(table, col);
                 }
-            } else {
+            }
+            /*
+              Example: <R.A + R.B AS AB>
+             */
+            else {
                 if (alias != null) {
                     col = alias;
                 }
