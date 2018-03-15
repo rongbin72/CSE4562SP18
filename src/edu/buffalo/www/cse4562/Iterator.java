@@ -39,12 +39,17 @@ public class Iterator {
 		//select
 		HashMap<String, List<PrimitiveValue>> line = tempIters.ReadLine();
 		while(line != null) {
-			List<Integer> selectResult = this.selectOB.Result(line);
-			line = this.selectOB.getTuple();
+			HashMap<Integer, HashMap<String, Integer>> selectResult = this.selectOB.Result(line);
+			HashMap<String, List<PrimitiveValue>> lineline = this.selectOB.getTuple();
 			if(this.whereOB.Result(line)) {
 				List<PrimitiveValue> tempResult = new ArrayList<PrimitiveValue>();
-				for(int i = 0;i < selectResult.size();i++) {
-					tempResult.add(line.get(line.keySet().iterator().next()).get(selectResult.get(i)));
+				int index = 0;
+				while (selectResult.containsKey(index)) {
+					HashMap<String, Integer> thisLine = selectResult.get(index);
+					String thisName = thisLine.keySet().iterator().next();
+					int thisIndex = thisLine.get(thisName);
+					tempResult.add(line.get(thisName).get(thisIndex));
+					index++;
 				}
 				this.resultTuples.add(tempResult);
 			}

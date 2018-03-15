@@ -11,9 +11,9 @@ import net.sf.jsqlparser.schema.Column;
 
 public class SelectObject implements SelectItemVisitor {
     private List<SelectItem> items;
-    private HashMap<String, List<PrimitiveValue>> tuple;
-    private List<PrimitiveValue> line = new ArrayList<>();
-    private List<Integer> indexResult = new ArrayList<>();
+    private HashMap<String, List<PrimitiveValue>> tuple = new HashMap<>();
+//    private HashMap<String, List<PrimitiveValue>> line = new HashMap<>();
+    private HashMap<Integer, HashMap<String, Integer>> indexResult = new HashMap<>();
     private String tableName;
     private HashMap<String, Integer> newIndex = new HashMap<String, Integer>();
     private int position = 0;
@@ -22,8 +22,8 @@ public class SelectObject implements SelectItemVisitor {
         this.items = list;
     }
 
-    //return a list include index of a the tuple should be selected
-    public List<Integer> Result(HashMap<String, List<PrimitiveValue>> tuple) {
+    // {result_tuple_index : {table_name : table_index}}
+    public HashMap<Integer, HashMap<String, Integer>> Result(HashMap<String, List<PrimitiveValue>> tuple) {
         this.tuple = tuple;
 
         for (SelectItem item : this.items) {
@@ -39,19 +39,19 @@ public class SelectObject implements SelectItemVisitor {
     }
 
     public void reset() {
-        this.indexResult = new ArrayList<>();
-        this.line.clear();
+        this.indexResult.clear();
+        this.tuple.clear();
         this.position = 0;
     }
 
     public HashMap<String, List<PrimitiveValue>> getTuple() {
-        HashMap<String, List<PrimitiveValue>> ret = new HashMap<>();
+//        HashMap<String, List<PrimitiveValue>> ret = new HashMap<>();
 //        if (this.tuple.size() == 1) {
 //            ret.put(this.tuple.keySet().iterator().next(), this.line);
 //        } else {
-            ret.put("*" , this.line);
+//            ret.put("*" , this.line);
 //        }
-        return ret;
+        return this.tuple;
     }
 
     public void setTable(List<String> tableNameList) {
@@ -68,27 +68,29 @@ public class SelectObject implements SelectItemVisitor {
         assert this.tableName != null;
 
         for (int i = 0; i < this.tuple.get(this.tableName).size(); i++) {
-            this.indexResult.add(i);
-            line.add(tuple.get(this.tableName).get(i));
+            HashMap<String, Integer> tupleIndex = new HashMap<>();
+            tupleIndex.put(this.tableName, i);
+            this.indexResult.put(i, tupleIndex);
         }
         this.newIndex = Schema.getIndxHash(this.tableName);
     }
 
     @Override
     public void visit(AllTableColumns ATcolumns) {
-        this.tableName = ATcolumns.getTable().getName();
-        List<PrimitiveValue> thisTuple = tuple.get(this.tableName);
-        HashMap<String, Integer> colIndex = Schema.getIndxHash(this.tableName);
+        String table = ATcolumns.getTable().getName();
+        List<PrimitiveValue> thisTuple = tuple.get(table);
+        HashMap<String, Integer> colIndex = Schema.getIndxHash(table);
 
         for (int i = 0; i < thisTuple.size(); i++) {
-            this.indexResult.add(this.position);
+            HashMap<String, Integer> tupleIndex = new HashMap<>();
+            tupleIndex.put(table, i);
+            this.indexResult.put(this.position, tupleIndex);
             for (String colName : colIndex.keySet()) {
                 if (colIndex.get(colName) == i) {
                     newIndex.put(colName, position);
                 }
             }
             this.position++;
-            this.line.add(thisTuple.get(i));
         }
         this.position--;
     }
@@ -113,19 +115,23 @@ public class SelectObject implements SelectItemVisitor {
                 }
                 if (alias != null) {
                     col = alias;
-                    this.line.add(eval.eval(e));
+                    this.tuple.get(table).add(eval.eval(e));
                     Schema.addColumn(table, col);
                 }
-                this.line.add(eval.eval(e));
             } else {
                 if (alias != null) {
                     col = alias;
                 }
+                // TODO select (R.A + S.B) AS X  -- no such test case in checkpoint 2
+                // assume only one table
+                assert tuple.size() == 1;
                 table = this.tableName;
-                this.line.add(eval.eval(e));
+                this.tuple.get(table).add(eval.eval(e));
                 Schema.addColumn(table, col);
             }
-            this.indexResult.add(this.position);
+            HashMap<String, Integer> tupleIndex = new HashMap<>();
+            tupleIndex.put(table, Schema.getColIndex(table, col));
+            this.indexResult.put(this.position, tupleIndex);
             this.newIndex.put(col, this.position);
 
         } catch (SQLException e1) {
