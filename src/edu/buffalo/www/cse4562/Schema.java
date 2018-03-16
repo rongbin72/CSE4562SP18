@@ -6,7 +6,6 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
@@ -80,6 +79,10 @@ public class Schema {
         return schema.get(tableName.toUpperCase()).getIndexHash();
     }
 
+    /**
+     * Return pointer not value
+     * @param tableName table name
+     */
     public static List<List<PrimitiveValue>> getTableContent(String tableName) {
         return schema.get(tableName.toUpperCase()).getTableContent();
     }
