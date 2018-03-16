@@ -1,13 +1,13 @@
 package edu.buffalo.www.cse4562;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-
-import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.*;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 
 public class SelectObject implements SelectItemVisitor {
     private List<SelectItem> items;

@@ -1,8 +1,8 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,10 +29,12 @@ public class Iterator {
 	public List<List<PrimitiveValue>> Result() throws IOException, SQLException {
 
 		Read tempIters = this.fromOB.GetTable();// the iteratorable table
-		List<String> tableName = this.fromOB.getName();//the table name
-//		tempIters.optimizeTables(this.where);
+		tempIters.optimizeTables(this.where);
+		tempIters.buildIndex();
 
+		List<String> tableName = this.fromOB.getName();//the table name
 		this.selectOB.setTable(tableName);
+
 		//pass value to select
 		//get value 
 		//pass value to where

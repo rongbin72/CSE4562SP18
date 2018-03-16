@@ -1,9 +1,15 @@
 package edu.buffalo.www.cse4562;
-import java.io.*;
-import java.sql.SQLException;
-import java.util.*;
 
-import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.PrimitiveValue;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class Read {
@@ -35,7 +41,8 @@ public class Read {
 		            	tmpTable.add(Helper.toPrimitive(name, i));
 		            }
 		            this.tables.add(tmpTable);
-		            Schema.setTableContent(name, tmpTable);
+		            // pass value not pointer
+		            Schema.setTableContent(name, new ArrayList<>(tmpTable));
 		        } catch (Exception e) {
 		            // TODO Auto-generated catch block
 		            e.printStackTrace();
@@ -47,10 +54,8 @@ public class Read {
 			}
 		}
 		
-		for(int i = 0;i<tablenames.size();i++) {
-			this.length.add(this.tables.get(i).size());
-		}
-		this.itor = this.getRowIndex(this.length).iterator();
+
+//		this.itor = this.getRowIndex(this.length).iterator();
 		
 	}
 	
@@ -59,7 +64,14 @@ public class Read {
 		this.tables = opt.getOptimizedTable();
 		
 	}
-	
+
+	public void buildIndex() {
+		for(int i = 0;i<this.tableNames.size();i++) {
+			this.length.add(this.tables.get(i).size());
+		}
+		this.itor = this.getRowIndex(this.length).iterator();
+	}
+
 	private List<List<Integer>> getRowIndex(List<Integer> length){
 		List<List<Integer>> ans = new ArrayList<List<Integer>>();
 		for(int i = 0;i < length.get(0);i++) {
