@@ -28,7 +28,7 @@ public class Read {
 		            File file  = new File(Schema.getPath(name));
 		            FileInputStream fis = new FileInputStream(file);
 		            BufferedInputStream bis = new BufferedInputStream(fis);
-		            byte[] buffer = new byte[1024];
+		            byte[] buffer = new byte[4096];
 		            int cnt = 0;
 		            tmpTable = new ArrayList<List<PrimitiveValue>>();
 		            String bluck = "";
