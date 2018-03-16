@@ -83,7 +83,6 @@ public class Helper {
             cmp(table, colIndex, isAsc);
             printTable(table);
 
-            Helper.print("amd");
         } else if (orderBy == null && limit != null) {
             // limit without order by
             printTable(table, (int) limit.getRowCount());
