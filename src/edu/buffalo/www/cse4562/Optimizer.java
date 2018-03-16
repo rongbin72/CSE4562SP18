@@ -53,12 +53,12 @@ public class Optimizer implements ExpressionVisitor{
 		Expression eR = exp.getRightExpression();
 		if(eL instanceof Column) {
 			if(!(eR instanceof Column)) {
-				Column c = (Column) eL;
-				String name = c.getTable().getName();
-				if(name != null) {
-					this.filter.add(exp);
-					this.filtedTables.add(name);
-				}
+				String name  = ((Column) eL).getTable().getName();
+				// if there is only one table, use tablenames.get(0)
+				assert tablenames.size() == 1 ^ name != null;
+				name = tablenames.size() == 1 ? tablenames.get(0) : name;
+                this.filter.add(exp);
+                this.filtedTables.add(name);
 			}
 		}
 	}
