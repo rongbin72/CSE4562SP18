@@ -5,7 +5,10 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.Limit;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class Helper {
 
@@ -49,6 +52,7 @@ public class Helper {
      * @param limit number of rows
      */
     private static void printTable(List<List<PrimitiveValue>> table, int limit) {
+        limit = limit <= table.size() ? limit : table.size();
         for (List<PrimitiveValue> row : table.subList(0, limit)) {
             List<String> line = new ArrayList<>();
             for (PrimitiveValue cell : row) {
