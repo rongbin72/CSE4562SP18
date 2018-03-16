@@ -34,8 +34,9 @@ public class Optimizer implements ExpressionVisitor{
 				String tablename = this.filtedTables.get(i);
 				Expression e = this.filter.get(i);
 				int index = this.tablenames.indexOf(tablename);
-				for(int j = 0;j < this.tables.get(index).size();j++) {
-					HashMap <String, List<PrimitiveValue>> h = new HashMap<String, List<PrimitiveValue>>();
+				// iterate table reversely
+				for(int j = this.tables.get(index).size() - 1; j > 0 ; j--) {
+					HashMap <String, List<PrimitiveValue>> h = new HashMap<>();
 					h.put(tablename, this.tables.get(index).get(j));
 					Evaluation ev = new Evaluation(h);
 					if(!ev.eval(e).toBool()) {
