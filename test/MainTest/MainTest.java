@@ -1,3 +1,5 @@
+package MainTest;
+
 import net.sf.jsqlparser.parser.ParseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
