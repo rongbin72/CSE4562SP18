@@ -62,9 +62,9 @@ public class Main {
         		SelectBody body = select.getSelectBody();
         		if(body instanceof PlainSelect) {
         			PlainSelect sel = (PlainSelect) body;
-        			Iterator iterator = new Iterator(sel);
-        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
-        			Schema.reset(1);
+//        			Iterator iterator = new Iterator(sel);
+//        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
+//        			Schema.reset(1);
         		}
         		else if(body instanceof Union) {
         			//do something with union
