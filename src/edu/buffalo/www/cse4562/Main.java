@@ -29,23 +29,22 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-    	Reader r = new InputStreamReader(System.in);
-
-//        Reader r = new StringReader("CREATE TABLE R(A integer, B integer);" + "CREATE TABLE PLAYERS(" +
-//                                            "ID STRING, " +
-//                                            "FIRSTNAME STRING, " +
-//                                            "LASTNAME STRING, " +
-//                                            "FIRSTSEASON double, " +
-//                                            "LASTSEASON integer, " +
-//                                            "WEIGHT integer, " +
-//                                            "BIRTHDATE date);" +
-//											"SELECT S.*, PLAYERS.ID from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS ORDER BY S.C DESC;" +
-//                                            "SELECT Q.FIRSTSEASON, Q.ID FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q " +
-//											"WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" +
-//                                             "SELECT A+B as C from R where C > 6 ORDER BY C LIMIT 3;" +
-//                                            "SELECT A as C FROM R where C > 4;" +
-//                                             "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
-//                                            );
+//    	Reader r = new InputStreamReader(System.in);
+        Reader r = new StringReader("CREATE TABLE R(A integer, B integer);" + "CREATE TABLE PLAYERS(" +
+                                            "ID STRING, " +
+                                            "FIRSTNAME STRING, " +
+                                            "LASTNAME STRING, " +
+                                            "FIRSTSEASON double, " +
+                                            "LASTSEASON integer, " +
+                                            "WEIGHT integer, " +
+                                            "BIRTHDATE date);" +
+											//"SELECT S.*, PLAYERS.ID from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS ORDER BY S.C DESC;" +
+                                            //"SELECT Q.FIRSTSEASON, Q.ID FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q " +
+											//"WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" //+
+                                            "SELECT A+B as C from R  where C > 6 ORDER BY C LIMIT 3;" 
+                                            //"SELECT A as C FROM R where C > 4;" +
+                                            // "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
+                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
          

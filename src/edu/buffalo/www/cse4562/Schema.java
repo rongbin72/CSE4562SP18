@@ -11,7 +11,28 @@ public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
     private static List<String> extraTable = new ArrayList<>();
     private static List<String> extraCol = new ArrayList<>(); // store names of table which has extra column
+    
+    private static HashMap<String, String> colAliasMap = new HashMap<String, String>();
+    private static HashMap<String, String> tableAliasMap = new HashMap<String, String>();
 
+    /**
+     * add column alias to map
+     * @param origin name
+     * @param alias
+     */
+    public static void addcolAlias(String origin, String alias) {
+        colAliasMap.put(origin, alias);
+    }
+    
+    /**
+     * add table alias to map
+     * @param origin name
+     * @param alias
+     */
+    public static void addtableAlias(String origin, String alias) {
+        tableAliasMap.put(origin, alias);
+    }
+    
     /**
      * Add a table definition to schema when create table
      * @param table
