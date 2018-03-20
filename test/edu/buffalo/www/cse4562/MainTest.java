@@ -1,4 +1,4 @@
-package edu.buffalo.www.test;
+package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.parser.ParseException;
 import org.junit.jupiter.api.DisplayName;
@@ -8,32 +8,34 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MainTest {
+    private String schema;
+    private List<String> queries;
+    private Connection con;
 
-    private String getSchema() throws IOException {
+    MainTest() throws IOException, SQLException {
+        // get schema
         List<String> schema = Files.readAllLines(Paths.get("data/schema.sql"));
-        String creatTable = "";
+        StringBuilder createTable = new StringBuilder();
         for(String line : schema) {
-            creatTable += line;
+            createTable.append(line);
         }
-        return creatTable;
-    }
-
-    private String getQuery(int index) throws IOException {
-        List<String> queries = Files.readAllLines(Paths.get("data/queries.sql"));
-        return queries.get(index);
+        this.schema = createTable.toString();
+        // get queries
+        this.queries = Files.readAllLines(Paths.get("data/queries.sql"));
+        // db init
+        this.con = DriverManager.getConnection("jdbc:sqlite:data/test.db");
     }
 
     private String getAnswer(String sql) throws SQLException {
-        String answer = "";
-        Connection con = DriverManager.getConnection("jdbc:sqlite:data/test.db");
-        Statement stmt = con.createStatement();
+        Statement stmt = this.con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
+
+        StringBuilder answer = new StringBuilder();
         int columnCount = rs.getMetaData().getColumnCount();
         while (rs.next()) {
             List<String> row = new ArrayList<>();
@@ -41,24 +43,24 @@ class MainTest {
                 row.add(rs.getString(i));
             }
             String line = String.join("|", row);
-            answer = answer + line + "\r\n";
+            answer.append(line).append(System.lineSeparator());
         }
+
         stmt.close();
-        con.close();
-        return answer;
+        return answer.toString();
     }
 
     /**
      *
      * @param sql SQL queries except create table
      * @param expected expected queries result
+     * @param isOrder True if query has order by else False
      * @throws ParseException
      * @throws SQLException
      * @throws IOException
      */
-    private void testFlow(String sql, String expected) throws ParseException, SQLException, IOException {
-        String create = getSchema();
-        sql = create + sql;
+    private void testFlow(String sql, String expected, boolean isOrder) throws ParseException, SQLException, IOException {
+        sql = this.schema + sql;
 
         // init stdin and stdout
         ByteArrayInputStream in = new ByteArrayInputStream(sql.getBytes());
@@ -73,48 +75,61 @@ class MainTest {
 
         String actual = out.toString();
         // remove unnecessary chars
-        actual = actual.replaceAll("\\$> \r\n", "");
-        actual = actual.replaceAll("'", "");
-        assertEquals(expected, actual);
+        actual = actual.replaceAll("\\$>\\s\r?\n|'", "");
+
+        if (isOrder) {
+            assertEquals(expected, actual);
+        } else {
+            Set<String> actualSet = new HashSet<>(Arrays.asList(actual.split("\r\n")));
+            Set<String> expectedSet = new HashSet<>(Arrays.asList(expected.split("\r\n")));
+            assertEquals(expectedSet, actualSet);
+        }
     }
 
-    /**
-     * Test subselect with where statement
-     */
     @Test
     @DisplayName("Query 1")
     void query1() throws ParseException, SQLException, IOException {
-        String sql = getQuery(0);
+        String sql = queries.get(0);
         String expected = getAnswer(sql);
-        testFlow(sql, expected);
+        boolean isOrder = sql.toUpperCase().contains("ORDER BY");
+        testFlow(sql, expected, isOrder);
     }
 
     @Test
+    @DisplayName("Query 2")
     void query2() throws ParseException, SQLException, IOException {
-        String sql = getQuery(1);
+        String sql = queries.get(1);
         String expected = getAnswer(sql);
-        testFlow(sql, expected);
+        boolean isOrder = sql.toUpperCase().contains("ORDER BY");
+        testFlow(sql, expected, isOrder);
     }
 
     @Test
+    @DisplayName("Query 3")
     void query3() throws ParseException, SQLException, IOException {
-        String sql = getQuery(2);
+        String sql = queries.get(2);
         String expected = getAnswer(sql);
-        testFlow(sql, expected);
+        boolean isOrder = sql.toUpperCase().contains("ORDER BY");
+        testFlow(sql, expected, isOrder);
     }
 
     @Test
+    @DisplayName("Query 4")
     void query4() throws ParseException, SQLException, IOException {
-        String sql = getQuery(3);
+        String sql = queries.get(3);
         String expected = getAnswer(sql);
-        testFlow(sql, expected);
+        boolean isOrder = sql.toUpperCase().contains("ORDER BY");
+        testFlow(sql, expected, isOrder);
     }
 
     @Test
+    @DisplayName("Query 5")
     void query5() throws ParseException, SQLException, IOException {
-        String sql = getQuery(4);
+        String sql = queries.get(4);
         String expected = getAnswer(sql);
-        testFlow(sql, expected);
+        boolean isOrder = sql.toUpperCase().contains("ORDER BY");
+        testFlow(sql, expected, isOrder);
+        this.con.close();
     }
 
 }
