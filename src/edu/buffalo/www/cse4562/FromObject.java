@@ -46,17 +46,22 @@ public class FromObject implements FromItemVisitor {
 	
 	@Override
 	public void visit(Table table) {
+		String alias = table.getAlias();
 		Read reader = new Read(table);
-		this.tableList.add(reader);
+		if(alias == null) {
+			this.tableList.add(reader);
+		}
+		else {
+			this.tableList.add(new TableAliasOP(table.getName(),table.getAlias(),reader));
+		}
 	}
 	@Override
 	public void visit(SubSelect subselect) {
-		String tablename = subselect.getAlias();
+		String alias = subselect.getAlias();
 		SelectBody subBody = subselect.getSelectBody();
 		SyntaxTreeBuilder builder = new SyntaxTreeBuilder((PlainSelect)subBody);
 		Operator tree = builder.resultTree();
-		this.tableList.add(tree);
-		//need to add new table index into schema here, with the select items
+		this.tableList.add(new TableAliasOP(alias, tree));
 		
 	}
 	@Override
