@@ -7,13 +7,13 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-public class SyntaxTreeBuilder {
+public class RATreeBuilder {
 	
 	private PlainSelect body;
 	private FromObject fromOB;
 	private List<SelectItem> selectItems;
 
-	public SyntaxTreeBuilder(PlainSelect body) {
+	public RATreeBuilder(PlainSelect body) {
 		this.body = body;
 		this.fromOB = new FromObject(body.getFromItem(),body.getJoins());
 		this.selectItems = body.getSelectItems();

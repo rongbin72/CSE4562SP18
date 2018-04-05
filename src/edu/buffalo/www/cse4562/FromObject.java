@@ -59,7 +59,7 @@ public class FromObject implements FromItemVisitor {
 	public void visit(SubSelect subselect) {
 		String alias = subselect.getAlias();
 		SelectBody subBody = subselect.getSelectBody();
-		SyntaxTreeBuilder builder = new SyntaxTreeBuilder((PlainSelect)subBody);
+		RATreeBuilder builder = new RATreeBuilder((PlainSelect)subBody);
 		Operator tree = builder.resultTree();
 		this.tableList.add(new TableAliasOP(alias, tree));
 		
