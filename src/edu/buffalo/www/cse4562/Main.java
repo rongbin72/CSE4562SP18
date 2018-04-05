@@ -62,6 +62,10 @@ public class Main {
         		SelectBody body = select.getSelectBody();
         		if(body instanceof PlainSelect) {
         			PlainSelect sel = (PlainSelect) body;
+					RATreeBuilder builder = new RATreeBuilder(sel);
+					Operator RATree = builder.resultTree();
+					Helper.output(RATree);
+
 //        			Iterator iterator = new Iterator(sel);
 //        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
 //        			Schema.reset(1);

@@ -1,6 +1,9 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 import java.util.ArrayList;
@@ -11,16 +14,16 @@ public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
     private static List<String> extraTable = new ArrayList<>();
     private static List<String> extraCol = new ArrayList<>(); // store names of table which has extra column
-    
-    private static HashMap<String, String> colAliasMap = new HashMap<String, String>();
-    private static HashMap<String, String> tableAliasMap = new HashMap<String, String>();
+    private static HashMap<String, Expression> colAliasMap = new HashMap<>();
+    private static HashMap<String, List<Expression>> tableAliasMap = new HashMap<>();
+    private static String tableName;
 
     /**
      * add column alias to map
      * @param origin name
      * @param alias
      */
-    public static void addcolAlias(String origin, String alias) {
+    public static void addcolAlias(String origin, Expression alias) {
         colAliasMap.put(origin, alias);
     }
     
@@ -29,10 +32,17 @@ public class Schema {
      * @param origin name
      * @param alias
      */
-    public static void addtableAlias(String origin, String alias) {
+    public static void addtableAlias(String origin, List<Expression> alias) {
         tableAliasMap.put(origin, alias);
     }
-    
+
+    public static Expression getColAlias(String origin) {
+        return colAliasMap.get(origin);
+    }
+
+    public static List<Expression> getTableAlias(String origin) {
+        return tableAliasMap.get(origin);
+    }
     /**
      * Add a table definition to schema when create table
      * @param table
@@ -97,6 +107,7 @@ public class Schema {
     }
 
     public static HashMap<String, Integer> getIndxHash(String tableName) {
+        Schema.tableName = tableName;
         return schema.get(tableName.toUpperCase()).getIndexHash();
     }
 
