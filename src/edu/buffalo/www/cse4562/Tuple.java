@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 
 import java.util.HashMap;
@@ -16,13 +17,18 @@ public class Tuple {
 		indexHash = Schema.getIndxHash(tableName);
 	}
 	
-	public Tuple combineTuples(Tuple extend) {
-		return null;
+	public void combineTuples(Tuple extend) {
+		
 	}
 	
 	public Tuple subTuple(String table) {
 		return null; //subtuple with tablename 'table'
 	}
+	
+	public void addCol(PrimitiveValue p) {
+		
+	}
+	
 	public List<PrimitiveValue> getTuple() {
 		return tuple;
 	}

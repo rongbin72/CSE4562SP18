@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Evaluation extends Eval {
-    private HashMap<String, List<PrimitiveValue>> tuple;
+    private Tuple tuple;
 
-    public Evaluation(HashMap<String, List<PrimitiveValue>> tuple) {
+    public Evaluation(Tuple tuple) {
         this.tuple = tuple;
     }
 

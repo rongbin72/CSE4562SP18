@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import net.sf.jsqlparser.expression.Expression;
@@ -16,6 +17,8 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 	private List<SelectItem> items;
 	private List<Expression> selectExps;
 	private Tuple resultTuple;
+	private Tuple resultofSon;
+	private Evaluation eval;
 	
 	public SelectOperator(Operator son, List<SelectItem> items) {
 		this.son = son;
@@ -33,7 +36,8 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public Tuple result() {
-		this.son.result();
+		this.resultofSon = this.son.result();
+		this.eval = new Evaluation(this.resultofSon);
 		for(SelectItem item:this.items) {
 			item.accept(this);
 		}
@@ -42,19 +46,23 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public void visit(AllColumns allCol) {
-		// TODO Auto-generated method stub
-		
+		this.resultTuple.combineTuples(resultofSon);
 	}
 
 	@Override
 	public void visit(AllTableColumns allTableCol) {
-		// TODO Auto-generated method stub
-		
+		String table = allTableCol.getTable().getName();
+		this.resultTuple.combineTuples(this.resultofSon.subTuple(table));
 	}
 
 	@Override
 	public void visit(SelectExpressionItem exp) {
-		// TODO Auto-generated method stub
+		Expression e = exp.getExpression();
+		try {
+			this.resultTuple.addCol(this.eval.eval(e));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 		
 	}
 
