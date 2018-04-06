@@ -64,7 +64,7 @@ public class Main {
         			PlainSelect sel = (PlainSelect) body;
 					RATreeBuilder builder = new RATreeBuilder(sel);
 					Operator RATree = builder.resultTree();
-					Helper.output(RATree);
+//					Helper.output(RATree);
 
 //        			Iterator iterator = new Iterator(sel);
 //        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
