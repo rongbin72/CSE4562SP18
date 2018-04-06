@@ -2,8 +2,6 @@ package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.create.table.ColDataType;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 import java.util.ArrayList;
@@ -24,7 +22,7 @@ public class Schema {
      * @param alias
      */
     public static void addcolAlias(String alias, Expression origin) {
-        colAliasMap.put(alias, origin);
+        colAliasMap.put(alias.toUpperCase(), origin);
     }
     
     /**
@@ -33,15 +31,15 @@ public class Schema {
      * @param alias
      */
     public static void addtableAlias(String alias, String origin) {
-        tableAliasMap.put(alias, origin);
+        tableAliasMap.put(alias.toUpperCase(), origin);
     }
 
-    public static Expression getColAlias(String origin) {
-        return colAliasMap.get(origin);
+    public static Expression getColAlias(String alias) {
+        return colAliasMap.get(alias.toUpperCase());
     }
 
-    public static String getTableAlias(String origin) {
-        return tableAliasMap.get(origin);
+    public static String getTableAlias(String alias) {
+        return tableAliasMap.get(alias.toUpperCase());
     }
     /**
      * Add a table definition to schema when create table
