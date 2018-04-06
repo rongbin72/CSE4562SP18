@@ -29,6 +29,10 @@ public class Tuple {
 	public void addCol(PrimitiveValue p) {
 		
 	}
+	
+	public void rename(String name) {
+		//combine all items in hash map in one line with key value is name
+	}
 
 	public PrimitiveValue getItem(String tableName, String colName) {
 		int index = indexHash.get(tableName);

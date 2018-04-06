@@ -15,8 +15,12 @@ public class RenameOperator extends Operator{
 
 	@Override
 	public Tuple result() {
-		// TODO Auto-generated method stub
-		return null;
+		if(this.origin == null) {
+			//subquery
+		}
+		else {
+			return this.son.result();
+		}
 	}
 
 }

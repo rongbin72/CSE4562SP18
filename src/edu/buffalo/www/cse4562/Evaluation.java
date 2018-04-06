@@ -4,8 +4,6 @@ import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 
-import java.util.HashMap;
-import java.util.List;
 
 public class Evaluation extends Eval {
     private Tuple tuple;
@@ -19,11 +17,12 @@ public class Evaluation extends Eval {
     public PrimitiveValue eval(Column column) {
     	String tableName = column.getTable().getName();
         String colName = column.getColumnName();
-        if (tableName == null || tuple.size() == 1) {
-            tableName = this.tuple.keySet().iterator().next();
+        if (tableName == null) {
+            //there is not tablename
+        	return null;
         }
-
-        int index = Schema.getColIndex(tableName, colName);
-        return this.tuple.get(tableName).get(index);
+        else {
+        	return this.tuple.getItem(tableName, colName);
+        }
     }
 }
