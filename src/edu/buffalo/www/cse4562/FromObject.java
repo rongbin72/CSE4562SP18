@@ -1,15 +1,12 @@
 package edu.buffalo.www.cse4562;
 
 
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.IOException;
-import java.sql.SQLException;
 
 public class FromObject implements FromItemVisitor {
 	
@@ -50,12 +47,22 @@ public class FromObject implements FromItemVisitor {
 		String alias = table.getAlias();
 		if(alias != null) {
 			Schema.addtableAlias(alias,table.getName());
-			Read reader = new Read(table);
+			Read reader = null;
+			try {
+				reader = new Read(table);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			RenameOperator rename = new RenameOperator(reader,alias,table.getName());
 			this.tableList.add(rename);
 		}		
 		else {
-			Read reader = new Read(table);
+			Read reader = null;
+			try {
+				reader = new Read(table);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			this.tableList.add(reader);
 		}
 	}

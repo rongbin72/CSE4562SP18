@@ -46,15 +46,24 @@ public class Read extends Operator{
 	}
 
 	@Override
-	public Tuple result() throws IOException {
+	public Tuple result() {
 
 		if (!eof && this.buffer.size() <= this.bufferSize * this.factor) {
-			fillBuffer();
+			try {
+				fillBuffer();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (eof && buffer.size() == 0) {
-			init();
+			try {
+				init();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return null;
+
 		} else {
 			return new Tuple(tableNames, buffer.poll());
 		}
