@@ -1,15 +1,11 @@
 package edu.buffalo.www.cse4562;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
-import net.sf.jsqlparser.statement.select.AllColumns;
-import net.sf.jsqlparser.statement.select.AllTableColumns;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SelectItem;
-import net.sf.jsqlparser.statement.select.SelectItemVisitor;
+import net.sf.jsqlparser.statement.select.*;
+
+import java.sql.SQLException;
+import java.util.List;
 
 public class SelectOperator extends Operator implements SelectItemVisitor{
 
@@ -36,6 +32,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public Tuple result() {
+		this.resultTuple = new Tuple();
 		this.resultofSon = this.son.result();
 		if(this.resultofSon == null) {
 			return null;
@@ -62,7 +59,13 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 	public void visit(SelectExpressionItem exp) {
 		Expression e = exp.getExpression();
 		try {
-			this.resultTuple.addCol(this.eval.eval(e));
+			String colName = e.toString();
+			String alias = exp.getAlias();
+			if (alias != null) {
+				colName = alias;
+			}
+			PrimitiveValue a = this.eval.eval(e);
+			this.resultTuple.addCol(a, colName);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
