@@ -16,13 +16,13 @@ public class JoinOperator extends CrossProductOP{
 
 	public Tuple result() {
 		Tuple tmp = super.result();
-		Evaluation eval = null;// need to add
+		if(tmp == null) {
+			return null;
+		}
+		Evaluation eval = new Evaluation(tmp);// need to add
 		try {
 			if(eval.eval(this.on).toBool()) {
 				return tmp;
-			}
-			else {
-				return null;
 			}
 		} catch (InvalidPrimitive e) {
 			// TODO Auto-generated catch block
@@ -31,6 +31,6 @@ public class JoinOperator extends CrossProductOP{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return this.result();
 	}
 }

@@ -11,11 +11,15 @@ public class CrossProductOP extends Operator{
 	private Tuple lhTuple;
 	private Tuple rhTuple;
 	private boolean started;
+	private boolean onlylh;
+	private boolean onlyrh;
 	
 	public CrossProductOP(Operator leftson, Operator rightSon) {
 		this.rhS = rightSon;
 		this.lhS = leftson;
 		this.started = false;
+		this.onlylh = false;
+		this.onlyrh = false;
 	}
 
 	@Override
@@ -38,25 +42,51 @@ public class CrossProductOP extends Operator{
 			//the first step
 			this.rhTuple = rhS.result();
 			this.lhTuple = lhS.result();
-			this.started = true;
-			this.lhTuple.combineTuples(this.rhTuple);
-			return this.lhTuple;
-		}
-		else {
-			this.rhTuple = rhS.result();
-			if(rhTuple == null) {
-				//one loop over
-				this.lhTuple = rhS.result();
-				if(this.lhTuple == null) {
-					return null;//whole loop end
-				}
-				this.rhTuple = rhS.result();
+			if(this.rhTuple == null && this.lhTuple == null) {
+				return null;
+			}
+			else if(this.rhTuple == null && this.lhTuple != null) {
+				//only lhTuple
+				this.onlylh = true;
+				this.started = true;
+				return this.lhTuple;
+			}
+			else if(this.rhTuple != null && this.lhTuple == null) {
+				//only rhTuple
+				this.onlyrh = true;
+				this.started = true;
+				return this.rhTuple;
+			}
+			else {
+				this.started = true;
 				this.lhTuple.combineTuples(this.rhTuple);
 				return this.lhTuple;
 			}
+		}
+		else {
+			if(onlylh && !onlyrh) {
+				return lhS.result();
+			}
+			else if(!onlylh && onlyrh) {
+				return rhS.result();
+			}
 			else {
-				this.lhTuple.combineTuples(this.rhTuple);
-				return this.lhTuple;
+				this.rhTuple = rhS.result();
+				if(rhTuple == null) {
+					//one loop over
+					this.lhTuple = rhS.result();
+					if(this.lhTuple == null) {
+						this.started = false;
+						return null;//whole loop end
+					}
+					this.rhTuple = rhS.result();
+					this.lhTuple.combineTuples(this.rhTuple);
+					return this.lhTuple;
+				}
+				else {
+					this.lhTuple.combineTuples(this.rhTuple);
+					return this.lhTuple;
+				}
 			}
 		}
 	}
