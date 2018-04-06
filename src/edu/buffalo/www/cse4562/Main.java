@@ -41,7 +41,7 @@ public class Main {
 											//"SELECT S.*, PLAYERS.ID from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS ORDER BY S.C DESC;" +
                                             //"SELECT Q.FIRSTSEASON, Q.ID FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q " +
 											//"WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" //+
-                                            "SELECT A+B as C from R  where C > 6 ORDER BY C LIMIT 3;" 
+                                            "SELECT A+B as C from R  where C > 6;" 
                                             //"SELECT A as C FROM R where C > 4;" +
                                             // "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
                                             );
@@ -64,6 +64,7 @@ public class Main {
         			PlainSelect sel = (PlainSelect) body;
 					RATreeBuilder builder = new RATreeBuilder(sel);
 					Operator RATree = builder.resultTree();
+					System.out.println();
 //					Helper.output(RATree);
 
 //        			Iterator iterator = new Iterator(sel);

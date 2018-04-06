@@ -15,7 +15,7 @@ public class Schema {
     private static List<String> extraTable = new ArrayList<>();
     private static List<String> extraCol = new ArrayList<>(); // store names of table which has extra column
     private static HashMap<String, Expression> colAliasMap = new HashMap<>();
-    private static HashMap<String, List<Expression>> tableAliasMap = new HashMap<>();
+    private static HashMap<String, String> tableAliasMap = new HashMap<>();
     private static String tableName;
 
     /**
@@ -23,8 +23,8 @@ public class Schema {
      * @param origin name
      * @param alias
      */
-    public static void addcolAlias(String origin, Expression alias) {
-        colAliasMap.put(origin, alias);
+    public static void addcolAlias(String alias, Expression origin) {
+        colAliasMap.put(alias, origin);
     }
     
     /**
@@ -32,15 +32,15 @@ public class Schema {
      * @param origin name
      * @param alias
      */
-    public static void addtableAlias(String origin, List<Expression> alias) {
-        tableAliasMap.put(origin, alias);
+    public static void addtableAlias(String alias, String origin) {
+        tableAliasMap.put(alias, origin);
     }
 
     public static Expression getColAlias(String origin) {
         return colAliasMap.get(origin);
     }
 
-    public static List<Expression> getTableAlias(String origin) {
+    public static String getTableAlias(String origin) {
         return tableAliasMap.get(origin);
     }
     /**
