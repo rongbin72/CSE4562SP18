@@ -37,6 +37,9 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 	@Override
 	public Tuple result() {
 		this.resultofSon = this.son.result();
+		if(this.resultofSon == null) {
+			return null;
+		}
 		this.eval = new Evaluation(this.resultofSon);
 		for(SelectItem item:this.items) {
 			item.accept(this);

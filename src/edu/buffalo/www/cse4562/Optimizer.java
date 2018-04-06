@@ -28,26 +28,6 @@ public class Optimizer implements ExpressionVisitor{
 		}
 	}
 
-	public List<List<List<PrimitiveValue>>> getOptimizedTable() throws SQLException {
-		if(this.filter.size()!=0) {
-			for(int i = 0;i < filter.size();i++) {
-				String tablename = this.filtedTables.get(i);
-				Expression e = this.filter.get(i);
-				int index = this.tablenames.indexOf(tablename);
-				// iterate table reversely
-				for(int j = this.tables.get(index).size() - 1; j > 0 ; j--) {
-					HashMap <String, List<PrimitiveValue>> h = new HashMap<>();
-					h.put(tablename, this.tables.get(index).get(j));
-					Evaluation ev = new Evaluation(h);
-					if(!ev.eval(e).toBool()) {
-						this.tables.get(index).remove(j);
-					}
-				}
-			}
-		}
-		return this.tables;
-	}
-
 	private void binaryFilter(BinaryExpression exp) {
 		Expression eL = exp.getLeftExpression();
 		Expression eR = exp.getRightExpression();
