@@ -1,6 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
@@ -47,26 +48,33 @@ public class FromObject implements FromItemVisitor {
 	@Override
 	public void visit(Table table) {
 		String alias = table.getAlias();
-		Read reader = new Read(table);
-		if(alias == null) {
+		if(alias != null) {
+			Schema.addtableAlias(alias,table.getName());
+			Read reader = new Read(table);
+			RenameOperator rename = new RenameOperator(reader,alias,table.getName());
+			this.tableList.add(rename);
+		}		
+		else {
+			Read reader = new Read(table);
 			this.tableList.add(reader);
 		}
-		else {
-			this.tableList.add(new TableAliasOP(table.getName(),table.getAlias(),reader));
-		}
 	}
+	
 	@Override
 	public void visit(SubSelect subselect) {
 		String alias = subselect.getAlias();
 		SelectBody subBody = subselect.getSelectBody();
+		PlainSelect sel = (PlainSelect)subBody;
 		RATreeBuilder builder = new RATreeBuilder((PlainSelect)subBody);
 		Operator tree = builder.resultTree();
-		this.tableList.add(new TableAliasOP(alias, tree));
+		RenameOperator rename = new RenameOperator(tree,alias);
+		this.tableList.add(rename);
 		
 	}
 	@Override
 	public void visit(SubJoin arg0) {
 		// TODO Auto-generated method stub
+		
 		
 	}
 	
