@@ -1,20 +1,21 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class Tuple {
-	private List<PrimitiveValue> tuple;
+	private HashMap<String, List<PrimitiveValue>> tuple;
 	private String tableName;
 	private HashMap<String, Integer> indexHash;
 	
 	public Tuple(String tableName, List<PrimitiveValue> tuple) {
-		this.tuple = tuple;
 		this.tableName = tableName;
-		indexHash = Schema.getIndxHash(tableName);
+		this.indexHash = Schema.getIndxHash(tableName);
+		HashMap<String, List<PrimitiveValue>> tmp = new HashMap<>();
+		tmp.put(tableName, tuple);
+		this.tuple = tmp;
 	}
 	
 	public void combineTuples(Tuple extend) {
@@ -28,8 +29,13 @@ public class Tuple {
 	public void addCol(PrimitiveValue p) {
 		
 	}
-	
-	public List<PrimitiveValue> getTuple() {
+
+	public PrimitiveValue getItem(String tableName, String colName) {
+		int index = indexHash.get(tableName);
+		return tuple.get(tableName).get(index);
+	}
+
+	public HashMap<String, List<PrimitiveValue>> getTuple() {
 		return tuple;
 	}
 

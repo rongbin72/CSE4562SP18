@@ -1,28 +1,26 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 public class Read extends Operator{
 	private String tableNames;
+	private Queue<List<PrimitiveValue>> buffer = new LinkedList<>();
+
 	
 	public Read(Table table) {
-		// TODO Auto-generated constructor stub
+		this.tableNames = table.getName();
+		String path = Schema.getPath(tableNames);
+
 	}
 
 	@Override
 	public Tuple result() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Tuple(tableNames, buffer.poll());
 	}
 }
