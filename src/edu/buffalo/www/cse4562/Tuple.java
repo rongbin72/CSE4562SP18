@@ -1,6 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.schema.Column;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,14 @@ public class Tuple {
 	}
 
 	public PrimitiveValue getItem(String tableName, String colName) {
-		int index = indexHash.get(tableName);
+		if (Schema.getTableAlias(tableName) != null) {
+			tableName = Schema.getTableAlias(tableName);
+		}
+		if (Schema.getColAlias(colName) != null) {
+			colName = ((Column)Schema.getColAlias(colName)).getColumnName();
+		}
+
+		int index = indexHash.get(colName);
 		return tuple.get(tableName).get(index);
 	}
 
