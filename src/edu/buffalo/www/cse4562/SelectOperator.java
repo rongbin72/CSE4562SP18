@@ -15,6 +15,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 	private Operator son;
 	private List<SelectItem> items;
 	private List<Expression> selectExps;
+	private Tuple resultTuple;
 	
 	public SelectOperator(Operator son, List<SelectItem> items) {
 		this.son = son;
@@ -32,8 +33,11 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public Tuple result() {
-		// TODO Auto-generated method stub
-		return null;
+		this.son.result();
+		for(SelectItem item:this.items) {
+			item.accept(this);
+		}
+		return this.resultTuple;
 	}
 
 	@Override

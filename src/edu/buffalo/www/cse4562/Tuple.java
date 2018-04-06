@@ -9,14 +9,20 @@ public class Tuple {
 	private List<PrimitiveValue> tuple;
 	private String tableName;
 	private HashMap<String, Integer> indexHash;
-
-
+	
 	public Tuple(String tableName, List<PrimitiveValue> tuple) {
 		this.tuple = tuple;
 		this.tableName = tableName;
 		indexHash = Schema.getIndxHash(tableName);
 	}
-
+	
+	public Tuple combineTuples(Tuple extend) {
+		return null;
+	}
+	
+	public Tuple subTuple(String table) {
+		return null; //subtuple with tablename 'table'
+	}
 	public List<PrimitiveValue> getTuple() {
 		return tuple;
 	}
