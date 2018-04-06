@@ -19,6 +19,9 @@ public class WhereOperator extends Operator{
 	
 	public Tuple result(){
 		Tuple resultofSon = this.son.result();
+		if(resultofSon == null) {
+			return null;
+		}
 		Evaluation eval = new Evaluation(resultofSon);
 		try {
 			if(eval.eval(this.whereCondition).toBool()) {
@@ -29,6 +32,6 @@ public class WhereOperator extends Operator{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return this.result();
 	}
 }
