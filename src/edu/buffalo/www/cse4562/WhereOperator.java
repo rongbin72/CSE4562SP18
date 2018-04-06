@@ -32,6 +32,8 @@ public class WhereOperator extends Operator{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
 		return this.result();
+		
 	}
 }
