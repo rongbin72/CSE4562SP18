@@ -27,13 +27,23 @@ public class WhereOperator extends Operator{
 			if(eval.eval(this.whereCondition).toBool()) {
 				return resultofSon;
 			}
+			else {
+				resultofSon = this.son.result();
+				if(resultofSon == null) {return null;}
+				eval = new Evaluation(resultofSon);
+				boolean evalResult = eval.eval(this.whereCondition).toBool();
+				while(!evalResult) {
+					resultofSon = this.son.result();
+					if(resultofSon == null) {return null;}
+				}
+				return resultofSon;
+			}
 		} catch (InvalidPrimitive e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		return this.result();
+		return null;
 		
 	}
 }
