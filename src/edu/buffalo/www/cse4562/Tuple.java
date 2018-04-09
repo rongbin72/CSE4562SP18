@@ -33,7 +33,7 @@ public class Tuple {
 		this.indexHash.put(tableName, indexHash);
 	}
 
-	public void combineTuples(Tuple extend) {
+	public void addTable(Tuple extend) {
 		this.tuple.putAll(extend.getTuple());
 		this.indexHash.putAll(extend.getIndexHash());
 	}
