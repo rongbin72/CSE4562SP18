@@ -10,6 +10,7 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.Union;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.sql.SQLException;
@@ -20,22 +21,23 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-//    	Reader r = new InputStreamReader(System.in);
-        Reader r = new StringReader("CREATE TABLE R(A integer, B integer);" + "CREATE TABLE PLAYERS(" +
-                                            "ID STRING, " +
-                                            "FIRSTNAME STRING, " +
-                                            "LASTNAME STRING, " +
-                                            "FIRSTSEASON double, " +
-                                            "LASTSEASON integer, " +
-                                            "WEIGHT integer, " +
-                                            "BIRTHDATE date);" +
-											//"SELECT S.*, PLAYERS.ID from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS ORDER BY S.C DESC;" +
-                                            //"SELECT Q.FIRSTSEASON, Q.ID FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q " +
-											//"WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" //+
-                                            "SELECT A+B as C from R  where C > 6;" 
-                                            //"SELECT A as C FROM R where C > 4;" +
-                                            // "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
-                                            );
+    	Reader r = new InputStreamReader(System.in);
+//        Reader r = new StringReader("CREATE TABLE R(A integer, B integer);" + "CREATE TABLE PLAYERS(" +
+//                                            "ID STRING, " +
+//                                            "FIRSTNAME STRING, " +
+//                                            "LASTNAME STRING, " +
+//                                            "FIRSTSEASON double, " +
+//                                            "LASTSEASON integer, " +
+//                                            "WEIGHT integer, " +
+//                                            "BIRTHDATE date);" +
+//				"CREATE TABLE REGION(R_REGIONKEY INTEGER, R_NAME STRING, R_COMMENT STRING);" +
+//											//"SELECT S.*, PLAYERS.ID from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS ORDER BY S.C DESC;" +
+//                                            //"SELECT Q.FIRSTSEASON, Q.ID FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q " +
+//											//"WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" //+
+//                                            "SELECT R.A, Q.M from R, (SELECT PLAYERS.ID AS M, R.B AS N FROM PLAYERS, R) Q ;"
+//                                            //"SELECT A as C FROM R where C > 4;" +
+//                                            // "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
+//                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
          
@@ -55,8 +57,8 @@ public class Main {
         			PlainSelect sel = (PlainSelect) body;
 					RATreeBuilder builder = new RATreeBuilder(sel);
 					Operator RATree = builder.resultTree();
-					Tuple res = RATree.result();
-					System.out.println();
+					Helper.output(RATree);
+//					System.out.println();
 //					Helper.output(RATree);
 
 //        			Iterator iterator = new Iterator(sel);

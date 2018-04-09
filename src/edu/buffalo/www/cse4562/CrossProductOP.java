@@ -1,9 +1,5 @@
 package edu.buffalo.www.cse4562;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-
 public class CrossProductOP extends Operator{
 	
 	private Operator rhS;
@@ -59,7 +55,7 @@ public class CrossProductOP extends Operator{
 			}
 			else {
 				this.started = true;
-				this.lhTuple.combineTuples(this.rhTuple);
+				this.lhTuple.addTable(this.rhTuple);
 				return this.lhTuple;
 			}
 		}
@@ -74,17 +70,17 @@ public class CrossProductOP extends Operator{
 				this.rhTuple = rhS.result();
 				if(rhTuple == null) {
 					//one loop over
-					this.lhTuple = rhS.result();
+					this.lhTuple = lhS.result();
 					if(this.lhTuple == null) {
 						this.started = false;
 						return null;//whole loop end
 					}
 					this.rhTuple = rhS.result();
-					this.lhTuple.combineTuples(this.rhTuple);
+					this.lhTuple.addTable(this.rhTuple);
 					return this.lhTuple;
 				}
 				else {
-					this.lhTuple.combineTuples(this.rhTuple);
+					this.lhTuple.addTable(this.rhTuple);
 					return this.lhTuple;
 				}
 			}

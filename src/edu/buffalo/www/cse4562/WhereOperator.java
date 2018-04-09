@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class WhereOperator extends Operator{
 	
 	private Expression whereCondition;
 	private Operator son;
-	
+
 	public WhereOperator(Operator son, Expression where) {
 		this.whereCondition = where;
 		this.son = son;
@@ -35,6 +36,8 @@ public class WhereOperator extends Operator{
 				while(!evalResult) {
 					resultofSon = this.son.result();
 					if(resultofSon == null) {return null;}
+					eval = new Evaluation(resultofSon);
+					evalResult = eval.eval(this.whereCondition).toBool();
 				}
 				return resultofSon;
 			}

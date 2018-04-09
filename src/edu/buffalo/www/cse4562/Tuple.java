@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Tuple {
+    // TODO can use HashMap to Store tuple => {tableName: {colName: data}}
 	private HashMap<String, List<PrimitiveValue>> tuple = new HashMap<>();
 	private String tableName;
 	private HashMap<String, HashMap<String, Integer>> indexHash = new HashMap<>();
@@ -33,15 +34,28 @@ public class Tuple {
 		this.indexHash.put(tableName, indexHash);
 	}
 
-	public void combineTuples(Tuple extend) {
+	public void addTable(Tuple extend) {
 		this.tuple.putAll(extend.getTuple());
 		this.indexHash.putAll(extend.getIndexHash());
 	}
-	
-	public Tuple subTuple(String tableName) {
-		return new Tuple(tableName, this.tuple.get(tableName), this.indexHash.get(tableName));
+
+	public void mergeTable(Tuple merge) {
+		List<PrimitiveValue> tuple = this.tuple.get(this.tableName);
+		HashMap<String, Integer> indexHash = this.indexHash.get(this.tableName);
+		for (String key : merge.getTuple().keySet()) {
+			int size = tuple.size();
+			tuple.addAll(merge.getTuple().get(key));
+			merge.getIndexHash().get(key).forEach((k, v) -> indexHash.put(k, v + size));
+		}
 	}
 	
+	public Tuple subTuple(String tableName) {
+		String origin = Schema.getTableAlias(tableName);
+		origin = origin == null ? tableName:origin;
+//	    Tuple a =  new Tuple(tableName, this.tuple.get(origin), this.indexHash.get(origin));
+		return new Tuple(tableName, this.tuple.get(origin), this.indexHash.get(origin));
+	}
+
 	public void addCol(PrimitiveValue p, String colName) {
 		this.tuple.get(this.tableName).add(p);
 		indexHash.get(tableName).put(colName, indexHash.get(this.tableName).size());
@@ -62,12 +76,14 @@ public class Tuple {
 		if (Schema.getTableAlias(tableName) != null) {
 			tableName = Schema.getTableAlias(tableName);
 		}
-		if (Schema.getColAlias(colName) != null) {
+
+		Integer index = indexHash.get(tableName).get(colName);
+
+		if (Schema.getColAlias(colName) != null && index == null) {
 			Expression col = Schema.getColAlias(colName);
 			return eval.eval(col);
 		}
 
-		int index = indexHash.get(tableName).get(colName);
 		return this.tuple.get(tableName).get(index);
 	}
 
