@@ -46,13 +46,13 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public void visit(AllColumns allCol) {
-		this.resultTuple.combineTuples(resultofSon);
+		this.resultTuple.mergeTable(resultofSon);
 	}
 
 	@Override
 	public void visit(AllTableColumns allTableCol) {
 		String table = allTableCol.getTable().getName();
-		this.resultTuple.combineTuples(this.resultofSon.subTuple(table));
+		this.resultTuple.mergeTable(this.resultofSon.subTuple(table));
 	}
 
 	@Override

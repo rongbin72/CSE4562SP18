@@ -5,10 +5,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.Limit;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Helper {
 
@@ -62,6 +59,18 @@ public class Helper {
         }
     }
 
+    public static void output(Operator tree) {
+        Tuple tuple;
+        while ((tuple = tree.result()) != null) {
+            List<PrimitiveValue> row = tuple.getTuple().get(tuple.getTableName());
+            List<String> line = new ArrayList<>();
+            for (PrimitiveValue cell : row) {
+                line.add(cell.toString());
+            }
+            print(String.join("|", line));
+        }
+    }
+
     /**
      * Print
      *
@@ -69,42 +78,42 @@ public class Helper {
      * @param orderBy OrderByElement
      * @param limit   Limit
      */
-    public static void output(List<List<PrimitiveValue>> table, List<OrderByElement> orderBy, Limit limit) {
-        // no order by, no limit, print all
-        if (orderBy == null && limit == null) {
-            printTable(table);
-        } else if (orderBy != null && limit == null) {
-            // order by without limit
-            boolean isAsc = orderBy.get(0).isAsc();
-            Column col = (Column) orderBy.get(0).getExpression();
-            String colName = col.getColumnName();
-            int colIndex = Schema.getColIndex("*", colName);
+//    public static void output(List<List<PrimitiveValue>> table, List<OrderByElement> orderBy, Limit limit) {
+//        // no order by, no limit, print all
+//        if (orderBy == null && limit == null) {
+//            printTable(table);
+//        } else if (orderBy != null && limit == null) {
+//            // order by without limit
+//            boolean isAsc = orderBy.get(0).isAsc();
+//            Column col = (Column) orderBy.get(0).getExpression();
+//            String colName = col.getColumnName();
+//            int colIndex = Schema.getColIndex("*", colName);
+//
+//            cmp(table, colIndex, isAsc);
+//            printTable(table);
+//
+//        } else if (orderBy == null && limit != null) {
+//            // limit without order by
+//            printTable(table, (int) limit.getRowCount());
+//
+//        } else if (orderBy != null && limit != null) {
+//            // order by with limit
+//            boolean isAsc = orderBy.get(0).isAsc();
+//            Column col = (Column) orderBy.get(0).getExpression();
+//            String colName = col.getColumnName();
+//            int colIndex = Schema.getColIndex("*", colName);
+//
+//            cmp(table, colIndex, isAsc);
+//            printTable(table, (int) limit.getRowCount());
+//
+//        }
+//    }
 
-            cmp(table, colIndex, isAsc);
-            printTable(table);
-
-        } else if (orderBy == null && limit != null) {
-            // limit without order by
-            printTable(table, (int) limit.getRowCount());
-
-        } else if (orderBy != null && limit != null) {
-            // order by with limit
-            boolean isAsc = orderBy.get(0).isAsc();
-            Column col = (Column) orderBy.get(0).getExpression();
-            String colName = col.getColumnName();
-            int colIndex = Schema.getColIndex("*", colName);
-
-            cmp(table, colIndex, isAsc);
-            printTable(table, (int) limit.getRowCount());
-
-        }
-    }
-
-    private static void cmp(List<List<PrimitiveValue>> table, int colIndex, boolean isAsc) {
+    public static void cmp(List<Tuple> table, int colIndex, boolean isAsc) {
         table.sort((a, b) -> {
-            PrimitiveValue lhs = a.get(colIndex);
-            PrimitiveValue rhs = b.get(colIndex);
-            String type = a.get(colIndex).getType().name();
+            PrimitiveValue lhs = a.getTuple().get(a.getTableName()).get(colIndex);
+            PrimitiveValue rhs = b.getTuple().get(b.getTableName()).get(colIndex);
+            String type = lhs.getType().name();
             switch (type) {
                 case "LONG":
                     try {

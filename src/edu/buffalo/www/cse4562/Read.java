@@ -58,6 +58,7 @@ public class Read extends Operator{
 
 		if (eof && buffer.size() == 0) {
 			try {
+				this.br.close();
 				init();
 			} catch (IOException e) {
 				e.printStackTrace();
