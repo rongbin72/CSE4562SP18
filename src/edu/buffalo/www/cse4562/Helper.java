@@ -62,7 +62,7 @@ public class Helper {
     public static void output(Operator tree) {
         Tuple tuple;
         while ((tuple = tree.result()) != null) {
-            List<PrimitiveValue> row = tuple.getTuple().get(tuple.getTableName());
+            List<PrimitiveValue> row = tuple.getTuple();
             List<String> line = new ArrayList<>();
             for (PrimitiveValue cell : row) {
                 line.add(cell.toString());
@@ -89,7 +89,7 @@ public class Helper {
 //            String colName = col.getColumnName();
 //            int colIndex = Schema.getColIndex("*", colName);
 //
-//            cmp(table, colIndex, isAsc);
+//            sort(table, colIndex, isAsc);
 //            printTable(table);
 //
 //        } else if (orderBy == null && limit != null) {
@@ -103,16 +103,16 @@ public class Helper {
 //            String colName = col.getColumnName();
 //            int colIndex = Schema.getColIndex("*", colName);
 //
-//            cmp(table, colIndex, isAsc);
+//            sort(table, colIndex, isAsc);
 //            printTable(table, (int) limit.getRowCount());
 //
 //        }
 //    }
 
-    public static void cmp(List<Tuple> table, int colIndex, boolean isAsc) {
+    public static void sort(List<Tuple> table, int colIndex, boolean isAsc) {
         table.sort((a, b) -> {
-            PrimitiveValue lhs = a.getTuple().get(a.getTableName()).get(colIndex);
-            PrimitiveValue rhs = b.getTuple().get(b.getTableName()).get(colIndex);
+            PrimitiveValue lhs = a.getTuple().get(colIndex);
+            PrimitiveValue rhs = b.getTuple().get(colIndex);
             String type = lhs.getType().name();
             switch (type) {
                 case "LONG":
@@ -170,7 +170,7 @@ public class Helper {
      */
     public static List<PrimitiveValue> toPrimitive(String tableName, String line) {
         List<PrimitiveValue> tuple = new ArrayList<>();
-        List<String> lineSplit = Arrays.asList(line.split("\\|"));
+        String[] lineSplit = line.split("\\|");
         int index = 0;
         for (String cell : lineSplit) {
             String type = Schema.getColType(tableName, index);

@@ -16,6 +16,10 @@ public class Schema {
     private static HashMap<String, String> tableAliasMap = new HashMap<>();
     private static String tableName;
 
+    public static HashMap<String, Expression> getColAliasMap() {
+        return colAliasMap;
+    }
+
     /**
      * add column alias to map
      * @param origin name
@@ -104,7 +108,7 @@ public class Schema {
         return schema.get(tableName).getLine();
     }
 
-    public static HashMap<String, Integer> getIndxHash(String tableName) {
+    public static HashMap<String, Integer> getIndexHash(String tableName) {
         Schema.tableName = tableName;
         return schema.get(tableName.toUpperCase()).getIndexHash();
     }

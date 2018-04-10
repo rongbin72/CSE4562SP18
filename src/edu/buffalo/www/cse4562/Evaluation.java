@@ -20,7 +20,10 @@ public class Evaluation extends Eval {
     	String tableName = column.getTable().getName();
         String colName = column.getColumnName();
         if (tableName == null) {
-            tableName = this.tuple.getTableName();
+            // Only one table in tuple
+            for (String t:this.tuple.getIndexHash().keySet()) {
+                tableName = t;
+            }
         }
         return this.tuple.getItem(tableName, colName);
     }
