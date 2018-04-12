@@ -1,52 +1,95 @@
 package edu.buffalo.www.cse4562;
 
+import javafx.scene.Scene;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 
+import java.security.KeyStore;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Tuple {
     // TODO can use HashMap to Store tuple => {tableName: {colName: data}}
     private List<PrimitiveValue> tuple = new ArrayList<>();
     private HashMap<String, HashMap<String, Integer>> indexHash = new HashMap<>();
-    private HashMap<String, HashMap<String, Integer>> tableAliasMap = new HashMap<>();
-    private HashMap<String, Expression> colAliasMap = new HashMap<>();
+    private HashMap<String, String> tableAliasMap;
+    private HashMap<String, Expression> colAliasMap;
 
+    /**
+     * Used by Read to init tuple
+     * @param tableName table name
+     * @param tuple tuple
+     */
     public Tuple(String tableName, List<PrimitiveValue> tuple) {
-        indexHash.put(tableName, Schema.getIndexHash(tableName));
+        this.indexHash.put(tableName, Schema.getIndexHash(tableName));
+        this.tableAliasMap = Schema.getTableAliasMap();
         this.colAliasMap = Schema.getColAliasMap();
         this.tuple = tuple;
     }
 
+    /**
+     * Used by SelectOperator
+     */
     public Tuple() {
         String tableName = "*";
         this.indexHash.put(tableName, new HashMap<>());
+        this.colAliasMap = Schema.getColAliasMap();
+        this.tableAliasMap = Schema.getTableAliasMap();
     }
 
     public Tuple(String tableName, List<PrimitiveValue> tuple, HashMap<String, Integer> indexHash) {
         this.tuple = tuple;
         this.indexHash.put(tableName, indexHash);
         this.colAliasMap = Schema.getColAliasMap();
+        this.tableAliasMap = Schema.getTableAliasMap();
     }
 
-    public void addColumn(String tableName, String colName, PrimitiveValue value) {
-        this.tuple.add(value);
+    public void addColumn(String colName, PrimitiveValue value) {
+        String tableName = "*";
         this.indexHash.get(tableName).put(colName, this.tuple.size());
+        this.tuple.add(value);
+    }
+
+    public void addAllColumn(String tableName, Tuple tuple) {
+        tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
+        HashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
+        List<PrimitiveValue> line = tuple.getTuple();
+        List<String> colList = tuple.getColList(tableName);
+        for (String colName : colList) {
+            int i = index.get(colName);
+            addColumn(colName, line.get(i));
+        }
+    }
+
+    public void addTable(Tuple tuple) {
+        for (String tableName : tuple.getIndexHash().keySet()) {
+            tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
+            List<String> colList = tuple.getColList(tableName);
+            HashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
+            List<PrimitiveValue> line = tuple.getTuple();
+            this.indexHash.put(tableName, new HashMap<>());
+            for (String colName : colList) {
+                this.indexHash.get(tableName).put(colName, this.tuple.size());
+                int i = index.get(colName);
+                this.tuple.add(line.get(i));
+            }
+        }
     }
 
     public void setTableAliasMap(String alias, String origin) {
-        this.tableAliasMap.put(alias, this.indexHash.get(origin));
+        this.tableAliasMap.put(alias, origin);
     }
 
-    //	public void addTable(Tuple extend) {
-//		this.tuple.putAll(extend.getTuple());
-//		this.indexHash.putAll(extend.getIndexHash());
-//	}
-//
-//
+    public List<String> getColList(String tableName) {
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(this.indexHash.get(tableName).entrySet());
+        entryList.sort(Comparator.comparing(Map.Entry::getValue));
+        List<String> colList = new ArrayList<>();
+        for (Map.Entry<String, Integer> kv : entryList) {
+            colList.add(kv.getKey());
+        }
+        return colList;
+    }
+
 //	public void mergeTable(Tuple merge) {
 //		List<PrimitiveValue> tuple = this.tuple.get(this.tableName);
 //		HashMap<String, Integer> indexHash = this.indexHash.get(this.tableName);
@@ -57,7 +100,7 @@ public class Tuple {
 //		}
 //	}
 
-    //	public Tuple subTuple(String tableName) {
+//    	public Tuple subTuple(String tableName) {
 //		String origin = Schema.getTableAlias(tableName);
 //		origin = origin == null ? tableName:origin;
 ////	    Tuple a =  new Tuple(tableName, this.tuple.get(origin), this.indexHash.get(origin));
@@ -71,12 +114,10 @@ public class Tuple {
 //
     public void rename(String tableName) {
         //combine all items in hash map in one line with key value is name
-        assert this.tuple.size() == 1;
-        String oldName = "";
-        for (String n : this.indexHash.keySet()) {
-            oldName = n;
+        assert this.indexHash.size() == 1;
+        for (String oldName : this.indexHash.keySet()) {
+            this.tableAliasMap.put(tableName, oldName);
         }
-        this.tableAliasMap.put(tableName, this.indexHash.get(oldName));
     }
 
     public PrimitiveValue getItem(String tableName, String colName) throws SQLException {
@@ -84,13 +125,11 @@ public class Tuple {
         if (colAliasMap.containsKey(colName)) {
             Expression exp = colAliasMap.get(colName);
             return eval.eval(exp);
-        } else if (this.tableAliasMap.containsKey(tableName)) {
-            int i = this.tableAliasMap.get(tableName).get(colName);
-            return tuple.get(i);
-        } else {
-            int i = this.indexHash.get(tableName).get(colName);
-            return tuple.get(i);
         }
+
+        String realName = this.tableAliasMap.getOrDefault(tableName, tableName);
+        int i = this.indexHash.get(realName).get(colName);
+        return tuple.get(i);
     }
 
     public List<PrimitiveValue> getTuple() {

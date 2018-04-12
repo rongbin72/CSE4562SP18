@@ -46,13 +46,16 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public void visit(AllColumns allCol) {
-		this.resultTuple.mergeTable(resultofSon);
+		this.resultTuple = this.resultofSon;
+//		this.resultTuple.mergeTable(resultofSon);
 	}
+
 
 	@Override
 	public void visit(AllTableColumns allTableCol) {
-		String table = allTableCol.getTable().getName();
-		this.resultTuple.mergeTable(this.resultofSon.subTuple(table));
+		String tableName = allTableCol.getTable().getName();
+		this.resultTuple.addAllColumn(tableName, this.resultofSon);
+//		this.resultTuple.mergeTable(this.resultofSon.subTuple(table));
 	}
 
 	@Override
@@ -64,8 +67,8 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			if (alias != null) {
 				colName = alias;
 			}
-			PrimitiveValue a = this.eval.eval(e);
-			this.resultTuple.addCol(a, colName);
+			PrimitiveValue value = this.eval.eval(e);
+			this.resultTuple.addColumn(colName, value);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

@@ -12,7 +12,7 @@ import java.util.Queue;
 
 
 public class Read extends Operator{
-	private String tableNames;
+	private String tableName;
 	private BufferedReader br;
 	private boolean eof = false;
 	private Integer bufferSize = 100;
@@ -22,7 +22,7 @@ public class Read extends Operator{
 	private void fillBuffer() throws IOException {
 		String line;
 		while ((line = br.readLine()) != null) {
-			this.buffer.add(Helper.toPrimitive(this.tableNames, line));
+			this.buffer.add(Helper.toPrimitive(this.tableName, line));
 			if (this.buffer.size() == this.bufferSize) {
 				break;
 			}
@@ -33,21 +33,21 @@ public class Read extends Operator{
 	}
 
 	public Read(Table table) throws IOException {
-		this.tableNames = table.getName();
-		String path = Schema.getPath(tableNames);
+		this.tableName = table.getName();
+		String path = Schema.getPath(tableName);
 		this.br = new BufferedReader(new FileReader(path));
 		fillBuffer();
 	}
 
 	private void init() throws IOException {
-		String path = Schema.getPath(tableNames);
+		String path = Schema.getPath(this.tableName);
 		this.br = new BufferedReader(new FileReader(path));
 		fillBuffer();
 	}
 
 	@Override
 	public Tuple result() {
-
+		// fill buffer
 		if (!eof && this.buffer.size() <= this.bufferSize * this.factor) {
 			try {
 				fillBuffer();
@@ -66,7 +66,7 @@ public class Read extends Operator{
 			return null;
 
 		} else {
-			return new Tuple(tableNames, buffer.poll());
+			return new Tuple(tableName, buffer.poll());
 		}
 	}
 }

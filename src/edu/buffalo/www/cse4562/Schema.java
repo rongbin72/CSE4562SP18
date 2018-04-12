@@ -16,6 +16,10 @@ public class Schema {
     private static HashMap<String, String> tableAliasMap = new HashMap<>();
     private static String tableName;
 
+    public static HashMap<String, String> getTableAliasMap() {
+        return tableAliasMap;
+    }
+
     public static HashMap<String, Expression> getColAliasMap() {
         return colAliasMap;
     }
