@@ -1,5 +1,7 @@
 package edu.buffalo.www.cse4562;
 
+import java.util.HashMap;
+
 public class RenameOperator extends Operator{
 	private Operator son;
 	private String alias;
@@ -26,9 +28,12 @@ public class RenameOperator extends Operator{
 		else if(this.origin == null) {
 			//subquery
 			resultofSon.rename(this.alias);
+			resultofSon.setColAliasMap(new HashMap<>());
 			return resultofSon;
 		}
 		else {
+			resultofSon.rename(this.alias);
+			resultofSon.setColAliasMap(new HashMap<>());
 			return resultofSon;
 		}
 	}

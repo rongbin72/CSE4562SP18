@@ -1,19 +1,38 @@
 package edu.buffalo.www.cse4562;
 
-import javafx.scene.Scene;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.schema.Column;
 
-import java.security.KeyStore;
 import java.sql.SQLException;
 import java.util.*;
 
 public class Tuple {
-    // TODO can use HashMap to Store tuple => {tableName: {colName: data}}
     private List<PrimitiveValue> tuple = new ArrayList<>();
     private HashMap<String, HashMap<String, Integer>> indexHash = new HashMap<>();
     private HashMap<String, String> tableAliasMap;
     private HashMap<String, Expression> colAliasMap;
+    private List<Column> groups = new ArrayList<>();
+
+    public void setColAliasMap(HashMap<String, Expression> colAliasMap) {
+        this.colAliasMap = colAliasMap;
+    }
+
+    public void setTuple(List<PrimitiveValue> tuple) {
+        this.tuple = tuple;
+    }
+
+    public boolean haveGroups() {
+        return this.groups != null;
+    }
+
+    public List<Column> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Column> groups) {
+        this.groups = groups;
+    }
 
     /**
      * Used by Read to init tuple
@@ -37,12 +56,12 @@ public class Tuple {
         this.tableAliasMap = Schema.getTableAliasMap();
     }
 
-    public Tuple(String tableName, List<PrimitiveValue> tuple, HashMap<String, Integer> indexHash) {
-        this.tuple = tuple;
-        this.indexHash.put(tableName, indexHash);
-        this.colAliasMap = Schema.getColAliasMap();
-        this.tableAliasMap = Schema.getTableAliasMap();
-    }
+//    public Tuple(String tableName, List<PrimitiveValue> tuple, HashMap<String, Integer> indexHash) {
+//        this.tuple = tuple;
+//        this.indexHash.put(tableName, indexHash);
+//        this.colAliasMap = Schema.getColAliasMap();
+//        this.tableAliasMap = Schema.getTableAliasMap();
+//    }
 
     public void addColumn(String colName, PrimitiveValue value) {
         String tableName = "*";
@@ -51,7 +70,7 @@ public class Tuple {
     }
 
     public void addAllColumn(String tableName, Tuple tuple) {
-        tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
+//        tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
         HashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
         List<PrimitiveValue> line = tuple.getTuple();
         List<String> colList = tuple.getColList(tableName);
@@ -63,7 +82,7 @@ public class Tuple {
 
     public void addTable(Tuple tuple) {
         for (String tableName : tuple.getIndexHash().keySet()) {
-            tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
+//            tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
             List<String> colList = tuple.getColList(tableName);
             HashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
             List<PrimitiveValue> line = tuple.getTuple();
@@ -115,9 +134,12 @@ public class Tuple {
     public void rename(String tableName) {
         //combine all items in hash map in one line with key value is name
         assert this.indexHash.size() == 1;
-        for (String oldName : this.indexHash.keySet()) {
-            this.tableAliasMap.put(tableName, oldName);
+        String oldName = "";
+        for (String o : this.indexHash.keySet()) {
+            oldName = o;
         }
+        this.indexHash.put(tableName, this.indexHash.get(oldName));
+        this.indexHash.remove(oldName);
     }
 
     public PrimitiveValue getItem(String tableName, String colName) throws SQLException {
@@ -127,8 +149,8 @@ public class Tuple {
             return eval.eval(exp);
         }
 
-        String realName = this.tableAliasMap.getOrDefault(tableName, tableName);
-        int i = this.indexHash.get(realName).get(colName);
+//        String realName = this.tableAliasMap.getOrDefault(tableName, tableName);
+        int i = this.indexHash.get(tableName).get(colName);
         return tuple.get(i);
     }
 

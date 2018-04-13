@@ -22,7 +22,11 @@ public class Evaluation extends Eval {
         if (tableName == null) {
             // Only one table in tuple
             for (String t:this.tuple.getIndexHash().keySet()) {
-                tableName = t;
+                try {
+                    return this.tuple.getItem(t, colName);
+                } catch (NullPointerException n) {
+                    continue;
+                }
             }
         }
         return this.tuple.getItem(tableName, colName);
