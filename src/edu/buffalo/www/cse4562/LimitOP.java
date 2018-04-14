@@ -22,4 +22,14 @@ public class LimitOP extends Operator{
         return null;
     }
 
+	@Override
+	public Operator getSon() {
+		return this.son;
+	}
+
+	@Override
+	public void setSon(Operator son) {
+		
+	}
+
 }

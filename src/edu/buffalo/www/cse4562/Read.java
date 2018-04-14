@@ -31,6 +31,10 @@ public class Read extends Operator{
 			this.eof = true;
 		}
 	}
+	
+	public String getTablename() {
+		return this.tableName;
+	}
 
 	public Read(Table table) throws IOException {
 		this.tableName = table.getName();
@@ -68,5 +72,16 @@ public class Read extends Operator{
 		} else {
 			return new Tuple(tableName, buffer.poll());
 		}
+	}
+
+	@Override
+	public Operator getSon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSon(Operator son) {
+		
 	}
 }

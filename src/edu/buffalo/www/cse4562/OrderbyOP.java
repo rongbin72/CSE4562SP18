@@ -41,4 +41,15 @@ public class OrderbyOP extends Operator {
             return this.tableContent.poll();
         }
     }
+
+	@Override
+	public Operator getSon() {
+		return this.son;
+	}
+
+	@Override
+	public void setSon(Operator son) {
+		// TODO Auto-generated method stub
+		
+	}
 }

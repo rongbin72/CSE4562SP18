@@ -51,6 +51,8 @@ public class Main {
         			PlainSelect sel = (PlainSelect) body;
 					RATreeBuilder builder = new RATreeBuilder(sel);
 					Operator RATree = builder.resultTree();
+					Optimizer opt = new Optimizer(sel.getWhere(),RATree);
+					RATree = opt.resultTree();
 					Helper.output(RATree);
 //					System.out.println();
 //					Helper.output(RATree);

@@ -26,4 +26,15 @@ public class GroupbyOperator extends Operator{
 		return resulfofSon;
 	}
 
+	@Override
+	public Operator getSon() {
+		return this.son;
+	}
+
+	@Override
+	public void setSon(Operator son) {
+		this.son = son;
+		
+	}
+
 }

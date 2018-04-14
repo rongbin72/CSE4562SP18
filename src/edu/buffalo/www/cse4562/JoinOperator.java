@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue.InvalidPrimitive;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 
 public class JoinOperator extends CrossProductOP{
 
@@ -13,7 +14,12 @@ public class JoinOperator extends CrossProductOP{
 		super(leftSon, rightSon);
 		this.on = conditions;
 	}
-
+	
+	public void addCondition(Expression e) {
+		AndExpression andExp = new AndExpression(e,this.on);
+		this.on = andExp;
+	}
+	
 	public Tuple result() {
 		Tuple tmp = super.result();
 		if(tmp == null) {

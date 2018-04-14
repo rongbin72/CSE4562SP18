@@ -18,6 +18,10 @@ public class RenameOperator extends Operator{
 		this.origin = origin;
 		Schema.addtableAlias(alias, origin);
 	}
+	
+	public String nameGetter() {
+		return this.alias;
+	}
 
 	@Override
 	public Tuple result() {
@@ -36,6 +40,17 @@ public class RenameOperator extends Operator{
 			resultofSon.setColAliasMap(new HashMap<>());
 			return resultofSon;
 		}
+	}
+
+	@Override
+	public Operator getSon() {
+		return this.son;
+	}
+
+	@Override
+	public void setSon(Operator son) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

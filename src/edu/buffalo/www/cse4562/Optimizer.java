@@ -15,32 +15,169 @@ import java.util.List;
 
 public class Optimizer implements ExpressionVisitor{
 
-	private List<List<List<PrimitiveValue>>> tables;
-	private List<String> tablenames;
-	private List<Expression> filter = new ArrayList<Expression>();
-	private List<String> filtedTables = new ArrayList<>();
+	private List<BinaryExpression> filter = new ArrayList<>();
+	private Operator tree;
 
-	public Optimizer(Expression exp, List<List<List<PrimitiveValue>>> tables, List<String> tablenames) {
-		this.tables = tables;
-		this.tablenames = tablenames;
+	public Optimizer(Expression exp, Operator tree) {
 		if (exp != null) {
             exp.accept(this);
 		}
+		this.tree = tree;
+		
 	}
-
-	private void binaryFilter(BinaryExpression exp) {
-		Expression eL = exp.getLeftExpression();
-		Expression eR = exp.getRightExpression();
-		if(eL instanceof Column) {
-			if(!(eR instanceof Column)) {
-				String name  = ((Column) eL).getTable().getName();
-				// if there is only one table, use tablenames.get(0)
-				assert tablenames.size() == 1 ^ name != null;
-				name = tablenames.size() == 1 ? tablenames.get(0) : name;
-                this.filter.add(exp);
-                this.filtedTables.add(name);
+	
+	public void searchTree(Operator tree) {
+		if(!(tree instanceof Read) && !(tree instanceof RenameOperator) 
+				&& !(tree instanceof CrossProductOP) && !(tree instanceof JoinOperator)) {
+			//is select, where, group by etc.
+			this.searchTree(tree.getSon());
+		}
+		if(tree instanceof CrossProductOP) {//or join
+			CrossProductOP cop = (CrossProductOP) tree;
+			cop.relatedT();//search the after tree by crossproduct itself
+		}
+	}
+	
+	private boolean containTables(Operator op,String t1,String t2) {
+		if(op instanceof CrossProductOP) {
+			CrossProductOP cross = (CrossProductOP)op;
+			if(cross.relatedGetter().contains(t1) && cross.relatedGetter().contains(t2)) {
+				return true;
+			}
+			return false;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
+	private void twoConditions(Operator tree, BinaryExpression exp, String t1, String t2) {
+		if(tree instanceof CrossProductOP) {
+			CrossProductOP cross = (CrossProductOP)tree;
+			if(this.containTables(cross, t1, t2)) {
+				if(!this.containTables(cross.getSon(), t1, t2) &&
+						!this.containTables(cross.getRhson(), t1, t2)) {
+					//lsh and rhs are all not include these tables, then add condition
+					if(tree instanceof JoinOperator) {
+						JoinOperator join = (JoinOperator)tree;
+						join.addCondition(exp);
+					}
+					else {
+						JoinOperator j = new JoinOperator(cross.getSon(),cross.getRhson(),exp);
+						tree = j;
+					}
+				}
+				else {
+					if(this.containTables(cross.getSon(), t1, t2)) {
+						this.twoConditions(cross.getSon(),exp , t1, t2);
+					}
+					if(this.containTables(cross.getRhson(), t1, t2)) {
+						this.twoConditions(cross.getRhson(),exp , t1, t2);
+					}
+				}
 			}
 		}
+		else {
+			this.twoConditions(tree.getSon(), exp, t1, t2);
+		}
+	}
+
+	private void oneCondition(Operator tree, BinaryExpression exp, String tablename) {
+		if(tree instanceof CrossProductOP) {
+			CrossProductOP cross = (CrossProductOP) tree;
+			if(cross.getSon() instanceof Read) {
+				Read read = (Read)cross.getSon();
+				if(tablename.equals(read.getTablename())) {
+					WhereOperator where = new WhereOperator(read,exp);
+					cross.setSon(where);
+				}
+			}
+			else if(cross.getSon() instanceof RenameOperator) {
+				RenameOperator rename = (RenameOperator)cross.getSon();
+				if(tablename.equals(rename.nameGetter())) {
+					WhereOperator where = new WhereOperator(rename,exp);
+					cross.setSon(where);
+				}
+			}
+			else if(cross.getRhson() instanceof Read) {
+				Read read = (Read)cross.getRhson();
+				if(tablename.equals(read.getTablename())) {
+					WhereOperator where = new WhereOperator(read,exp);
+					cross.setRhS(where);
+				}
+			}
+			else if(cross.getRhson() instanceof RenameOperator) {
+				RenameOperator rename = (RenameOperator)cross.getRhson();
+				if(tablename.equals(rename.nameGetter())) {
+					WhereOperator where = new WhereOperator(rename,exp);
+					cross.setRhS(where);
+				}
+			}
+			else { 
+				if((cross.getSon() instanceof JoinOperator) ||
+				(cross.getSon() instanceof CrossProductOP) ||
+				(cross.getRhson() instanceof JoinOperator) ||
+				(cross.getRhson() instanceof CrossProductOP)) {
+					this.oneCondition(cross, exp, tablename);
+				}
+			}
+		}
+		else {
+			while(!(tree.getSon() instanceof Read) && !(tree.getSon() instanceof RenameOperator) &&
+					!(tree.getSon() instanceof CrossProductOP)) {
+				tree = tree.getSon();
+				
+			}
+			if(tree.getSon() instanceof Read) {
+				Read read = (Read)tree.getSon();
+				if(tablename.equals(read.getTablename())) {
+					WhereOperator where = new WhereOperator(read,exp);
+					tree.setSon(where);
+				}
+			}
+			else if(tree.getSon() instanceof RenameOperator) {
+				RenameOperator rename = (RenameOperator)tree.getSon();
+				if(tablename.equals(rename.nameGetter())) {
+					WhereOperator where = new WhereOperator(rename,exp);
+					tree.setSon(where);
+				}
+			}
+			else if(tree.getSon() instanceof CrossProductOP) {
+				CrossProductOP cross = (CrossProductOP)tree.getSon();
+				this.oneCondition(cross, exp, tablename);
+			}
+		}
+	}
+	
+	
+	public Operator resultTree() {
+		for(BinaryExpression exp:this.filter) {
+			if(exp.getLeftExpression() instanceof Column) {
+				Column lhs = (Column)exp.getLeftExpression();
+				if(lhs.getTable() == null) {
+					continue;
+				}
+				else {
+					if(exp.getRightExpression() instanceof Column) {
+						Column rhs = (Column)exp.getRightExpression();
+						if(rhs.getTable() == null) {
+							continue;
+						}
+						else {
+							String t1 = lhs.getTable().getName();
+							String t2 = rhs.getTable().getName();
+							this.twoConditions(this.tree, exp, t1, t2);
+						}
+					}
+					else {
+						String t1 = lhs.getTable().getName();
+						this.oneCondition(this.tree, exp, t1);
+					}
+				}
+			}
+		}
+		return this.tree;
 	}
 
 	@Override
@@ -155,17 +292,17 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(EqualsTo equ) {
-		binaryFilter(equ);
+		this.filter.add(equ);
 	}
 
 	@Override
 	public void visit(GreaterThan gt) {
-    	binaryFilter(gt);
+    	this.filter.add(gt);
 	}
 
 	@Override
 	public void visit(GreaterThanEquals gte) {
-	    binaryFilter(gte);
+	    this.filter.add(gte);
 	}
 
 	@Override
@@ -188,17 +325,17 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(MinorThan mt) {
-	    binaryFilter(mt);
+	    this.filter.add(mt);
 	}
 
 	@Override
 	public void visit(MinorThanEquals mte) {
-	    binaryFilter(mte);
+	    this.filter.add(mte);
 	}
 
 	@Override
 	public void visit(NotEqualsTo nequ) {
-	    binaryFilter(nequ);
+	    this.filter.add(nequ);
 	}
 
 	@Override

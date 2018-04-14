@@ -49,4 +49,15 @@ public class WhereOperator extends Operator{
 		return null;
 		
 	}
+
+	@Override
+	public Operator getSon() {
+		return this.son;
+	}
+
+	@Override
+	public void setSon(Operator son) {
+		this.son = son;
+		
+	}
 }
