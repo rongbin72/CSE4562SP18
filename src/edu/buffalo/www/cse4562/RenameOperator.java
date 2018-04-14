@@ -16,7 +16,7 @@ public class RenameOperator extends Operator{
 		this.son = son;
 		this.alias = alias;
 		this.origin = origin;
-		Schema.addtableAlias(alias, origin);
+		Schema.addTableAlias(alias, origin);
 	}
 	
 	public String nameGetter() {

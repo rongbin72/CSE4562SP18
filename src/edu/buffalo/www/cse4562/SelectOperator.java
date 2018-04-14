@@ -35,7 +35,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 				}
             	String alias = exp.getAlias();
             	if(alias != null) {
-            		Schema.addcolAlias(alias, exp.getExpression());//add alias to alias map in schema
+            		Schema.addColAlias(alias, exp.getExpression());//add alias to alias map in schema
             	}
             }
         }
