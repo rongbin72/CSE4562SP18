@@ -216,7 +216,7 @@ public class Optimizer implements ExpressionVisitor{
 		for(BinaryExpression exp:this.filter) {
 			if(exp.getLeftExpression() instanceof Column) {
 				Column lhs = (Column)exp.getLeftExpression();
-				if(lhs.getTable() == null) {
+				if(lhs.getTable().getName() == null) {
 					continue;
 				}
 				else {
