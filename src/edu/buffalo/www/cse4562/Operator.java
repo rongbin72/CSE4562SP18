@@ -7,5 +7,4 @@ public abstract class Operator {
 	public Operator() {
 		
 	}
-	
 }

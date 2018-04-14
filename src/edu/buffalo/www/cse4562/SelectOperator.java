@@ -163,8 +163,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public Operator getSon() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.son;
 	}
 
 	@Override

@@ -21,17 +21,17 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
 
     	Helper.prompt();
-    	Reader r = new InputStreamReader(System.in);
-//        Reader r = new StringReader("CREATE TABLE R(A integer, B integer, C integer);" + "CREATE TABLE PLAYERS(" +
-//                                            "ID STRING, " +
-//                                            "FIRSTNAME STRING, " +
-//                                            "LASTNAME STRING, " +
-//                                            "FIRSTSEASON double, " +
-//                                            "LASTSEASON integer, " +
-//                                            "WEIGHT integer, " +
-//                                            "BIRTHDATE date);" +
-//											"SELECT A, SUM(B), SUM(C) FROM R GROUP BY A;"
-//                                            );
+//    	Reader r = new InputStreamReader(System.in);
+        Reader r = new StringReader("CREATE TABLE R(A integer, B integer, C integer);" + "CREATE TABLE PLAYERS(" +
+                                            "ID STRING, " +
+                                            "FIRSTNAME STRING, " +
+                                            "LASTNAME STRING, " +
+                                            "FIRSTSEASON double, " +
+                                            "LASTSEASON integer, " +
+                                            "WEIGHT integer, " +
+                                            "BIRTHDATE date);" +
+											"SELECT R1.A,R2.A FROM R as R1, R R2, R R3 WHERE R1.A = R2.B and R1.A<3;"
+                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
          

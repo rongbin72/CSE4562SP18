@@ -51,37 +51,97 @@ public class Optimizer implements ExpressionVisitor{
 		}
 	}
 	
-	
 	private void twoConditions(Operator tree, BinaryExpression exp, String t1, String t2) {
 		if(tree instanceof CrossProductOP) {
-			CrossProductOP cross = (CrossProductOP)tree;
-			if(this.containTables(cross, t1, t2)) {
-				if(!this.containTables(cross.getSon(), t1, t2) &&
-						!this.containTables(cross.getRhson(), t1, t2)) {
-					//lsh and rhs are all not include these tables, then add condition
-					if(tree instanceof JoinOperator) {
-						JoinOperator join = (JoinOperator)tree;
-						join.addCondition(exp);
+			CrossProductOP self = (CrossProductOP)tree;
+			boolean left = this.containTables(self.getSon(), t1, t2);
+			boolean right = this.containTables(self.getRhson(), t1, t2);
+			if(left || right) {
+				if(left) {
+					//left must be a crossproduct and contains the tables
+					CrossProductOP leftson = (CrossProductOP) self.getSon();
+					Operator leftSonofLeft = leftson.getSon();
+					Operator rightSonofLeft = leftson.getRhson();
+					if(this.containTables(leftSonofLeft, t1, t2) || 
+							this.containTables(rightSonofLeft, t1, t2)) {
+						//continue push down
 					}
 					else {
-						JoinOperator j = new JoinOperator(cross.getSon(),cross.getRhson(),exp);
-						tree = j;
+						//stop
+						if(self.getSon() instanceof JoinOperator) {
+							JoinOperator join = (JoinOperator)self.getSon();
+							join.addCondition(exp);
+							self.setSon(join);
+						}
+						else {
+							JoinOperator join = new JoinOperator(leftSonofLeft,rightSonofLeft,exp);
+							self.setSon(join);
+						}
+					}
+					
+				}
+				if(right) {
+					//right must be a crossproduct and contains the tables
+					CrossProductOP rightson = (CrossProductOP) self.getRhson();
+					Operator leftSonofRight = rightson.getSon();
+					Operator rightSonofRight = rightson.getRhson();
+					if(this.containTables(leftSonofRight, t1, t2) || 
+							this.containTables(rightSonofRight, t1, t2)) {
+						//continue push down
+					}
+					else {
+						//stop
+						if(self.getSon() instanceof JoinOperator) {
+							JoinOperator join = (JoinOperator)self.getSon();
+							join.addCondition(exp);
+						}
+						else {
+							JoinOperator join = new JoinOperator(leftSonofRight,rightSonofRight,exp);
+							self.setSon(join);
+						}
+					}
+				}
+				
+			}
+			else {
+				//do nothing
+				System.out.println("there must be something wrong");
+			}
+			
+		}
+		else {
+			if(!(tree instanceof Read) && !(tree instanceof RenameOperator)) {
+				if(tree.getSon() instanceof CrossProductOP) {
+					CrossProductOP cross = (CrossProductOP) tree.getSon();
+					//try one step
+					Operator lhsOfson = cross.getSon();
+					Operator rhsOfson = cross.getRhson();
+					boolean left = this.containTables(lhsOfson, t1, t2);
+					boolean right = this.containTables(rhsOfson, t1, t2);
+					if(left || right) {
+						//move one step
+						this.twoConditions(tree.getSon(), exp, t1, t2);
+					}
+					else if(this.containTables(cross, t1, t2)) {
+						if(tree.getSon() instanceof JoinOperator) {
+							JoinOperator join = (JoinOperator)cross;
+							join.addCondition(exp);
+							
+						}
+						else {
+							//must be crossproduct
+							JoinOperator join = new JoinOperator(cross.getSon(),cross.getRhson(),exp);
+							tree.setSon(join);
+						}
 					}
 				}
 				else {
-					if(this.containTables(cross.getSon(), t1, t2)) {
-						this.twoConditions(cross.getSon(),exp , t1, t2);
-					}
-					if(this.containTables(cross.getRhson(), t1, t2)) {
-						this.twoConditions(cross.getRhson(),exp , t1, t2);
-					}
+					this.twoConditions(tree.getSon(), exp, t1, t2);
 				}
 			}
 		}
-		else {
-			this.twoConditions(tree.getSon(), exp, t1, t2);
-		}
 	}
+	
 
 	private void oneCondition(Operator tree, BinaryExpression exp, String tablename) {
 		if(tree instanceof CrossProductOP) {
@@ -152,6 +212,7 @@ public class Optimizer implements ExpressionVisitor{
 	
 	
 	public Operator resultTree() {
+		this.searchTree(this.tree);
 		for(BinaryExpression exp:this.filter) {
 			if(exp.getLeftExpression() instanceof Column) {
 				Column lhs = (Column)exp.getLeftExpression();
