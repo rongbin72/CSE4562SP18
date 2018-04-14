@@ -15,52 +15,229 @@ import java.util.List;
 
 public class Optimizer implements ExpressionVisitor{
 
-	private List<List<List<PrimitiveValue>>> tables;
-	private List<String> tablenames;
-	private List<Expression> filter = new ArrayList<Expression>();
-	private List<String> filtedTables = new ArrayList<>();
+	private List<BinaryExpression> filter = new ArrayList<>();
+	private Operator tree;
 
-	public Optimizer(Expression exp, List<List<List<PrimitiveValue>>> tables, List<String> tablenames) {
-		this.tables = tables;
-		this.tablenames = tablenames;
+	public Optimizer(Expression exp, Operator tree) {
 		if (exp != null) {
             exp.accept(this);
 		}
+		this.tree = tree;
+		
 	}
+	
+	public void searchTree(Operator tree) {
+		if(!(tree instanceof Read) && !(tree instanceof RenameOperator) 
+				&& !(tree instanceof CrossProductOP) && !(tree instanceof JoinOperator)) {
+			//is select, where, group by etc.
+			this.searchTree(tree.getSon());
+		}
+		if(tree instanceof CrossProductOP) {//or join
+			CrossProductOP cop = (CrossProductOP) tree;
+			cop.relatedT();//search the after tree by crossproduct itself
+		}
+	}
+	
+	private boolean containTables(Operator op,String t1,String t2) {
+		if(op instanceof CrossProductOP) {
+			CrossProductOP cross = (CrossProductOP)op;
+			if(cross.relatedGetter().contains(t1) && cross.relatedGetter().contains(t2)) {
+				return true;
+			}
+			return false;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	private void twoConditions(Operator tree, BinaryExpression exp, String t1, String t2) {
+		if(tree instanceof CrossProductOP) {
+			CrossProductOP self = (CrossProductOP)tree;
+			boolean left = this.containTables(self.getSon(), t1, t2);
+			boolean right = this.containTables(self.getRhson(), t1, t2);
+			if(left || right) {
+				if(left) {
+					//left must be a crossproduct and contains the tables
+					CrossProductOP leftson = (CrossProductOP) self.getSon();
+					Operator leftSonofLeft = leftson.getSon();
+					Operator rightSonofLeft = leftson.getRhson();
+					if(this.containTables(leftSonofLeft, t1, t2) || 
+							this.containTables(rightSonofLeft, t1, t2)) {
+						//continue push down
+					}
+					else {
+						//stop
+						if(self.getSon() instanceof JoinOperator) {
+							JoinOperator join = (JoinOperator)self.getSon();
+							join.addCondition(exp);
+							self.setSon(join);
+						}
+						else {
+							JoinOperator join = new JoinOperator(leftSonofLeft,rightSonofLeft,exp);
+							self.setSon(join);//////////////////
+						}
+					}
+					
+				}
+				if(right) {
+					//right must be a crossproduct and contains the tables
+					CrossProductOP rightson = (CrossProductOP) self.getRhson();
+					Operator leftSonofRight = rightson.getSon();
+					Operator rightSonofRight = rightson.getRhson();
+					if(this.containTables(leftSonofRight, t1, t2) || 
+							this.containTables(rightSonofRight, t1, t2)) {
+						//continue push down
+					}
+					else {
+						//stop
+						if(self.getSon() instanceof JoinOperator) {
+							JoinOperator join = (JoinOperator)self.getSon();
+							join.addCondition(exp);
+						}
+						else {
+							JoinOperator join = new JoinOperator(leftSonofRight,rightSonofRight,exp);
+							self.setRhS(join);
+						}
+					}
+				}
+				
+			}
+			else {
+				//do nothing
+				System.out.println("there must be something wrong");
+			}
+			
+		}
+		else {
+			if(!(tree instanceof Read) && !(tree instanceof RenameOperator)) {
+				if(tree.getSon() instanceof CrossProductOP) {
+					CrossProductOP cross = (CrossProductOP) tree.getSon();
+					//try one step
+					Operator lhsOfson = cross.getSon();
+					Operator rhsOfson = cross.getRhson();
+					boolean left = this.containTables(lhsOfson, t1, t2);
+					boolean right = this.containTables(rhsOfson, t1, t2);
+					if(left || right) {
+						//move one step
+						this.twoConditions(tree.getSon(), exp, t1, t2);
+					}
+					else if(this.containTables(cross, t1, t2)) {
+						if(tree.getSon() instanceof JoinOperator) {
+							JoinOperator join = (JoinOperator)cross;
+							join.addCondition(exp);
+							
+						}
+						else {
+							//must be crossproduct
+							JoinOperator join = new JoinOperator(cross.getSon(),cross.getRhson(),exp);
+							tree.setSon(join);
+						}
+					}
+				}
+				else {
+					this.twoConditions(tree.getSon(), exp, t1, t2);
+				}
+			}
+		}
+	}
+	
 
-	public List<List<List<PrimitiveValue>>> getOptimizedTable() throws SQLException {
-		if(this.filter.size()!=0) {
-			for(int i = 0;i < filter.size();i++) {
-				String tablename = this.filtedTables.get(i);
-				Expression e = this.filter.get(i);
-				int index = this.tablenames.indexOf(tablename);
-				// iterate table reversely
-				for(int j = this.tables.get(index).size() - 1; j > 0 ; j--) {
-					HashMap <String, List<PrimitiveValue>> h = new HashMap<>();
-					h.put(tablename, this.tables.get(index).get(j));
-					Evaluation ev = new Evaluation(h);
-					if(!ev.eval(e).toBool()) {
-						this.tables.get(index).remove(j);
+	private void oneCondition(Operator tree, BinaryExpression exp, String tablename) {
+		if(tree instanceof CrossProductOP) {
+			CrossProductOP cross = (CrossProductOP) tree;
+			if(cross.getSon() instanceof Read) {
+				Read read = (Read)cross.getSon();
+				if(tablename.equals(read.getTablename())) {
+					WhereOperator where = new WhereOperator(read,exp);
+					cross.setSon(where);
+				}
+			}
+			else if(cross.getSon() instanceof RenameOperator) {
+				RenameOperator rename = (RenameOperator)cross.getSon();
+				if(tablename.equals(rename.nameGetter())) {
+					WhereOperator where = new WhereOperator(rename,exp);
+					cross.setSon(where);
+				}
+			}
+			else if(cross.getSon() instanceof CrossProductOP) {
+				this.oneCondition(cross.getSon(), exp, tablename);
+			}
+			
+			if(cross.getRhson() instanceof Read) {
+				Read read = (Read)cross.getRhson();
+				if(tablename.equals(read.getTablename())) {
+					WhereOperator where = new WhereOperator(read,exp);
+					cross.setRhS(where);
+				}
+			}
+			else if(cross.getRhson() instanceof RenameOperator) {
+				RenameOperator rename = (RenameOperator)cross.getRhson();
+				if(tablename.equals(rename.nameGetter())) {
+					WhereOperator where = new WhereOperator(rename,exp);
+					cross.setRhS(where);
+				}
+			}
+			else if(cross.getRhson() instanceof CrossProductOP) { 
+				this.oneCondition(cross.getRhson(), exp, tablename);
+			}
+		}
+		else {
+			while(!(tree.getSon() instanceof Read) && !(tree.getSon() instanceof RenameOperator) &&
+					!(tree.getSon() instanceof CrossProductOP)) {
+				tree = tree.getSon();
+				
+			}
+			if(tree.getSon() instanceof Read) {
+				Read read = (Read)tree.getSon();
+				if(tablename.equals(read.getTablename())) {
+					WhereOperator where = new WhereOperator(read,exp);
+					tree.setSon(where);
+				}
+			}
+			else if(tree.getSon() instanceof RenameOperator) {
+				RenameOperator rename = (RenameOperator)tree.getSon();
+				if(tablename.equals(rename.nameGetter())) {
+					WhereOperator where = new WhereOperator(rename,exp);
+					tree.setSon(where);
+				}
+			}
+			else if(tree.getSon() instanceof CrossProductOP) {
+				CrossProductOP cross = (CrossProductOP)tree.getSon();
+				this.oneCondition(cross, exp, tablename);
+			}
+		}
+	}
+	
+	
+	public Operator resultTree() {
+		this.searchTree(this.tree);
+		for(BinaryExpression exp:this.filter) {
+			if(exp.getLeftExpression() instanceof Column) {
+				Column lhs = (Column)exp.getLeftExpression();
+				if(lhs.getTable().getName() == null) {
+					continue;
+				}
+				else {
+					if(exp.getRightExpression() instanceof Column) {
+						Column rhs = (Column)exp.getRightExpression();
+						if(rhs.getTable() == null) {
+							continue;
+						}
+						else {
+							String t1 = lhs.getTable().getName();
+							String t2 = rhs.getTable().getName();
+							this.twoConditions(this.tree, exp, t1, t2);
+						}
+					}
+					else {
+						String t1 = lhs.getTable().getName();
+						this.oneCondition(this.tree, exp, t1);
 					}
 				}
 			}
 		}
-		return this.tables;
-	}
-
-	private void binaryFilter(BinaryExpression exp) {
-		Expression eL = exp.getLeftExpression();
-		Expression eR = exp.getRightExpression();
-		if(eL instanceof Column) {
-			if(!(eR instanceof Column)) {
-				String name  = ((Column) eL).getTable().getName();
-				// if there is only one table, use tablenames.get(0)
-				assert tablenames.size() == 1 ^ name != null;
-				name = tablenames.size() == 1 ? tablenames.get(0) : name;
-                this.filter.add(exp);
-                this.filtedTables.add(name);
-			}
-		}
+		return this.tree;
 	}
 
 	@Override
@@ -175,17 +352,17 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(EqualsTo equ) {
-		binaryFilter(equ);
+		this.filter.add(equ);
 	}
 
 	@Override
 	public void visit(GreaterThan gt) {
-    	binaryFilter(gt);
+    	this.filter.add(gt);
 	}
 
 	@Override
 	public void visit(GreaterThanEquals gte) {
-	    binaryFilter(gte);
+	    this.filter.add(gte);
 	}
 
 	@Override
@@ -208,17 +385,17 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(MinorThan mt) {
-	    binaryFilter(mt);
+	    this.filter.add(mt);
 	}
 
 	@Override
 	public void visit(MinorThanEquals mte) {
-	    binaryFilter(mte);
+	    this.filter.add(mte);
 	}
 
 	@Override
 	public void visit(NotEqualsTo nequ) {
-	    binaryFilter(nequ);
+	    this.filter.add(nequ);
 	}
 
 	@Override

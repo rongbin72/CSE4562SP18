@@ -14,14 +14,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.sf.jsqlparser.statement.*;
-import net.sf.jsqlparser.statement.create.table.CreateTable;
-import net.sf.jsqlparser.statement.select.*;
-import net.sf.jsqlparser.expression.PrimitiveValue;
-import net.sf.jsqlparser.parser.*;
 
 
 public class Main {
@@ -30,8 +22,7 @@ public class Main {
 
     	Helper.prompt();
     	Reader r = new InputStreamReader(System.in);
-
-//        Reader r = new StringReader("CREATE TABLE R(A integer, B integer);" + "CREATE TABLE PLAYERS(" +
+//        Reader r = new StringReader("CREATE TABLE R(A integer, B integer, C integer);" + "CREATE TABLE PLAYERS(" +
 //                                            "ID STRING, " +
 //                                            "FIRSTNAME STRING, " +
 //                                            "LASTNAME STRING, " +
@@ -39,12 +30,7 @@ public class Main {
 //                                            "LASTSEASON integer, " +
 //                                            "WEIGHT integer, " +
 //                                            "BIRTHDATE date);" +
-//											"SELECT S.*, PLAYERS.ID from (SELECT A+B AS C FROM R WHERE C>5) S, PLAYERS ORDER BY S.C DESC;" +
-//                                            "SELECT Q.FIRSTSEASON, Q.ID FROM (SELECT FIRSTNAME, LASTSEASON, ID, FIRSTSEASON FROM PLAYERS) Q " +
-//											"WHERE Q.FIRSTSEASON >= 1980 ORDER BY Q.FIRSTSEASON DESC LIMIT 3;" +
-//                                             "SELECT A+B as C from R where C > 6 ORDER BY C LIMIT 3;" +
-//                                            "SELECT A as C FROM R where C > 4;" +
-//                                             "SELECT S.A from R as S ORDER BY S.A DESC LIMIT 6;"
+//											"SELECT R1.A,R2.A FROM R as R1, R R2, R R3 WHERE R1.A = R2.B and R2.A<3;"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
@@ -63,9 +49,17 @@ public class Main {
         		SelectBody body = select.getSelectBody();
         		if(body instanceof PlainSelect) {
         			PlainSelect sel = (PlainSelect) body;
-        			Iterator iterator = new Iterator(sel);
-        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
-        			Schema.reset(1);
+					RATreeBuilder builder = new RATreeBuilder(sel);
+					Operator RATree = builder.resultTree();
+					Optimizer opt = new Optimizer(sel.getWhere(),RATree);
+					RATree = opt.resultTree();
+					Helper.output(RATree);
+//					System.out.println();
+//					Helper.output(RATree);
+
+//        			Iterator iterator = new Iterator(sel);
+//        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
+//        			Schema.reset(1);
         		}
         		else if(body instanceof Union) {
         			//do something with union

@@ -1,116 +1,87 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.schema.Table;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
-public class Read {
-	private List<List<List<PrimitiveValue>>> tables = new ArrayList<>();
-	private List<String> tableNames;
-	private java.util.Iterator<List<Integer>> itor;
-	private List<Integer> length = new ArrayList<Integer>();
-	
-	public Read(List<String> tablenames) {
-		this.tableNames = tablenames;
-		for(String name:tableNames) {
-			List<List<PrimitiveValue>> tmpTable = Schema.getTableContent(name);
-			if(tmpTable == null) {
-				//this is a table without content in file
-				try {
-		            File file  = new File(Schema.getPath(name));
-		            FileInputStream fis = new FileInputStream(file);
-		            BufferedInputStream bis = new BufferedInputStream(fis);
-		            byte[] buffer = new byte[4096];
-		            int cnt = 0;
-		            tmpTable = new ArrayList<List<PrimitiveValue>>();
-		            String bluck = "";
-		            while((cnt=bis.read(buffer)) != -1) {
-		              bluck += new String(buffer, 0, cnt);  
-		            }
-		            bis.close();
-		            String[] textTable = bluck.split(System.getProperty("line.separator"));
-		            for(String i:textTable) {
-		            	tmpTable.add(Helper.toPrimitive(name, i));
-		            }
-		            this.tables.add(tmpTable);
-		            // pass value not pointer
-		            Schema.setTableContent(name, new ArrayList<>(tmpTable));
-		        } catch (Exception e) {
-		            // TODO Auto-generated catch block
-		            e.printStackTrace();
-		        }
-			}
-			else {
-				//this is a table with content in file
-				this.tables.add(tmpTable);
+public class Read extends Operator{
+	private String tableName;
+	private BufferedReader br;
+	private boolean eof = false;
+	private Integer bufferSize = 100;
+	private double factor = 0.5;
+	private Queue<List<PrimitiveValue>> buffer = new LinkedList<>();
+
+	private void fillBuffer() throws IOException {
+		String line;
+		while ((line = br.readLine()) != null) {
+			this.buffer.add(Helper.toPrimitive(this.tableName, line));
+			if (this.buffer.size() == this.bufferSize) {
+				break;
 			}
 		}
-		
-
-//		this.itor = this.getRowIndex(this.length).iterator();
-		
+		if (this.buffer.size() < bufferSize) {
+			this.eof = true;
+		}
 	}
 	
-	public void optimizeTables(Expression e) throws SQLException {
-		Optimizer opt = new Optimizer(e,this.tables,this.tableNames);
-		this.tables = opt.getOptimizedTable();
-		
+	public String getTablename() {
+		return this.tableName;
 	}
 
-	public void buildIndex() {
-		for(int i = 0;i<this.tableNames.size();i++) {
-			this.length.add(this.tables.get(i).size());
-		}
-		this.itor = this.getRowIndex(this.length).iterator();
+	public Read(Table table) throws IOException {
+		this.tableName = table.getName();
+		String path = Schema.getPath(tableName);
+		this.br = new BufferedReader(new FileReader(path));
+		fillBuffer();
 	}
 
-	private List<List<Integer>> getRowIndex(List<Integer> length){
-		List<List<Integer>> ans = new ArrayList<List<Integer>>();
-		for(int i = 0;i < length.get(0);i++) {
-			List<Integer> tmp = new ArrayList<Integer>();
-			tmp.add(i);
-			ans.add(tmp);
-		}
-		if(length.size() == 1) {
-			return ans;
-		}
-		else {
-			length.remove(0);
-			List<List<Integer>> ret = this.getRowIndex(length);
-			List<List<Integer>> result = new ArrayList<List<Integer>>();
-			for(int i = 0;i < ans.size();i++) {
-				for(int j = 0;j < ret.size();j++) {
-					List<Integer> tmp = new ArrayList<>();
-					tmp.addAll(ans.get(i));
-					tmp.addAll(ret.get(j));
-					result.add(tmp);
-				}
+	private void init() throws IOException {
+		String path = Schema.getPath(this.tableName);
+		this.br = new BufferedReader(new FileReader(path));
+		fillBuffer();
+	}
+
+	@Override
+	public Tuple result() {
+		// fill buffer
+		if (!eof && this.buffer.size() <= this.bufferSize * this.factor) {
+			try {
+				fillBuffer();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			return result;
 		}
-	}
 
-	public HashMap <String, List<PrimitiveValue>> ReadLine(){
-		HashMap <String, List<PrimitiveValue>> result = new HashMap <String, List<PrimitiveValue>>();
-		if(this.itor.hasNext()) {
-			List<Integer> tmp = this.itor.next();
-			for(int i = 0;i < tmp.size();i++) {
-				int line = tmp.get(i);
-				// put deep copy into result
-				result.put(this.tableNames.get(i), new ArrayList<>(this.tables.get(i).get(line)));
+		if (eof && buffer.size() == 0) {
+			try {
+				this.br.close();
+				init();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			return result;
-		}
-		else {
 			return null;
+
+		} else {
+			return new Tuple(tableName, buffer.poll());
 		}
+	}
+
+	@Override
+	public Operator getSon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSon(Operator son) {
+		
 	}
 }

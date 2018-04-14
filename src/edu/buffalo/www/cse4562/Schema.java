@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
@@ -11,7 +12,43 @@ public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
     private static List<String> extraTable = new ArrayList<>();
     private static List<String> extraCol = new ArrayList<>(); // store names of table which has extra column
+    private static HashMap<String, Expression> colAliasMap = new HashMap<>();
+    private static HashMap<String, String> tableAliasMap = new HashMap<>();
+    private static String tableName;
 
+    public static HashMap<String, String> getTableAliasMap() {
+        return tableAliasMap;
+    }
+
+    public static HashMap<String, Expression> getColAliasMap() {
+        return colAliasMap;
+    }
+
+    /**
+     * add column alias to map
+     * @param origin name
+     * @param alias
+     */
+    public static void addcolAlias(String alias, Expression origin) {
+        colAliasMap.put(alias.toUpperCase(), origin);
+    }
+    
+    /**
+     * add table alias to map
+     * @param origin name
+     * @param alias
+     */
+    public static void addtableAlias(String alias, String origin) {
+        tableAliasMap.put(alias.toUpperCase(), origin);
+    }
+
+    public static Expression getColAlias(String alias) {
+        return colAliasMap.get(alias.toUpperCase());
+    }
+
+    public static String getTableAlias(String alias) {
+        return tableAliasMap.get(alias.toUpperCase());
+    }
     /**
      * Add a table definition to schema when create table
      * @param table
@@ -75,7 +112,8 @@ public class Schema {
         return schema.get(tableName).getLine();
     }
 
-    public static HashMap<String, Integer> getIndxHash(String tableName) {
+    public static HashMap<String, Integer> getIndexHash(String tableName) {
+        Schema.tableName = tableName;
         return schema.get(tableName.toUpperCase()).getIndexHash();
     }
 
