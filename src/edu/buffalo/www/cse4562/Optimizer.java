@@ -175,11 +175,11 @@ public class Optimizer implements ExpressionVisitor{
 				}
 			}
 			else { 
-				if((cross.getSon() instanceof JoinOperator) ||
-				(cross.getSon() instanceof CrossProductOP) ||
-				(cross.getRhson() instanceof JoinOperator) ||
-				(cross.getRhson() instanceof CrossProductOP)) {
-					this.oneCondition(cross, exp, tablename);
+				if((cross.getSon() instanceof CrossProductOP)) {
+					this.oneCondition(cross.getSon(), exp, tablename);
+				}
+				if((cross.getRhson() instanceof CrossProductOP)) {
+					this.oneCondition(cross.getRhson(), exp, tablename);
 				}
 			}
 		}
