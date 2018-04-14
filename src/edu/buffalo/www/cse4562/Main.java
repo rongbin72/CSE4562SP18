@@ -30,7 +30,7 @@ public class Main {
                                             "LASTSEASON integer, " +
                                             "WEIGHT integer, " +
                                             "BIRTHDATE date);" +
-											"SELECT R1.A,R2.A FROM R as R1, R R2, R R3 WHERE R1.A = R2.B and R1.A<3;"
+											"SELECT R1.A,R2.A FROM R as R1, R R2, R R3 WHERE R1.A = R2.B and R2.A<3;"
                                             );
 
         CCJSqlParser parser = new CCJSqlParser(r);

@@ -160,7 +160,11 @@ public class Optimizer implements ExpressionVisitor{
 					cross.setSon(where);
 				}
 			}
-			else if(cross.getRhson() instanceof Read) {
+			else if(cross.getSon() instanceof CrossProductOP) {
+				this.oneCondition(cross.getSon(), exp, tablename);
+			}
+			
+			if(cross.getRhson() instanceof Read) {
 				Read read = (Read)cross.getRhson();
 				if(tablename.equals(read.getTablename())) {
 					WhereOperator where = new WhereOperator(read,exp);
@@ -174,13 +178,8 @@ public class Optimizer implements ExpressionVisitor{
 					cross.setRhS(where);
 				}
 			}
-			else { 
-				if((cross.getSon() instanceof CrossProductOP)) {
-					this.oneCondition(cross.getSon(), exp, tablename);
-				}
-				if((cross.getRhson() instanceof CrossProductOP)) {
-					this.oneCondition(cross.getRhson(), exp, tablename);
-				}
+			else if(cross.getRhson() instanceof CrossProductOP) { 
+				this.oneCondition(cross.getRhson(), exp, tablename);
 			}
 		}
 		else {
