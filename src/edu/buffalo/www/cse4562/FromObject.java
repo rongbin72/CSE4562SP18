@@ -74,7 +74,8 @@ public class FromObject implements FromItemVisitor {
 		PlainSelect sel = (PlainSelect)subBody;
 		RATreeBuilder builder = new RATreeBuilder((PlainSelect)subBody);
 		Operator tree = builder.resultTree();
-		RenameOperator rename = new RenameOperator(tree,alias);
+		Optimizer opt = new Optimizer(sel.getWhere(),tree);
+		RenameOperator rename = new RenameOperator(opt.resultTree(),alias);
 		this.tableList.add(rename);
 		
 	}
