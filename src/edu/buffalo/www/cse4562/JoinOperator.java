@@ -30,6 +30,16 @@ public class JoinOperator extends CrossProductOP{
 			if(eval.eval(this.on).toBool()) {
 				return tmp;
 			}
+			
+			boolean evalResult = eval.eval(this.on).toBool();
+			while(!evalResult) {
+				tmp = super.result();
+				if(tmp == null) {return null;}
+				eval = new Evaluation(tmp);
+				evalResult = eval.eval(this.on).toBool();
+			}
+			return tmp;
+			
 		} catch (InvalidPrimitive e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -37,6 +47,7 @@ public class JoinOperator extends CrossProductOP{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return this.result();
+		
+		return null;
 	}
 }
