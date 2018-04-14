@@ -75,7 +75,7 @@ public class Optimizer implements ExpressionVisitor{
 						}
 						else {
 							JoinOperator join = new JoinOperator(leftSonofLeft,rightSonofLeft,exp);
-							self.setSon(join);
+							self.setSon(join);//////////////////
 						}
 					}
 					
@@ -97,7 +97,7 @@ public class Optimizer implements ExpressionVisitor{
 						}
 						else {
 							JoinOperator join = new JoinOperator(leftSonofRight,rightSonofRight,exp);
-							self.setSon(join);
+							self.setRhS(join);
 						}
 					}
 				}
