@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ParseException, SQLException {
+    public static void main(String[] args) throws ParseException {
 
     	Helper.prompt();
     	Reader r = new InputStreamReader(System.in);
@@ -30,7 +30,7 @@ public class Main {
 //                                            "LASTSEASON integer, " +
 //                                            "WEIGHT integer, " +
 //                                            "BIRTHDATE date);" +
-//											"SELECT R1.A,R2.A FROM R as R1, R R2, R R3 WHERE R1.A = R2.B and R2.A<3;"
+//											"SELECT A, B FROM R ORDER BY A, B;"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);

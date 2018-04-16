@@ -46,7 +46,7 @@ public class FromObject implements FromItemVisitor {
 	public void visit(Table table) {
 		String alias = table.getAlias();
 		if(alias != null) {
-			Schema.addtableAlias(alias,table.getName());
+			Schema.addTableAlias(alias,table.getName());
 			Read reader = null;
 			try {
 				reader = new Read(table);

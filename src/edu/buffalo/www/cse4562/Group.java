@@ -10,21 +10,18 @@ import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
 
 public class Group {
-    private List<PrimitiveValue> tuple;
+    private List<PrimitiveValue> line;
     private int cnt;
     private HashMap<Integer, String> funcMap = new HashMap<>();
-    private List<SelectItem> selectItems;
-    private Tuple t;
+    private Tuple tuple;
 
     public Group(List<SelectItem> selectItems) {
         this.cnt = 0;
-        this.selectItems = selectItems;
+        // Build FuncMap => {columnIndex : FuncName, ...}
         for (int i = 0; i < selectItems.size(); i++) {
             SelectItem select = selectItems.get(i);
             if (select instanceof SelectExpressionItem) {
@@ -40,7 +37,7 @@ public class Group {
 
     public void fold(Tuple tuple) throws SQLException {
         List<PrimitiveValue> line = tuple.getTuple();
-        this.t = tuple;
+        this.tuple = tuple;
         boolean isFirstLine = false;
         for (int i = 0; i < line.size(); i++) {
             if (this.funcMap.containsKey(i)) {
@@ -48,43 +45,42 @@ public class Group {
                 Evaluation eval = new Evaluation(tuple);
                 switch (func) {
                     case "SUM":
-                        if (this.tuple == null) {
-                            this.tuple = line;
+                        if (this.line == null) {
+                            this.line = line;
                             isFirstLine = true;
                         } else {
                             if (isFirstLine) break;
-                            Expression add = new Addition(line.get(i), this.tuple.get(i));
-                            PrimitiveValue value = eval.eval(add);
-                            line.set(i, value);
+                            Expression add = new Addition(line.get(i), this.line.get(i));
+                            line.set(i, eval.eval(add));
                         }
                         break;
                     case "AVG":
-                        if (this.tuple == null) {
-                            this.tuple = line;
+                        if (this.line == null) {
+                            this.line = line;
                         } else {
-                            Expression add2 = new Addition(line.get(i), this.tuple.get(i));
+                            Expression add2 = new Addition(line.get(i), this.line.get(i));
                             line.set(i, eval.eval(add2));
                         }
                         break;
                 }
             }
         }
-        this.tuple = line;
+        this.line = line;
         this.cnt++;
     }
 
     public Tuple result() throws SQLException {
-        for (int i = 0; i < this.tuple.size(); i++) {
+        for (int i = 0; i < this.line.size(); i++) {
             if (this.funcMap.containsKey(i)) {
                 String func = this.funcMap.get(i);
-                Evaluation eval = new Evaluation(this.t);
                 if (func.equals("AVG")) {
-                    Expression div = new Division(this.tuple.get(i), new LongValue(this.cnt));
-                    this.tuple.set(i, eval.eval(div));
+                    Evaluation eval = new Evaluation(this.tuple);
+                    Expression div = new Division(this.line.get(i), new LongValue(this.cnt));
+                    this.line.set(i, eval.eval(div));
                 }
             }
         }
-        this.t.setTuple(this.tuple);
-        return this.t;
+        this.tuple.setTuple(this.line);
+        return this.tuple;
     }
 }

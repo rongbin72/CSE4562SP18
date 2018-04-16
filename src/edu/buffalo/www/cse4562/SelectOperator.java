@@ -35,7 +35,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 				}
             	String alias = exp.getAlias();
             	if(alias != null) {
-            		Schema.addcolAlias(alias, exp.getExpression());//add alias to alias map in schema
+            		Schema.addColAlias(alias, exp.getExpression());//add alias to alias map in schema
             	}
             }
         }
@@ -46,10 +46,10 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			item.accept(this);
 		}
 
-		List<Column> columns = this.resultofSon.getGroups();
-		String key = "";
 		Evaluation e = new Evaluation(this.resultTuple);
+		String key = "*";
 		if (this.resultofSon.haveGroups()) {
+			List<Column> columns = this.resultofSon.getGroups();
 			for (Column c : columns) {
 				try {
 					key += e.eval(c).toRawString() + ",";
@@ -57,8 +57,6 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 					e1.printStackTrace();
 				}
 			}
-		} else {
-			key = "*";
 		}
 
 		if (groupMap.containsKey(key)) {
@@ -81,14 +79,13 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public Tuple result() {
-		this.resultofSon = this.son.result();
-		if(this.resultofSon == null) {
-			return null;
-		}
-		this.resultTuple = new Tuple();
-
 		if (isFunc) {
 			if (!isReadAll) {
+                this.resultofSon = this.son.result();
+                if(this.resultofSon == null)
+                    return null;
+
+                this.resultTuple = new Tuple();
 				this.eval = new Evaluation(this.resultofSon);
 				loop();
 				while ((this.resultofSon = this.son.result()) != null) {
@@ -108,9 +105,11 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			} else {
 				return this.table.poll();
 			}
-
-
 		} else {
+            this.resultofSon = this.son.result();
+            if(this.resultofSon == null)
+                return null;
+            this.resultTuple = new Tuple();
 			this.eval = new Evaluation(this.resultofSon);
 			for(SelectItem item:this.items) {
 				item.accept(this);
