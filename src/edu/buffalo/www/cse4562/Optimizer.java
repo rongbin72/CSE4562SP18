@@ -8,9 +8,7 @@ import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Optimizer implements ExpressionVisitor{
@@ -148,7 +146,7 @@ public class Optimizer implements ExpressionVisitor{
 			CrossProductOP cross = (CrossProductOP) tree;
 			if(cross.getSon() instanceof Read) {
 				Read read = (Read)cross.getSon();
-				if(tablename.equals(read.getTablename())) {
+				if(tablename.equals(read.getTableName())) {
 					WhereOperator where = new WhereOperator(read,exp);
 					cross.setSon(where);
 				}
@@ -166,7 +164,7 @@ public class Optimizer implements ExpressionVisitor{
 			
 			if(cross.getRhson() instanceof Read) {
 				Read read = (Read)cross.getRhson();
-				if(tablename.equals(read.getTablename())) {
+				if(tablename.equals(read.getTableName())) {
 					WhereOperator where = new WhereOperator(read,exp);
 					cross.setRhS(where);
 				}
@@ -190,7 +188,7 @@ public class Optimizer implements ExpressionVisitor{
 			}
 			if(tree.getSon() instanceof Read) {
 				Read read = (Read)tree.getSon();
-				if(tablename.equals(read.getTablename())) {
+				if(tablename.equals(read.getTableName())) {
 					WhereOperator where = new WhereOperator(read,exp);
 					tree.setSon(where);
 				}
