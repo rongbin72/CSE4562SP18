@@ -1,12 +1,8 @@
 package edu.buffalo.www.cse4562;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.PrimitiveValue;
-import net.sf.jsqlparser.expression.PrimitiveValue.InvalidPrimitive;
+
+import java.sql.SQLException;
 
 public class WhereOperator extends Operator{
 	
@@ -41,8 +37,6 @@ public class WhereOperator extends Operator{
 				}
 				return resultofSon;
 			}
-		} catch (InvalidPrimitive e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
