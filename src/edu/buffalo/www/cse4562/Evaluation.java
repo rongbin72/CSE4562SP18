@@ -29,6 +29,11 @@ public class Evaluation extends Eval {
                 }
             }
         }
+        if (!this.tuple.getIndexHash().containsKey(tableName)) {
+            tableName = "*";
+            colName = column.toString();
+        }
+
         return this.tuple.getItem(tableName, colName);
     }
 }
