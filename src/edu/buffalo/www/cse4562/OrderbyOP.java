@@ -1,10 +1,10 @@
 package edu.buffalo.www.cse4562;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class OrderbyOP extends Operator {
     private Operator son;

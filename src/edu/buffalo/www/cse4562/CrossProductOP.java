@@ -99,11 +99,11 @@ public class CrossProductOP extends Operator{
 	public void relatedT() {
 		if(this.lhS instanceof Read) {
 			Read r = (Read)this.lhS;
-			this.relatedTables.add(r.getTablename());
+			this.relatedTables.add(r.getTableName());
 		}
 		if(this.rhS instanceof Read) {
 			Read r = (Read)this.rhS;
-			this.relatedTables.add(r.getTablename());
+			this.relatedTables.add(r.getTableName());
 		}
 		if(this.lhS instanceof CrossProductOP) {
 			CrossProductOP c = (CrossProductOP) this.lhS;

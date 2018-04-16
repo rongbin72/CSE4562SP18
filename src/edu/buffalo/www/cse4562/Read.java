@@ -3,12 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.*;
 
 
@@ -20,7 +15,7 @@ public class Read extends Operator{
 	private double factor = 0.5;
 	private Queue<List<PrimitiveValue>> buffer = new LinkedList<>();
 	private List<List<PrimitiveValue>> table = new ArrayList<>();
-	private Iterator<List<PrimitiveValue>> tableIter;
+	private Iterator<List<PrimitiveValue>> tableIterator;
 
 	private void fillBuffer() throws IOException {
 		String line;
@@ -35,19 +30,22 @@ public class Read extends Operator{
 		}
 	}
 	
-	public String getTablename() {
+	public String getTableName() {
 		return this.tableName;
 	}
 
 	public Read(Table table) throws IOException {
 		this.tableName = table.getName();
 		String path = Schema.getPath(tableName);
-		Path p = Paths.get(path);
-		List<String> ls = Files.readAllLines(p);
-		for (String i : ls) {
-			this.table.add(Helper.toPrimitive(tableName, i));
+		FileInputStream fs = new FileInputStream(new File(path));
+		this.br = new BufferedReader(new InputStreamReader(fs));
+		String line;
+		while ((line = this.br.readLine()) != null) {
+			this.table.add(Helper.toPrimitive(this.tableName, line));
 		}
-		this.tableIter = this.table.iterator();
+		fs.close();
+		br.close();
+		this.tableIterator = this.table.iterator();
 //		FileReader fr = new FileReader(path);
 //		fillBuffer();
 	}
@@ -77,10 +75,10 @@ public class Read extends Operator{
 //				e.printStackTrace();
 //			}
 //			return null;
-		if (this.tableIter.hasNext()) {
-			return new Tuple(tableName, tableIter.next());
+		if (this.tableIterator.hasNext()) {
+			return new Tuple(tableName, tableIterator.next());
 		} else {
-			this.tableIter = this.table.iterator();
+			this.tableIterator = this.table.iterator();
 			return null;
 		}
 	}

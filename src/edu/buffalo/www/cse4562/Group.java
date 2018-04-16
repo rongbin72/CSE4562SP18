@@ -19,7 +19,7 @@ public class Group {
     private HashMap<Integer, String> funcMap = new HashMap<>();
     private Tuple tuple;
 
-    public Group(List<SelectItem> selectItems) {
+    Group(List<SelectItem> selectItems) {
         this.cnt = 0;
         // Build FuncMap => {columnIndex : FuncName, ...}
         for (int i = 0; i < selectItems.size(); i++) {
@@ -35,7 +35,7 @@ public class Group {
         }
     }
 
-    public void fold(Tuple tuple) throws SQLException {
+    void fold(Tuple tuple) throws SQLException {
         List<PrimitiveValue> line = tuple.getTuple();
         this.tuple = tuple;
         boolean isFirstLine = false;
@@ -44,7 +44,7 @@ public class Group {
                 String func = this.funcMap.get(i);
                 Evaluation eval = new Evaluation(tuple);
                 switch (func) {
-                    case "SUM":
+                    default:
                         if (this.line == null) {
                             this.line = line;
                             isFirstLine = true;
@@ -52,14 +52,6 @@ public class Group {
                             if (isFirstLine) break;
                             Expression add = new Addition(line.get(i), this.line.get(i));
                             line.set(i, eval.eval(add));
-                        }
-                        break;
-                    case "AVG":
-                        if (this.line == null) {
-                            this.line = line;
-                        } else {
-                            Expression add2 = new Addition(line.get(i), this.line.get(i));
-                            line.set(i, eval.eval(add2));
                         }
                         break;
                 }
