@@ -18,12 +18,12 @@ public class TableDef {
      * @param def CreateTable instance
      */
     public TableDef(CreateTable def) {
-        this.tableName = def.getTable().getName().toUpperCase();
+        this.tableName = def.getTable().getName();
         this.tablePath = "data/" + this.tableName + ".dat";
 
         int columnIndex = 0;
         for (ColumnDefinition col : def.getColumnDefinitions()) {
-            this.colIndex.put(col.getColumnName().toUpperCase(), columnIndex);
+            this.colIndex.put(col.getColumnName(), columnIndex);
             this.colType.put(columnIndex, col.getColDataType().getDataType());
             columnIndex++;
         }
@@ -54,7 +54,7 @@ public class TableDef {
      * @return column index
      */
     public int getColIndex(String colName) {
-        return this.colIndex.get(colName.toUpperCase());
+        return this.colIndex.get(colName);
     }
 
     public String getColType(int index) {

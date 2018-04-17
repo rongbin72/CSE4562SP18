@@ -25,7 +25,7 @@ public class Schema {
      * @param alias
      */
     public static void addColAlias(String alias, Expression origin) {
-        colAliasMap.put(alias.toUpperCase(), origin);
+        colAliasMap.put(alias, origin);
     }
     
     /**
@@ -34,34 +34,34 @@ public class Schema {
      * @param alias
      */
     public static void addTableAlias(String alias, String origin) {
-        tableAliasMap.put(alias.toUpperCase(), origin);
+        tableAliasMap.put(alias, origin);
     }
 
     public static Expression getColAlias(String alias) {
-        return colAliasMap.get(alias.toUpperCase());
+        return colAliasMap.get(alias);
     }
 
     public static String getTableAlias(String alias) {
-        return tableAliasMap.get(alias.toUpperCase());
+        return tableAliasMap.get(alias);
     }
     /**
      * Add a table definition to schema when create table
      * @param table
      */
     public static void addTable(CreateTable table) {
-        schema.put(table.getTable().getName().toUpperCase(), new TableDef(table));
+        schema.put(table.getTable().getName(), new TableDef(table));
     }
 
     public static LinkedHashMap<String, Integer> getIndexHash(String tableName) {
-        return schema.get(tableName.toUpperCase()).getIndexHash();
+        return schema.get(tableName).getIndexHash();
     }
 
     public static int getColIndex(String tableName, String colName) {
-        return schema.get(tableName.toUpperCase()).getColIndex(colName);
+        return schema.get(tableName).getColIndex(colName);
     }
 
     public static String getColType(String tableName, int index) {
-        return schema.get(tableName.toUpperCase()).getColType(index);
+        return schema.get(tableName).getColType(index);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Schema {
      * @return table path
      */
     public static String getPath(String tableName) {
-        return schema.get(tableName.toUpperCase()).getTablePath();
+        return schema.get(tableName).getTablePath();
     }
 
 }

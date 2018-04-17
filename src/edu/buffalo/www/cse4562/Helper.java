@@ -105,17 +105,17 @@ class Helper {
         for (String cell : lineSplit) {
             String type = Schema.getColType(tableName, index);
             // keep the type as lower case
-            switch (type.toLowerCase()) {
-                case "integer":
+            switch (type) {
+                case "INTEGER":
                     tuple.add(new LongValue(cell));
                     break;
-                case "string":
+                case "STRING":
                     tuple.add(new StringValue(cell));
                     break;
-                case "double":
+                case "DOUBLE":
                     tuple.add(new DoubleValue(cell));
                     break;
-                case "date":
+                case "DATE":
                     tuple.add(new DateValue(cell));
                     break;
             }
