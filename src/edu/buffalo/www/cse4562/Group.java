@@ -16,7 +16,6 @@ public class Group {
     private int cnt;
     private HashMap<Integer, String> funcMap = new HashMap<>();
     private Tuple tuple;
-    private Evaluation eval = new Evaluation();
 
     Group(List<SelectItem> selectItems) {
         this.cnt = 0;
@@ -41,7 +40,6 @@ public class Group {
         for (int i = 0; i < line.size(); i++) {
             if (this.funcMap.containsKey(i)) {
                 String func = this.funcMap.get(i);
-                this.eval.init(tuple);
                 switch (func) {
                     default:
                         if (this.line == null) {
@@ -65,9 +63,8 @@ public class Group {
             if (this.funcMap.containsKey(i)) {
                 String func = this.funcMap.get(i);
                 if (func.equals("AVG")) {
-                    this.eval.init(this.tuple);
-                    Expression div = new Division(this.line.get(i), new LongValue(this.cnt));
-                    this.line.set(i, eval.eval(div));
+                    double div = this.line.get(i).toDouble() / this.cnt;
+                    this.line.set(i, new DoubleValue(div));
                 }
             }
         }
