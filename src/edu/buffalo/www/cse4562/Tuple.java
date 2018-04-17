@@ -4,7 +4,6 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 
-import java.sql.SQLException;
 import java.util.*;
 
 public class Tuple {
@@ -152,12 +151,12 @@ public class Tuple {
         this.indexHash.remove(oldName);
     }
 
-    PrimitiveValue getItem(String tableName, String colName) throws SQLException {
-        if (colAliasMap.containsKey(colName)) {
-            this.eval.init(this);
-            Expression exp = colAliasMap.get(colName);
-            return eval.eval(exp);
-        }
+    PrimitiveValue getItem(String tableName, String colName) {
+//        if (colAliasMap.containsKey(colName)) {
+//            this.eval.init(this);
+//            Expression exp = colAliasMap.get(colName);
+//            return eval.eval(exp);
+//        }
 
 //        String realName = this.tableAliasMap.getOrDefault(tableName, tableName);
         int i = this.indexHash.get(tableName).get(colName);
