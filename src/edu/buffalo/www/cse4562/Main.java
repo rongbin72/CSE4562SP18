@@ -15,7 +15,6 @@ import java.io.Reader;
 public class Main {
 
     public static void main(String[] args) throws ParseException {
-        int i = 0;
         Helper.prompt();
         Reader r = new InputStreamReader(System.in);
 //        Reader r = new StringReader("CREATE TABLE R(A integer, B integer, C integer);" + "CREATE TABLE PLAYERS(" +
@@ -50,12 +49,6 @@ public class Main {
                 }
             }
             Helper.prompt();
-            i++;
-            if (i == 14) {
-                i++;
-                Helper.prompt();
-                statement = parser.Statement();
-            }
             statement = parser.Statement();
         }
     }
