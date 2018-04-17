@@ -15,16 +15,15 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	private Operator son;
 	private List<SelectItem> items;
-	private List<Expression> selectExps;
 	private Tuple resultTuple;
-	private Tuple resultofSon;
+    private Tuple resultOfSon;
 	private Evaluation eval;
 	private HashMap<String, Group> groupMap = new HashMap<>();
 	private boolean isFunc = false;
 	private boolean isReadAll = false;
 	private LinkedList<Tuple> table = new LinkedList<>();
 
-	public SelectOperator(Operator son, List<SelectItem> items) {
+    SelectOperator(Operator son, List<SelectItem> items) {
 		this.son = son;
 		this.items = items;
 		this.eval = new Evaluation();
@@ -47,21 +46,21 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			item.accept(this);
 		}
 		this.eval.init(resultTuple);
-		String key = "*";
-		if (this.resultofSon.haveGroups()) {
-			List<Column> columns = this.resultofSon.getGroups();
+        StringBuilder key = new StringBuilder("*");
+        if (this.resultOfSon.haveGroups()) {
+            List<Column> columns = this.resultOfSon.getGroups();
 			for (Column c : columns) {
 				try {
-					key += this.eval.eval(c).toRawString() + ",";
+                    key.append(this.eval.eval(c).toRawString()).append(",");
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
 			}
 		}
 
-		if (groupMap.containsKey(key)) {
+        if (groupMap.containsKey(key.toString())) {
 			try {
-				this.groupMap.get(key).fold(this.resultTuple);
+                this.groupMap.get(key.toString()).fold(this.resultTuple);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -70,7 +69,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			Group group = new Group(this.items);
 			try {
 				group.fold(this.resultTuple);
-				this.groupMap.put(key, group);
+                this.groupMap.put(key.toString(), group);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -81,15 +80,15 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 	public Tuple result() {
 		if (isFunc) {
 			if (!isReadAll) {
-                this.resultofSon = this.son.result();
-                if(this.resultofSon == null)
+                this.resultOfSon = this.son.result();
+                if (this.resultOfSon == null)
                     return null;
 
                 this.resultTuple = new Tuple();
-				this.eval.init(this.resultofSon);
+                this.eval.init(this.resultOfSon);
 				loop();
-				while ((this.resultofSon = this.son.result()) != null) {
-					this.eval.init(this.resultofSon);
+                while ((this.resultOfSon = this.son.result()) != null) {
+                    this.eval.init(this.resultOfSon);
 					this.resultTuple = new Tuple();
 					loop();
 				}
@@ -106,11 +105,11 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 				return this.table.poll();
 			}
 		} else {
-            this.resultofSon = this.son.result();
-            if(this.resultofSon == null)
+            this.resultOfSon = this.son.result();
+            if (this.resultOfSon == null)
                 return null;
             this.resultTuple = new Tuple();
-			this.eval.init(this.resultofSon);
+            this.eval.init(this.resultOfSon);
 			for(SelectItem item:this.items) {
 				item.accept(this);
 			}
@@ -120,16 +119,14 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 
 	@Override
 	public void visit(AllColumns allCol) {
-		this.resultTuple = this.resultofSon;
-//		this.resultTuple.mergeTable(resultofSon);
+        this.resultTuple = this.resultOfSon;
 	}
 
 
 	@Override
 	public void visit(AllTableColumns allTableCol) {
 		String tableName = allTableCol.getTable().getName();
-		this.resultTuple.addAllColumn(tableName, this.resultofSon);
-//		this.resultTuple.mergeTable(this.resultofSon.subTuple(table));
+        this.resultTuple.addAllColumn(tableName, this.resultOfSon);
 	}
 
 	@Override
