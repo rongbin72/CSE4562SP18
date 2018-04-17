@@ -51,7 +51,7 @@ public class Main {
             }
             Helper.prompt();
             i++;
-            if (i == 12) {
+            if (i == 14) {
                 i++;
                 Helper.prompt();
                 statement = parser.Statement();
