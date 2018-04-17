@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class Evaluation extends Eval {
     private Tuple tuple;
 
-    public void init(Tuple tuple) {
+    void init(Tuple tuple) {
         this.tuple = tuple;
     }
     
@@ -19,16 +19,12 @@ public class Evaluation extends Eval {
     	String tableName = column.getTable().getName();
         String colName = column.getColumnName();
         if (tableName == null) {
-            // Only one table in tuple
-            for (String t:this.tuple.getIndexHash().keySet()) {
-                try {
+            for (String t : this.tuple.getIndexHash().keySet()) {
+                if (this.tuple.getIndexHash().get(t).containsKey(colName)) {
                     return this.tuple.getItem(t, colName);
-                } catch (NullPointerException n) {
-                    continue;
                 }
             }
-        }
-        if (!this.tuple.getIndexHash().containsKey(tableName)) {
+        } else if (!this.tuple.getIndexHash().containsKey(tableName)) {
             tableName = "*";
             colName = column.toString();
         }
