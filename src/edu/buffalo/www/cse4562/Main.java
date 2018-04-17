@@ -30,7 +30,7 @@ public class Main {
 //                                            "LASTSEASON integer, " +
 //                                            "WEIGHT integer, " +
 //                                            "BIRTHDATE date);" +
-//											"SELECT A, B FROM R ORDER BY A, B;"
+//											"SELECT R1.A, R2.B FROM R R1, R R2, R R3 WHERE R1.A = R2.A;"
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);

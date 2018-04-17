@@ -1,47 +1,63 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class WhereOperator extends Operator{
 	
 	private Expression whereCondition;
 	private Operator son;
+	private Evaluation eval;
+	private List<Tuple> table = new ArrayList<>();
+	private Iterator<Tuple> tableIterator;
+	private boolean isFirstLine = true;
 
 	public WhereOperator(Operator son, Expression where) {
 		this.whereCondition = where;
 		this.son = son;
+		this.eval = new Evaluation();
 	}
-	
+
 	public Tuple result(){
-		Tuple resultofSon = this.son.result();
-		if(resultofSon == null) {
-			return null;
-		}
-		Evaluation eval = new Evaluation(resultofSon);
-		try {
-			if(eval.eval(this.whereCondition).toBool()) {
-				return resultofSon;
+		if (isFirstLine) {
+			Tuple resultOfSon = this.son.result();
+			if (resultOfSon == null) {
+				return null;
 			}
-			else {
-				resultofSon = this.son.result();
-				if(resultofSon == null) {return null;}
-				eval = new Evaluation(resultofSon);
-				boolean evalResult = eval.eval(this.whereCondition).toBool();
-				while(!evalResult) {
-					resultofSon = this.son.result();
-					if(resultofSon == null) {return null;}
-					eval = new Evaluation(resultofSon);
-					evalResult = eval.eval(this.whereCondition).toBool();
+
+			this.eval.init(resultOfSon);
+			while (resultOfSon != null) {
+				try {
+					if (eval.eval(this.whereCondition).toBool()) {
+						table.add(resultOfSon);
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-				return resultofSon;
+				resultOfSon = this.son.result();
+				eval.init(resultOfSon);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			this.tableIterator = this.table.iterator();
+			isFirstLine = false;
+			if (this.tableIterator.hasNext()) {
+				return new Tuple(tableIterator.next());
+			} else {
+				this.tableIterator = this.table.iterator();
+				return null;
+			}
+		} else {
+			if (this.tableIterator.hasNext()) {
+				return new Tuple(tableIterator.next());
+			} else {
+				this.tableIterator = this.table.iterator();
+				return null;
+			}
 		}
-		return null;
-		
 	}
 
 	@Override

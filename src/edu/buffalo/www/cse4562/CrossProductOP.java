@@ -12,9 +12,9 @@ public class CrossProductOP extends Operator {
     private boolean started;
     private List<String> relatedTables;
 
-    public CrossProductOP(Operator leftson, Operator rightSon) {
+    public CrossProductOP(Operator leftSon, Operator rightSon) {
         this.rhS = rightSon;
-        this.lhS = leftson;
+        this.lhS = leftSon;
         this.started = false;
         this.relatedTables = new ArrayList<>();
     }
@@ -43,8 +43,8 @@ public class CrossProductOP extends Operator {
                 return null;
             } else {
                 this.started = true;
-                this.lhTuple.addTable(this.rhTuple);
-                return this.lhTuple;
+                this.rhTuple.addTable(this.lhTuple);
+                return this.rhTuple;
             }
         } else {
             this.rhTuple = rhS.result();
@@ -56,11 +56,11 @@ public class CrossProductOP extends Operator {
                     return null;//whole loop end
                 }
                 this.rhTuple = rhS.result();
-                this.lhTuple.addTable(this.rhTuple);
-                return this.lhTuple;
+                this.rhTuple.addTable(this.lhTuple);
+                return this.rhTuple;
             } else {
-                this.lhTuple.addTable(this.rhTuple);
-                return this.lhTuple;
+                this.rhTuple.addTable(this.lhTuple);
+                return this.rhTuple;
             }
         }
     }

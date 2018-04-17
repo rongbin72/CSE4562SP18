@@ -10,10 +10,9 @@ import java.sql.SQLException;
 public class Evaluation extends Eval {
     private Tuple tuple;
 
-    public Evaluation(Tuple tuple) {
+    public void init(Tuple tuple) {
         this.tuple = tuple;
     }
-
     
     @Override
     public PrimitiveValue eval(Column column) throws SQLException {
