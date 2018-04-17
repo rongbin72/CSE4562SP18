@@ -14,7 +14,7 @@ import java.io.Reader;
 
 public class Main {
 
-    public static void main(String[] args) throws ParseException, InterruptedException {
+    public static void main(String[] args) throws ParseException {
         int i = 0;
         Helper.prompt();
         Reader r = new InputStreamReader(System.in);
@@ -51,9 +51,8 @@ public class Main {
             }
             Helper.prompt();
             i++;
-            if (i == 3) {
+            if (i == 12) {
                 i++;
-                Thread.sleep(1000 * 10);
                 Helper.prompt();
                 statement = parser.Statement();
             }
