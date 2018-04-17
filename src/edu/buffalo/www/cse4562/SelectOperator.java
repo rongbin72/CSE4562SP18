@@ -18,7 +18,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 	private Tuple resultTuple;
     private Tuple resultOfSon;
 	private Evaluation eval;
-	private HashMap<String, Group> groupMap = new HashMap<>();
+    private HashMap<Integer, Group> groupMap = new HashMap<>();
 	private boolean isFunc = false;
 	private boolean isReadAll = false;
 	private LinkedList<Tuple> table = new LinkedList<>();
@@ -46,21 +46,23 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			item.accept(this);
 		}
 		this.eval.init(resultTuple);
-        StringBuilder key = new StringBuilder("*");
+//        StringBuilder key = new StringBuilder("*");
+        int key = 0;
         if (this.resultOfSon.haveGroups()) {
             List<Column> columns = this.resultOfSon.getGroups();
 			for (Column c : columns) {
 				try {
-                    key.append(this.eval.eval(c).toRawString());
+                    key += this.eval.eval(c).hashCode();
+//                    key.append(this.eval.eval(c).toRawString());
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
 			}
 		}
 
-        if (groupMap.containsKey(key.toString())) {
+        if (groupMap.containsKey(key)) {
 			try {
-                this.groupMap.get(key.toString()).fold(this.resultTuple);
+                this.groupMap.get(key).fold(this.resultTuple);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -69,7 +71,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			Group group = new Group(this.items);
 			try {
 				group.fold(this.resultTuple);
-                this.groupMap.put(key.toString(), group);
+                this.groupMap.put(key, group);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
