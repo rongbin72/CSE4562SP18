@@ -23,10 +23,11 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 	private boolean isFunc = false;
 	private boolean isReadAll = false;
 	private LinkedList<Tuple> table = new LinkedList<>();
-	
+
 	public SelectOperator(Operator son, List<SelectItem> items) {
 		this.son = son;
 		this.items = items;
+		this.eval = new Evaluation();
 		for (SelectItem item : this.items) {
             if(item instanceof SelectExpressionItem) {
             	SelectExpressionItem exp = (SelectExpressionItem) item;
@@ -45,14 +46,13 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 		for(SelectItem item:this.items) {
 			item.accept(this);
 		}
-
-		Evaluation e = new Evaluation(this.resultTuple);
+		this.eval.init(resultTuple);
 		String key = "*";
 		if (this.resultofSon.haveGroups()) {
 			List<Column> columns = this.resultofSon.getGroups();
 			for (Column c : columns) {
 				try {
-					key += e.eval(c).toRawString() + ",";
+					key += this.eval.eval(c).toRawString() + ",";
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -86,10 +86,10 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
                     return null;
 
                 this.resultTuple = new Tuple();
-				this.eval = new Evaluation(this.resultofSon);
+				this.eval.init(this.resultofSon);
 				loop();
 				while ((this.resultofSon = this.son.result()) != null) {
-					this.eval = new Evaluation(this.resultofSon);
+					this.eval.init(this.resultofSon);
 					this.resultTuple = new Tuple();
 					loop();
 				}
@@ -110,7 +110,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
             if(this.resultofSon == null)
                 return null;
             this.resultTuple = new Tuple();
-			this.eval = new Evaluation(this.resultofSon);
+			this.eval.init(this.resultofSon);
 			for(SelectItem item:this.items) {
 				item.accept(this);
 			}
