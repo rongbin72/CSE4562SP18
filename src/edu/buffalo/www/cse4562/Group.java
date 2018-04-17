@@ -1,12 +1,12 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
-import net.sf.jsqlparser.expression.operators.arithmetic.Division;
+import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-import java.security.PrivateKey;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -37,21 +37,19 @@ public class Group {
         List<PrimitiveValue> line = tuple.getTuple();
         this.tuple = tuple;
         boolean isFirstLine = false;
-        for (int i = 0; i < line.size(); i++) {
-            if (this.funcMap.containsKey(i)) {
-                String func = this.funcMap.get(i);
-                switch (func) {
-                    default:
-                        if (this.line == null) {
-                            this.line = line;
-                            isFirstLine = true;
-                        } else {
-                            if (isFirstLine) break;
-                            double add = line.get(i).toDouble() + this.line.get(i).toDouble();
-                            line.set(i, new DoubleValue(add));
-                        }
-                        break;
-                }
+        for (int i : this.funcMap.keySet()) {
+            String func = this.funcMap.get(i);
+            switch (func) {
+                default:
+                    if (this.line == null) {
+                        this.line = line;
+                        isFirstLine = true;
+                    } else {
+                        if (isFirstLine) break;
+                        double add = line.get(i).toDouble() + this.line.get(i).toDouble();
+                        line.set(i, new DoubleValue(add));
+                    }
+                    break;
             }
         }
         this.line = line;
@@ -59,13 +57,11 @@ public class Group {
     }
 
     public Tuple result() throws SQLException {
-        for (int i = 0; i < this.line.size(); i++) {
-            if (this.funcMap.containsKey(i)) {
-                String func = this.funcMap.get(i);
-                if (func.equals("AVG")) {
-                    double div = this.line.get(i).toDouble() / this.cnt;
-                    this.line.set(i, new DoubleValue(div));
-                }
+        for (int i : this.funcMap.keySet()) {
+            String func = this.funcMap.get(i);
+            if (func.equals("AVG")) {
+                double div = this.line.get(i).toDouble() / this.cnt;
+                this.line.set(i, new DoubleValue(div));
             }
         }
         this.tuple.setTuple(this.line);
