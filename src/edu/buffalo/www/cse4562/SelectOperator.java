@@ -51,7 +51,7 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
             List<Column> columns = this.resultOfSon.getGroups();
 			for (Column c : columns) {
 				try {
-                    key.append(this.eval.eval(c).toRawString()).append(",");
+                    key.append(this.eval.eval(c).toRawString());
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
