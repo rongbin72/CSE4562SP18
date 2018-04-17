@@ -148,8 +148,8 @@ public class Tuple {
     }
 
     public PrimitiveValue getItem(String tableName, String colName) throws SQLException {
-        this.eval.init(this);
         if (colAliasMap.containsKey(colName)) {
+            this.eval.init(this);
             Expression exp = colAliasMap.get(colName);
             return eval.eval(exp);
         }

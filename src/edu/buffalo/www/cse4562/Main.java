@@ -19,8 +19,8 @@ import java.sql.SQLException;
 public class Main {
 
     public static void main(String[] args) throws ParseException {
-    	Helper.prompt();
-    	Reader r = new InputStreamReader(System.in);
+        Helper.prompt();
+        Reader r = new InputStreamReader(System.in);
 //        Reader r = new StringReader("CREATE TABLE R(A integer, B integer, C integer);" + "CREATE TABLE PLAYERS(" +
 //                                            "ID STRING, " +
 //                                            "FIRSTNAME STRING, " +
@@ -33,47 +33,28 @@ public class Main {
 //                                            );
 
         CCJSqlParser parser = new CCJSqlParser(r);
-         
+
         Statement statement = parser.Statement();
 
-        while(statement != null) {
-            //system out
-        	//.....
-        	if(statement instanceof CreateTable) {
-        		// do something with create table
-				CreateTable create = (CreateTable) statement;
-				Schema.addTable(create);
-        	} else if(statement instanceof Select) {
-        		Select select = (Select)statement;
-        		SelectBody body = select.getSelectBody();
-        		if(body instanceof PlainSelect) {
-        			PlainSelect sel = (PlainSelect) body;
-					RATreeBuilder builder = new RATreeBuilder(sel);
-					Operator RATree = builder.resultTree();
-					Optimizer opt = new Optimizer(sel.getWhere(),RATree);
-					RATree = opt.resultTree();
-					Helper.output(RATree);
-//					System.out.println();
-//					Helper.output(RATree);
+        while (statement != null) {
+            if (statement instanceof CreateTable) {
+                CreateTable create = (CreateTable) statement;
+                Schema.addTable(create);
+            } else if (statement instanceof Select) {
+                Select select = (Select) statement;
+                SelectBody body = select.getSelectBody();
+                if (body instanceof PlainSelect) {
+                    PlainSelect sel = (PlainSelect) body;
+                    RATreeBuilder builder = new RATreeBuilder(sel);
+                    Operator RATree = builder.resultTree();
+                    Optimizer opt = new Optimizer(sel.getWhere(), RATree);
+                    RATree = opt.resultTree();
+                    Helper.output(RATree);
+                }
+                Helper.prompt();
+                statement = parser.Statement();
+            }
 
-//        			Iterator iterator = new Iterator(sel);
-//        			Helper.output(iterator.Result(), sel.getOrderByElements(), sel.getLimit());
-//        			Schema.reset(1);
-        		}
-        		else if(body instanceof Union) {
-        			//do something with union
-        		}
-        		else {
-        			System.out.println();
-        		}
-        	}
-
-        		else {
-
-        	}
-        	Helper.prompt();
-        	statement = parser.Statement();
         }
-
     }
 }
