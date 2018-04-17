@@ -7,18 +7,15 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.statement.select.Union;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.sql.SQLException;
 
 
 public class Main {
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, InterruptedException {
+        int i = 0;
         Helper.prompt();
         Reader r = new InputStreamReader(System.in);
 //        Reader r = new StringReader("CREATE TABLE R(A integer, B integer, C integer);" + "CREATE TABLE PLAYERS(" +
@@ -51,10 +48,16 @@ public class Main {
                     RATree = opt.resultTree();
                     Helper.output(RATree);
                 }
+            }
+            Helper.prompt();
+            i++;
+            if (i == 3) {
+                i++;
+                Thread.sleep(1000 * 10);
                 Helper.prompt();
                 statement = parser.Statement();
             }
-
+            statement = parser.Statement();
         }
     }
 }
