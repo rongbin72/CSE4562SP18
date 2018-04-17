@@ -1,14 +1,12 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
 import net.sf.jsqlparser.expression.operators.arithmetic.Division;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
+import java.security.PrivateKey;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +49,8 @@ public class Group {
                             isFirstLine = true;
                         } else {
                             if (isFirstLine) break;
-                            Expression add = new Addition(line.get(i), this.line.get(i));
-                            line.set(i, eval.eval(add));
+                            double add = line.get(i).toDouble() + this.line.get(i).toDouble();
+                            line.set(i, new DoubleValue(add));
                         }
                         break;
                 }
