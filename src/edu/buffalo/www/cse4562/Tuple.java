@@ -13,6 +13,32 @@ public class Tuple {
     private HashMap<String, String> tableAliasMap;
     private HashMap<String, Expression> colAliasMap;
     private List<Column> groups = new ArrayList<>();
+    private Evaluation eval = new Evaluation();
+    private String tableName;
+
+    public void setIndexHash(HashMap<String, LinkedHashMap<String, Integer>> indexHash) {
+        this.indexHash = indexHash;
+    }
+
+    public HashMap<String, String> getTableAliasMap() {
+        return tableAliasMap;
+    }
+
+    public void setTableAliasMap(HashMap<String, String> tableAliasMap) {
+        this.tableAliasMap = tableAliasMap;
+    }
+
+    public HashMap<String, Expression> getColAliasMap() {
+        return colAliasMap;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
 
     public void setColAliasMap(HashMap<String, Expression> colAliasMap) {
         this.colAliasMap = colAliasMap;
@@ -34,12 +60,22 @@ public class Tuple {
         this.groups = groups;
     }
 
+    public Tuple(Tuple tuple) {
+        this.tableName = tuple.getTableName();
+        this.indexHash = tuple.getIndexHash();
+        this.tableAliasMap = tuple.getTableAliasMap();
+        this.colAliasMap = tuple.getColAliasMap();
+        this.tuple = new ArrayList<>(tuple.getTuple());
+    }
+
     /**
      * Used by Read to init tuple
+     *
      * @param tableName table name
-     * @param tuple tuple
+     * @param tuple     tuple
      */
     public Tuple(String tableName, List<PrimitiveValue> tuple) {
+        this.tableName = tableName;
         this.indexHash.put(tableName, Schema.getIndexHash(tableName));
         this.tableAliasMap = Schema.getTableAliasMap();
         this.colAliasMap = Schema.getColAliasMap();
@@ -51,6 +87,7 @@ public class Tuple {
      */
     public Tuple() {
         String tableName = "*";
+        this.tableName = tableName;
         this.indexHash.put(tableName, new LinkedHashMap<>());
         this.colAliasMap = Schema.getColAliasMap();
         this.tableAliasMap = Schema.getTableAliasMap();
@@ -75,8 +112,13 @@ public class Tuple {
     public void addTable(Tuple tuple) {
         for (String tableName : tuple.getIndexHash().keySet()) {
 //            tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
-            HashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
+            LinkedHashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
             List<PrimitiveValue> line = tuple.getTuple();
+//            int size = this.indexHash.get(this.tableName).size();
+//            index.replaceAll((k, v) -> v += size);
+//            this.indexHash.put(tableName, index);
+//            this.tuple.addAll(line);
+
             this.indexHash.put(tableName, new LinkedHashMap<>());
             for (String colName : tuple.getIndexHash().get(tableName).keySet()) {
                 this.indexHash.get(tableName).put(colName, this.tuple.size());
@@ -106,7 +148,7 @@ public class Tuple {
     }
 
     public PrimitiveValue getItem(String tableName, String colName) throws SQLException {
-        Evaluation eval = new Evaluation(this);
+        this.eval.init(this);
         if (colAliasMap.containsKey(colName)) {
             Expression exp = colAliasMap.get(colName);
             return eval.eval(exp);

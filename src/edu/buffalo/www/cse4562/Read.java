@@ -76,7 +76,7 @@ public class Read extends Operator{
 //			}
 //			return null;
 		if (this.tableIterator.hasNext()) {
-			return new Tuple(tableName, tableIterator.next());
+			return new Tuple(tableName, new ArrayList<>(tableIterator.next())) ;
 		} else {
 			this.tableIterator = this.table.iterator();
 			return null;
