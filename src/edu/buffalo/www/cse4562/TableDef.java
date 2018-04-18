@@ -67,7 +67,7 @@ public class TableDef {
      */
     public LinkedHashMap<String, Integer> getIndexHash()
     {
-        return new LinkedHashMap<>(this.colIndex);
+        return this.colIndex;
     }
 
 }
