@@ -4,56 +4,54 @@ import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class Read extends Operator{
 	private String tableName;
-	private BufferedReader br;
+	private String path;
 	private boolean eof = false;
-	private Integer bufferSize = 10000000;
-	private double factor = 0.5;
-	private Queue<List<PrimitiveValue>> buffer = new LinkedList<>();
+	private boolean isFirstLine = true;
+	//	private Integer bufferSize = 10000000;
+//	private double factor = 0.5;
+//	private Queue<List<PrimitiveValue>> buffer = new LinkedList<>();
 	private List<List<PrimitiveValue>> table = new ArrayList<>();
 	private Iterator<List<PrimitiveValue>> tableIterator;
 
-	private void fillBuffer() throws IOException {
-		String line;
-		while ((line = br.readLine()) != null) {
-			this.buffer.add(Helper.toPrimitive(this.tableName, line));
-			if (this.buffer.size() == this.bufferSize) {
-				break;
-			}
-		}
-		if (this.buffer.size() < bufferSize) {
-			this.eof = true;
-		}
-	}
+//	private void fillBuffer() throws IOException {
+//		String line;
+//		while ((line = br.readLine()) != null) {
+//			this.buffer.add(Helper.toPrimitive(this.tableName, line));
+//			if (this.buffer.size() == this.bufferSize) {
+//				break;
+//			}
+//		}
+//		if (this.buffer.size() < bufferSize) {
+//			this.eof = true;
+//		}
+//	}
 	
 	public String getTableName() {
 		return this.tableName;
 	}
 
-	public Read(Table table) throws IOException {
+	public Read(Table table) {
 		this.tableName = table.getName();
-		String path = Schema.getPath(tableName);
-		FileInputStream fs = new FileInputStream(new File(path));
-		this.br = new BufferedReader(new InputStreamReader(fs));
+		this.path = Schema.getPath(tableName);
+	}
+
+	private void init() throws IOException {
+		FileInputStream fs = new FileInputStream(new File(this.path));
+		BufferedReader br = new BufferedReader(new InputStreamReader(fs));
 		String line;
-		while ((line = this.br.readLine()) != null) {
+		while ((line = br.readLine()) != null) {
 			this.table.add(Helper.toPrimitive(this.tableName, line));
 		}
 		fs.close();
 		br.close();
 		this.tableIterator = this.table.iterator();
-//		FileReader fr = new FileReader(path);
-//		fillBuffer();
-	}
-
-	private void init() throws IOException {
-		String path = Schema.getPath(this.tableName);
-		this.br = new BufferedReader(new FileReader(path));
-		fillBuffer();
 	}
 
 	@Override
@@ -75,6 +73,18 @@ public class Read extends Operator{
 //				e.printStackTrace();
 //			}
 //			return null;
+		if (isFirstLine) {
+			try {
+				init();
+				isFirstLine = false;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (this.tableIterator.hasNext()) {
+				return new Tuple(tableName, new ArrayList<>(tableIterator.next()));
+			}
+		}
+
 		if (this.tableIterator.hasNext()) {
 			return new Tuple(tableName, new ArrayList<>(tableIterator.next())) ;
 		} else {

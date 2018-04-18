@@ -4,7 +4,6 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,22 +46,12 @@ public class FromObject implements FromItemVisitor {
 		String alias = table.getAlias();
 		if(alias != null) {
 			Schema.addTableAlias(alias,table.getName());
-			Read reader = null;
-			try {
-				reader = new Read(table);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+            Read reader = new Read(table);
 			RenameOperator rename = new RenameOperator(reader,alias,table.getName());
 			this.tableList.add(rename);
 		}		
 		else {
-			Read reader = null;
-			try {
-				reader = new Read(table);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+            Read reader = new Read(table);
 			this.tableList.add(reader);
 		}
 	}
