@@ -46,18 +46,12 @@ public class SelectOperator extends Operator implements SelectItemVisitor{
 			item.accept(this);
 		}
 		this.eval.init(resultTuple);
-//        StringBuilder key = new StringBuilder("*");
         int key = 0;
         if (this.resultOfSon.haveGroups()) {
             List<Column> columns = this.resultOfSon.getGroups();
 			for (Column c : columns) {
-				try {
-                    key += this.eval.eval(c).hashCode();
-//                    key.append(this.eval.eval(c).toRawString());
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			}
+                key += this.eval.eval(c).hashCode();
+            }
 		}
 
         if (groupMap.containsKey(key)) {

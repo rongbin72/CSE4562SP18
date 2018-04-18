@@ -69,6 +69,10 @@ public class CrossProductOP extends Operator {
         return this.relatedTables;
     }
 
+    public void relatedSetter(List<String> table) {
+        this.relatedTables = table;
+    }
+
     public void relatedT() {
         if (this.lhS instanceof Read) {
             Read r = (Read) this.lhS;
