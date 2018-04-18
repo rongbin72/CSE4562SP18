@@ -250,7 +250,7 @@ public class Optimizer implements ExpressionVisitor{
 	
 	private void cutWhere(Operator tree) {
 		//tree is parent of where
-		if(!(tree instanceof WhereOperator)) {
+		if(!(tree.getSon() instanceof WhereOperator)) {
 			this.cutWhere(tree.getSon());
 		}
 		else {
