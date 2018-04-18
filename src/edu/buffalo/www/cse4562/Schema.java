@@ -4,7 +4,6 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
@@ -52,7 +51,7 @@ public class Schema {
         schema.put(table.getTable().getName(), new TableDef(table));
     }
 
-    public static LinkedHashMap<String, Integer> getIndexHash(String tableName) {
+    public static HashMap<String, Integer> getIndexHash(String tableName) {
         return schema.get(tableName).getIndexHash();
     }
 

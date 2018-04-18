@@ -6,20 +6,26 @@ import net.sf.jsqlparser.schema.Column;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Tuple {
     private List<PrimitiveValue> tuple = new ArrayList<>();
-    private HashMap<String, LinkedHashMap<String, Integer>> indexHash = new HashMap<>();
+    private HashMap<String, HashMap<String, Integer>> indexHash = new HashMap<>();
     private HashMap<String, String> tableAliasMap;
     private HashMap<String, Expression> colAliasMap;
     private List<Column> groups = new ArrayList<>();
     private Evaluation eval = new Evaluation();
     private String tableName;
 
-    public void setIndexHash(HashMap<String, LinkedHashMap<String, Integer>> indexHash) {
-        this.indexHash = indexHash;
+    /**
+     * Used by SelectOperator
+     */
+    public Tuple() {
+        String tableName = "*";
+        this.tableName = tableName;
+        this.indexHash.put(tableName, new HashMap<>());
+        this.colAliasMap = Schema.getColAliasMap();
+        this.tableAliasMap = Schema.getTableAliasMap();
     }
 
     private HashMap<String, String> getTableAliasMap() {
@@ -32,10 +38,6 @@ public class Tuple {
 
     private HashMap<String, Expression> getColAliasMap() {
         return colAliasMap;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
 
     void setColAliasMap(HashMap<String, Expression> colAliasMap) {
@@ -84,15 +86,14 @@ public class Tuple {
         this.tuple = tuple;
     }
 
-    /**
-     * Used by SelectOperator
-     */
-    public Tuple() {
-        String tableName = "*";
-        this.tableName = tableName;
-        this.indexHash.put(tableName, new LinkedHashMap<>());
-        this.colAliasMap = Schema.getColAliasMap();
-        this.tableAliasMap = Schema.getTableAliasMap();
+    void addAllColumn(String tableName, Tuple tuple) {
+//        tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
+        HashMap<String, Integer> index = new HashMap<>(tuple.getIndexHash().get(tableName));
+        List<PrimitiveValue> line = tuple.getTuple();
+        int size = this.tuple.size();
+        index.replaceAll((k, v) -> v += size);
+        this.indexHash.put("*", index);
+        this.tuple.addAll(line);
     }
 
     void addColumn(String colName, PrimitiveValue value) {
@@ -101,46 +102,20 @@ public class Tuple {
         this.tuple.add(value);
     }
 
-    void addAllColumn(String tableName, Tuple tuple) {
-//        tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
-        HashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
-        List<PrimitiveValue> line = tuple.getTuple();
-        for (String colName : tuple.getIndexHash().get(tableName).keySet()) {
-            int i = index.get(colName);
-            addColumn(colName, line.get(i));
-        }
-    }
-
     void addTable(Tuple tuple) {
         for (String tableName : tuple.getIndexHash().keySet()) {
 //            tableName = this.tableAliasMap.getOrDefault(tableName, tableName);
-            LinkedHashMap<String, Integer> index = new LinkedHashMap<>(tuple.getIndexHash().get(tableName));
+            HashMap<String, Integer> index = new HashMap<>(tuple.getIndexHash().get(tableName));
             List<PrimitiveValue> line = tuple.getTuple();
             int size = this.tuple.size();
-//            for (Map.Entry<String, Integer> kv : index.entrySet()) {
-//                index.put(kv.getKey(), kv.getValue() + size);
-//            }
             index.replaceAll((k, v) -> v += size);
             this.indexHash.put(tableName, index);
             this.tuple.addAll(line);
-            // TODO rewrite here
-//            LinkedHashMap<String, Integer> index = tuple.getIndexHash().get(tableName);
-//            List<PrimitiveValue> line = tuple.getTuple();
-//            this.indexHash.put(tableName, new LinkedHashMap<>());
-//            for (String colName : tuple.getIndexHash().get(tableName).keySet()) {
-//                this.indexHash.get(tableName).put(colName, this.tuple.size());
-//                int i = index.get(colName);
-//                this.tuple.add(line.get(i));
-//            }
         }
     }
 
-    public void setTableAliasMap(String alias, String origin) {
-        this.tableAliasMap.put(alias, origin);
-    }
-
-    public List<String> getColList(String tableName) {
-        return new ArrayList<>(this.indexHash.get(tableName).keySet());
+    HashMap<String, HashMap<String, Integer>> getIndexHash() {
+        return indexHash;
     }
 
     void rename(String tableName) {
@@ -170,7 +145,7 @@ public class Tuple {
         return tuple;
     }
 
-    HashMap<String, LinkedHashMap<String, Integer>> getIndexHash() {
-        return indexHash;
+    public void setIndexHash(HashMap<String, HashMap<String, Integer>> indexHash) {
+        this.indexHash = indexHash;
     }
 }

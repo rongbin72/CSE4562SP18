@@ -4,12 +4,11 @@ import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class TableDef {
     private String tableName;
     private String tablePath;
-    private LinkedHashMap<String, Integer> colIndex = new LinkedHashMap<>();
+    private HashMap<String, Integer> colIndex = new HashMap<>();
     private HashMap<Integer, String> colType = new HashMap<>();
 
     /**
@@ -65,7 +64,7 @@ public class TableDef {
      * Return deep copy of Index hash
      * @return colIndex
      */
-    public LinkedHashMap<String, Integer> getIndexHash()
+    public HashMap<String, Integer> getIndexHash()
     {
         return this.colIndex;
     }
