@@ -220,7 +220,7 @@ public class Optimizer implements ExpressionVisitor{
 					tree.setSon(where);
 				}
 			}
-			else {
+			else if(!(tree.getSon() instanceof RenameOperator)){
 				this.pushOr(tree.getSon());
 			}
 			if(((CrossProductOP) tree).getRhson() instanceof Read) {
@@ -230,7 +230,7 @@ public class Optimizer implements ExpressionVisitor{
 					((CrossProductOP) tree).setRhS(where);
 				}
 			}
-			else {
+			else if(!(((CrossProductOP) tree).getRhson() instanceof RenameOperator)) {
 				this.pushOr(((CrossProductOP) tree).getRhson());
 			}
 		}
@@ -242,7 +242,7 @@ public class Optimizer implements ExpressionVisitor{
 					tree.setSon(where);
 				}
 			}
-			else {
+			else if(!(tree.getSon() instanceof RenameOperator)){
 				this.pushOr(tree.getSon());
 			}
 		}
