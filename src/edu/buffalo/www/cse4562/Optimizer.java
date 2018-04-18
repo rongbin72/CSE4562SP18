@@ -15,17 +15,20 @@ public class Optimizer implements ExpressionVisitor{
 
 	private List<BinaryExpression> filter = new ArrayList<>();
 	private Operator tree;
+    private Expression or;
+    private Expression exp;
 
 	public Optimizer(Expression exp, Operator tree) {
 		if (exp != null) {
+            this.exp = exp;
             exp.accept(this);
 		}
 		this.tree = tree;
-		
-	}
-	
+
+    }
+
 	public void searchTree(Operator tree) {
-		if(!(tree instanceof Read) && !(tree instanceof RenameOperator) 
+        if (!(tree instanceof Read) && !(tree instanceof RenameOperator)
 				&& !(tree instanceof CrossProductOP) && !(tree instanceof JoinOperator)) {
 			//is select, where, group by etc.
 			this.searchTree(tree.getSon());
@@ -35,20 +38,17 @@ public class Optimizer implements ExpressionVisitor{
 			cop.relatedT();//search the after tree by crossproduct itself
 		}
 	}
-	
+
 	private boolean containTables(Operator op,String t1,String t2) {
 		if(op instanceof CrossProductOP) {
 			CrossProductOP cross = (CrossProductOP)op;
-			if(cross.relatedGetter().contains(t1) && cross.relatedGetter().contains(t2)) {
-				return true;
-			}
-			return false;
-		}
+            return cross.relatedGetter().contains(t1) && cross.relatedGetter().contains(t2);
+        }
 		else {
 			return false;
 		}
 	}
-	
+
 	private void twoConditions(Operator tree, BinaryExpression exp, String t1, String t2) {
 		if(tree instanceof CrossProductOP) {
 			CrossProductOP self = (CrossProductOP)tree;
@@ -60,7 +60,7 @@ public class Optimizer implements ExpressionVisitor{
 					CrossProductOP leftson = (CrossProductOP) self.getSon();
 					Operator leftSonofLeft = leftson.getSon();
 					Operator rightSonofLeft = leftson.getRhson();
-					if(this.containTables(leftSonofLeft, t1, t2) || 
+                    if (this.containTables(leftSonofLeft, t1, t2) ||
 							this.containTables(rightSonofLeft, t1, t2)) {
 						//continue push down
 					}
@@ -76,14 +76,14 @@ public class Optimizer implements ExpressionVisitor{
 							self.setSon(join);//////////////////
 						}
 					}
-					
+
 				}
 				if(right) {
 					//right must be a crossproduct and contains the tables
 					CrossProductOP rightson = (CrossProductOP) self.getRhson();
 					Operator leftSonofRight = rightson.getSon();
 					Operator rightSonofRight = rightson.getRhson();
-					if(this.containTables(leftSonofRight, t1, t2) || 
+                    if (this.containTables(leftSonofRight, t1, t2) ||
 							this.containTables(rightSonofRight, t1, t2)) {
 						//continue push down
 					}
@@ -99,13 +99,13 @@ public class Optimizer implements ExpressionVisitor{
 						}
 					}
 				}
-				
+
 			}
 			else {
 				//do nothing
 				System.out.println("there must be something wrong");
 			}
-			
+
 		}
 		else {
 			if(!(tree instanceof Read) && !(tree instanceof RenameOperator)) {
@@ -124,7 +124,7 @@ public class Optimizer implements ExpressionVisitor{
 						if(tree.getSon() instanceof JoinOperator) {
 							JoinOperator join = (JoinOperator)cross;
 							join.addCondition(exp);
-							
+
 						}
 						else {
 							//must be crossproduct
@@ -139,7 +139,7 @@ public class Optimizer implements ExpressionVisitor{
 			}
 		}
 	}
-	
+
 
 	private void oneCondition(Operator tree, BinaryExpression exp, String tablename) {
 		if(tree instanceof CrossProductOP) {
@@ -161,7 +161,7 @@ public class Optimizer implements ExpressionVisitor{
 			else if(cross.getSon() instanceof CrossProductOP) {
 				this.oneCondition(cross.getSon(), exp, tablename);
 			}
-			
+
 			if(cross.getRhson() instanceof Read) {
 				Read read = (Read)cross.getRhson();
 				if(tablename.equals(read.getTableName())) {
@@ -175,8 +175,7 @@ public class Optimizer implements ExpressionVisitor{
 					WhereOperator where = new WhereOperator(rename,exp);
 					cross.setRhS(where);
 				}
-			}
-			else if(cross.getRhson() instanceof CrossProductOP) { 
+			} else if (cross.getRhson() instanceof CrossProductOP) {
 				this.oneCondition(cross.getRhson(), exp, tablename);
 			}
 		}
@@ -184,8 +183,8 @@ public class Optimizer implements ExpressionVisitor{
 			while(!(tree.getSon() instanceof Read) && !(tree.getSon() instanceof RenameOperator) &&
 					!(tree.getSon() instanceof CrossProductOP)) {
 				tree = tree.getSon();
-				
-			}
+
+            }
 			if(tree.getSon() instanceof Read) {
 				Read read = (Read)tree.getSon();
 				if(tablename.equals(read.getTableName())) {
@@ -206,8 +205,55 @@ public class Optimizer implements ExpressionVisitor{
 			}
 		}
 	}
-	
-	
+
+    private void pushOr(Operator tree) {
+        //must have where
+        if (tree instanceof CrossProductOP) {
+            if (tree.getSon() instanceof Read) {
+                Read read = (Read) tree.getSon();
+                if (read.getTableName().equals("LINEITEM")) {
+                    Operator where = new WhereOperator(read, this.or);
+                    tree.setSon(where);
+                }
+            } else {
+                this.pushOr(tree.getSon());
+            }
+            if (((CrossProductOP) tree).getRhson() instanceof Read) {
+                Read read = (Read) ((CrossProductOP) tree).getRhson();
+                if (read.getTableName().equals("LINEITEM")) {
+                    Operator where = new WhereOperator(read, this.or);
+                    ((CrossProductOP) tree).setRhS(where);
+                }
+            } else {
+                this.pushOr(((CrossProductOP) tree).getRhson());
+            }
+        } else {
+            if (tree.getSon() instanceof Read) {
+                Read read = (Read) tree.getSon();
+                if (read.getTableName().equals("LINEITEM")) {
+                    Operator where = new WhereOperator(read, this.or);
+                    tree.setSon(where);
+                }
+            } else {
+                this.pushOr(tree.getSon());
+            }
+        }
+    }
+
+    private void cutWhere(Operator tree) {
+        while (!(tree.getSon() instanceof WhereOperator)) {
+            tree = tree.getSon();
+        }
+        //tree is parent of where
+        Operator where = tree.getSon();
+        tree.setSon(where.getSon());
+        if (this.or != null) {
+            this.pushOr(this.tree);
+        }
+
+    }
+
+
 	public Operator resultTree() {
 		this.searchTree(this.tree);
 		for(BinaryExpression exp:this.filter) {
@@ -235,6 +281,9 @@ public class Optimizer implements ExpressionVisitor{
 				}
 			}
 		}
+        if (this.exp != null) {
+            this.cutWhere(this.tree);
+        }
 		return this.tree;
 	}
 
@@ -338,7 +387,7 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(OrExpression arg0) {
-		// TODO Auto-generated method stub
+        this.or = arg0;
 
 	}
 
@@ -355,12 +404,12 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(GreaterThan gt) {
-    	this.filter.add(gt);
+        this.filter.add(gt);
 	}
 
 	@Override
 	public void visit(GreaterThanEquals gte) {
-	    this.filter.add(gte);
+        this.filter.add(gte);
 	}
 
 	@Override
@@ -383,17 +432,17 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(MinorThan mt) {
-	    this.filter.add(mt);
+        this.filter.add(mt);
 	}
 
 	@Override
 	public void visit(MinorThanEquals mte) {
-	    this.filter.add(mte);
+        this.filter.add(mte);
 	}
 
 	@Override
 	public void visit(NotEqualsTo nequ) {
-	    this.filter.add(nequ);
+        this.filter.add(nequ);
 	}
 
 	@Override
