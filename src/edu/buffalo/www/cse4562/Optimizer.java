@@ -249,14 +249,18 @@ public class Optimizer implements ExpressionVisitor{
 	}
 	
 	private void cutWhere(Operator tree) {
-		while(!(tree.getSon() instanceof WhereOperator)) {
-			tree = tree.getSon();
-		}
 		//tree is parent of where
-		Operator where = tree.getSon();
-		tree.setSon(where.getSon());
-		if(this.or != null) {
-			this.pushOr(this.tree);
+		if(!(tree instanceof WhereOperator)) {
+			this.cutWhere(tree.getSon());
+		}
+		else {
+			Operator where = tree.getSon();
+			if(!(where.getSon() instanceof Read) && !(where.getSon() instanceof RenameOperator)) {
+				tree.setSon(where.getSon());
+				if(this.or != null) {
+					this.pushOr(this.tree);
+				}
+			}
 		}
 		
 	}
