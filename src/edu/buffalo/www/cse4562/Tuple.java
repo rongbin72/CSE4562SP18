@@ -4,7 +4,10 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class Tuple {
     private List<PrimitiveValue> tuple = new ArrayList<>();
@@ -114,10 +117,10 @@ public class Tuple {
             LinkedHashMap<String, Integer> index = new LinkedHashMap<>(tuple.getIndexHash().get(tableName));
             List<PrimitiveValue> line = tuple.getTuple();
             int size = this.tuple.size();
-            for (Map.Entry<String, Integer> kv : index.entrySet()) {
-                index.put(kv.getKey(), kv.getValue() + size);
-            }
-//            index.replaceAll((k, v) -> v += size);
+//            for (Map.Entry<String, Integer> kv : index.entrySet()) {
+//                index.put(kv.getKey(), kv.getValue() + size);
+//            }
+            index.replaceAll((k, v) -> v += size);
             this.indexHash.put(tableName, index);
             this.tuple.addAll(line);
             // TODO rewrite here
