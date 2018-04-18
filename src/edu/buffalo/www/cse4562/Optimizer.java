@@ -15,9 +15,12 @@ public class Optimizer implements ExpressionVisitor{
 
 	private List<BinaryExpression> filter = new ArrayList<>();
 	private Operator tree;
+	private Expression or;
+	private Expression exp;
 
 	public Optimizer(Expression exp, Operator tree) {
 		if (exp != null) {
+			this.exp = exp;
             exp.accept(this);
 		}
 		this.tree = tree;
@@ -207,6 +210,57 @@ public class Optimizer implements ExpressionVisitor{
 		}
 	}
 	
+	private void pushOr(Operator tree) {
+		//must have where
+		if(tree instanceof CrossProductOP) {
+			if(tree.getSon() instanceof Read) {
+				Read read = (Read) tree.getSon();
+				if(read.getTableName().equals("LINEITEM")) {
+					Operator where = new WhereOperator(read,this.or);
+					tree.setSon(where);
+				}
+			}
+			else {
+				this.pushOr(tree.getSon());
+			}
+			if(((CrossProductOP) tree).getRhson() instanceof Read) {
+				Read read = (Read) ((CrossProductOP) tree).getRhson();
+				if(read.getTableName().equals("LINEITEM")) {
+					Operator where = new WhereOperator(read,this.or);
+					((CrossProductOP) tree).setRhS(where);
+				}
+			}
+			else {
+				this.pushOr(((CrossProductOP) tree).getRhson());
+			}
+		}
+		else {
+			if(tree.getSon() instanceof Read) {
+				Read read = (Read) tree.getSon();
+				if(read.getTableName().equals("LINEITEM")) {
+					Operator where = new WhereOperator(read,this.or);
+					tree.setSon(where);
+				}
+			}
+			else {
+				this.pushOr(tree.getSon());
+			}
+		}
+	}
+	
+	private void cutWhere(Operator tree) {
+		while(!(tree.getSon() instanceof WhereOperator)) {
+			tree = tree.getSon();
+		}
+		//tree is parent of where
+		Operator where = tree.getSon();
+		tree.setSon(where.getSon());
+		if(this.or != null) {
+			this.pushOr(this.tree);
+		}
+		
+	}
+	
 	
 	public Operator resultTree() {
 		this.searchTree(this.tree);
@@ -234,6 +288,9 @@ public class Optimizer implements ExpressionVisitor{
 					}
 				}
 			}
+		}
+		if(this.exp != null) {
+			this.cutWhere(this.tree);
 		}
 		return this.tree;
 	}
@@ -338,8 +395,8 @@ public class Optimizer implements ExpressionVisitor{
 
 	@Override
 	public void visit(OrExpression arg0) {
-		// TODO Auto-generated method stub
-
+		this.or = arg0;
+		
 	}
 
 	@Override
