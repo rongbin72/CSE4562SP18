@@ -12,7 +12,7 @@ public class Read extends Operator {
     private String path;
     private boolean eof = false;
     private boolean isFirstLine = true;
-    private Integer bufferSize = 100;
+    private Integer bufferSize = 10;
     private BufferedReader br;
     private double factor = 0.5;
     private Queue<List<PrimitiveValue>> buffer = new LinkedList<>();
