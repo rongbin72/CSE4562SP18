@@ -9,6 +9,7 @@ public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
     private static HashMap<String, Expression> colAliasMap = new HashMap<>();
     private static HashMap<String, String> tableAliasMap = new HashMap<>();
+    static HashMap<String, HashMap<String, HashMap<String, Integer>>> indexHash = new HashMap<>();
 
     public static HashMap<String, String> getTableAliasMap() {
         return tableAliasMap;
@@ -20,15 +21,17 @@ public class Schema {
 
     /**
      * add column alias to map
+     *
      * @param origin name
      * @param alias
      */
     public static void addColAlias(String alias, Expression origin) {
         colAliasMap.put(alias, origin);
     }
-    
+
     /**
      * add table alias to map
+     *
      * @param origin name
      * @param alias
      */
@@ -43,8 +46,10 @@ public class Schema {
     public static String getTableAlias(String alias) {
         return tableAliasMap.get(alias);
     }
+
     /**
      * Add a table definition to schema when create table
+     *
      * @param table
      */
     public static void addTable(CreateTable table) {

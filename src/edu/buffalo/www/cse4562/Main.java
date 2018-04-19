@@ -10,6 +10,7 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
 
 
 public class Main {
@@ -46,6 +47,7 @@ public class Main {
                     Optimizer opt = new Optimizer(sel.getWhere(), RATree);
                     RATree = opt.resultTree();
                     Helper.output(RATree);
+                    Schema.indexHash.clear();
                 }
             }
             Helper.prompt();

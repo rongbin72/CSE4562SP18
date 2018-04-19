@@ -32,12 +32,12 @@ public class RenameOperator extends Operator{
 		else if(this.origin == null) {
 			//subquery
 			resultofSon.rename(this.alias);
-			resultofSon.setColAliasMap(new HashMap<>());
+//			resultofSon.setColAliasMap(new HashMap<>());
 			return resultofSon;
 		}
 		else {
 			resultofSon.rename(this.alias);
-			resultofSon.setColAliasMap(new HashMap<>());
+//			resultofSon.setColAliasMap(new HashMap<>());
 			return resultofSon;
 		}
 	}
