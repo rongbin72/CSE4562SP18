@@ -68,10 +68,6 @@ public class CrossProductOP extends Operator {
     public List<String> relatedGetter() {
         return this.relatedTables;
     }
-    
-    public void relatedSetter(List<String> table) {
-    	this.relatedTables = table;
-    }
 
     public void relatedSetter(List<String> table) {
         this.relatedTables = table;
