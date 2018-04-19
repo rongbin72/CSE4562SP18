@@ -22,13 +22,14 @@ public class Read extends Operator {
     public Read(Table table) {
         this.tableName = table.getName();
         this.path = Schema.getPath(tableName);
-        FileInputStream fs = null;
-        try {
-            fs = new FileInputStream(new File(this.path));
-            this.br = new BufferedReader(new InputStreamReader(fs));
-            fillBuffer();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (this.tableName.equals("PLAYERS")) {
+            try {
+                FileInputStream fs = new FileInputStream(new File(this.path));
+                this.br = new BufferedReader(new InputStreamReader(fs));
+                fillBuffer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -65,6 +66,7 @@ public class Read extends Operator {
             FileInputStream fs = new FileInputStream(new File(this.path));
             this.br = new BufferedReader(new InputStreamReader(fs));
             fillBuffer();
+            this.eof = false;
         }
     }
 
