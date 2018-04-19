@@ -1,6 +1,5 @@
 package edu.buffalo.www.cse4562;
 
-import javafx.scene.Scene;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 

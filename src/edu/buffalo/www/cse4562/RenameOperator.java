@@ -1,7 +1,5 @@
 package edu.buffalo.www.cse4562;
 
-import java.util.HashMap;
-
 public class RenameOperator extends Operator{
 	private Operator son;
 	private String alias;

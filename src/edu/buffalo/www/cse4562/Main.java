@@ -10,7 +10,6 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashMap;
 
 
 public class Main {
