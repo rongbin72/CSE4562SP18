@@ -25,15 +25,12 @@ public class Read extends Operator {
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(new File(this.path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        this.br = new BufferedReader(new InputStreamReader(fs));
-        try {
+            this.br = new BufferedReader(new InputStreamReader(fs));
             fillBuffer();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void fillBuffer() throws IOException {
@@ -127,8 +124,9 @@ public class Read extends Operator {
                     e.printStackTrace();
                 }
                 return null;
+            } else {
+                return new Tuple(tableName, this.buffer.poll());
             }
-            return new Tuple(tableName, this.buffer.poll());
         }
     }
 
