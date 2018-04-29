@@ -8,13 +8,14 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 
 public class Main {
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
         Helper.prompt();
         Reader r = new InputStreamReader(System.in);
 //        Reader r = new StringReader("CREATE TABLE R(A integer, B integer, C integer);" + "CREATE TABLE PLAYERS(" +
@@ -36,6 +37,7 @@ public class Main {
             if (statement instanceof CreateTable) {
                 CreateTable create = (CreateTable) statement;
                 Schema.addTable(create);
+                Schema.buildIndex();
             } else if (statement instanceof Select) {
                 Select select = (Select) statement;
                 SelectBody body = select.getSelectBody();
@@ -45,6 +47,7 @@ public class Main {
                     Operator RATree = builder.resultTree();
                     Optimizer opt = new Optimizer(sel.getWhere(), RATree);
                     RATree = opt.resultTree();
+                    // try catch out of memory exception
                     Helper.output(RATree);
                     Schema.indexHash.clear();
                 }

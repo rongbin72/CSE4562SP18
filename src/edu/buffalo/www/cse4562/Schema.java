@@ -3,6 +3,8 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Schema {
@@ -76,6 +78,12 @@ public class Schema {
      */
     public static String getPath(String tableName) {
         return schema.get(tableName).getTablePath();
+    }
+
+    static void buildIndex() throws IOException {
+        for (TableDef table : schema.values()) {
+            table.buildIndex();
+        }
     }
 
 }
