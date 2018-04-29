@@ -15,7 +15,7 @@ public class TableDef {
     private int length;
     private HashMap<String, Integer> colIndex = new HashMap<>();
     private HashMap<Integer, String> colType = new HashMap<>();
-    private List<String> indexOn = new ArrayList<>();
+    private Set<String> indexOn = new HashSet<>();
     private HashMap<String, TreeMap<PrimitiveValue, ArrayList<Long>>> index = new HashMap<>();
 
 
@@ -114,6 +114,10 @@ public class TableDef {
 
     public long getLength() {
         return length;
+    }
+
+    public HashMap<String, TreeMap<PrimitiveValue, ArrayList<Long>>> getIndex() {
+        return index;
     }
 
     void buildIndex() throws IOException {

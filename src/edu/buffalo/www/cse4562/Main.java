@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
@@ -39,6 +40,8 @@ public class Main {
                 Schema.addTable(create);
                 Schema.buildIndex();
             } else if (statement instanceof Select) {
+                Read read = new Read("LINEITEM");
+                read.result(new LongValue(1));
                 Select select = (Select) statement;
                 SelectBody body = select.getSelectBody();
                 if (body instanceof PlainSelect) {

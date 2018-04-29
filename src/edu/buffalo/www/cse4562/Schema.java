@@ -1,11 +1,13 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
@@ -78,6 +80,10 @@ public class Schema {
      */
     public static String getPath(String tableName) {
         return schema.get(tableName).getTablePath();
+    }
+
+    public static HashMap<String, TreeMap<PrimitiveValue, ArrayList<Long>>> getIndex(String tableName) {
+        return schema.get(tableName).getIndex();
     }
 
     static void buildIndex() throws IOException {
