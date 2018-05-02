@@ -13,7 +13,6 @@ public class Schema {
     private static HashMap<String, TableDef> schema = new HashMap<>();
     private static HashMap<String, Expression> colAliasMap = new HashMap<>();
     private static HashMap<String, String> tableAliasMap = new HashMap<>();
-    static HashMap<String, HashMap<String, HashMap<String, Integer>>> indexHash = new HashMap<>();
 
     public static HashMap<String, String> getTableAliasMap() {
         return tableAliasMap;

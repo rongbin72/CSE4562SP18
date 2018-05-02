@@ -40,8 +40,6 @@ public class Main {
                 Schema.addTable(create);
                 Schema.buildIndex();
             } else if (statement instanceof Select) {
-                Read read = new Read("LINEITEM");
-                read.result(new LongValue(1));
                 Select select = (Select) statement;
                 SelectBody body = select.getSelectBody();
                 if (body instanceof PlainSelect) {
@@ -52,7 +50,6 @@ public class Main {
                     RATree = opt.resultTree();
                     // try catch out of memory exception
                     Helper.output(RATree);
-                    Schema.indexHash.clear();
                 }
             }
             Helper.prompt();
