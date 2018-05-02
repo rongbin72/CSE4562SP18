@@ -38,12 +38,12 @@ class Helper {
         }
     }
 
-    static void sort(List<Tuple> table, List<Integer> orderList, List<Boolean> isAscList) {
+    static void sort(List<List<PrimitiveValue>> table, List<Integer> orderList, List<Boolean> isAscList) {
         table.sort((a, b) -> {
             int res = 0;
             for (int i = 0; i < orderList.size(); i++) {
-                PrimitiveValue lhs = a.getTuple().get(orderList.get(i));
-                PrimitiveValue rhs = b.getTuple().get(orderList.get(i));
+                PrimitiveValue lhs = a.get(orderList.get(i));
+                PrimitiveValue rhs = b.get(orderList.get(i));
                 String type = lhs.getType().name();
                 Boolean isAsc = isAscList.get(i);
 

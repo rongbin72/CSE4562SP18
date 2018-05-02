@@ -16,6 +16,7 @@ public class Tuple {
 //    private Evaluation eval = new Evaluation();
     private String tableName;
 
+    // TODO add a construction method, only has tuple, do not initialize other variables
     /**
      * Used by SelectOperator
      */

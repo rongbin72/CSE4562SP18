@@ -120,6 +120,11 @@ public class TableDef {
         return index;
     }
 
+    List<Long> getIndexList(Expression e) {
+
+        return null;
+    }
+
     void buildIndex() throws IOException {
         if (this.indexOn != null) {
             // init

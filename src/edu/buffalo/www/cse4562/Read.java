@@ -3,9 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Table;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.*;
 
 
@@ -23,11 +21,6 @@ public class Read extends Operator {
 
     public Read(Table table) {
         this.tableName = table.getName();
-        this.path = Schema.getPath(tableName);
-    }
-
-    Read(String tableName) {
-        this.tableName = tableName;
         this.path = Schema.getPath(tableName);
     }
 
@@ -49,7 +42,22 @@ public class Read extends Operator {
     }
 
     private void init() throws IOException {
-
+        if (!this.tableName.equals("PLAYERS")) {
+            FileInputStream fs = new FileInputStream(new File(this.path));
+            BufferedReader br = new BufferedReader(new InputStreamReader(fs));
+            String line;
+            while ((line = br.readLine()) != null) {
+                this.table.add(Helper.toPrimitive(this.tableName, line));
+            }
+            fs.close();
+            br.close();
+            this.tableIterator = this.table.iterator();
+        } else {
+            FileInputStream fs = new FileInputStream(new File(this.path));
+            this.br = new BufferedReader(new InputStreamReader(fs));
+            fillBuffer();
+            this.eof = false;
+        }
     }
 
     @Override

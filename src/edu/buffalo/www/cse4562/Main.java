@@ -38,7 +38,7 @@ public class Main {
             if (statement instanceof CreateTable) {
                 CreateTable create = (CreateTable) statement;
                 Schema.addTable(create);
-                Schema.buildIndex();
+//                Schema.buildIndex();
             } else if (statement instanceof Select) {
                 Select select = (Select) statement;
                 SelectBody body = select.getSelectBody();
