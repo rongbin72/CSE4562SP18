@@ -1,57 +1,127 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
+import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.statement.select.OrderByElement;
+import sun.font.TrueTypeFont;
 
 import java.io.*;
-import java.lang.reflect.Array;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.PrimitiveIterator;
 
 public class OrderbyOP extends Operator {
     private Operator son;
     private List<OrderByElement> orderBy;
     private List<List<PrimitiveValue>> buffer;
     private List<String> typeList;
+    private List<Integer> colIndexList = new ArrayList<>();
+    private List<Boolean> isAscList = new ArrayList<>();
     private int bufferSize;
     private boolean isReadAll = false;
+    private String cacheFolder = "data/sort_cache/";
+    private Evaluation eval = new Evaluation();
+    private GreaterThan greaterThan = new GreaterThan();
+    private MinorThan minorThan = new MinorThan();
+    private EqualsTo equalsTo = new EqualsTo();
 
     public OrderbyOP(Operator op, List<OrderByElement> orderBy) {
-        this.bufferSize = 100;
+        this.bufferSize = 10;
         this.son = op;
         this.orderBy = orderBy;
         this.buffer = new ArrayList<>(bufferSize);
         // make dir for sort cache
-        File f = new File("data/sort_cache/");
-        if (f.exists()) {
-            f.delete();
-            f.mkdir();
+        File dir = new File(cacheFolder);
+        if (dir.exists()) {
+            // delete all files in this dir
+            for (File f : dir.listFiles()) if (!f.isDirectory()) f.delete();
         } else {
-            f.mkdir();
+            dir.mkdir();
         }
     }
 
-    private void writeLine(DataOutputStream dataOut) throws PrimitiveValue.InvalidPrimitive, IOException {
-        for (List<PrimitiveValue> line : buffer) {
-            for (int i = 0; i < typeList.size(); i++) {
-                switch (typeList.get(i)) {
-                    case "LONG":
-                        dataOut.writeLong(line.get(i).toLong());
-                        break;
-                    case "DOUBLE":
-                        dataOut.writeDouble(line.get(i).toDouble());
-                        break;
-                    default:
-                        dataOut.writeUTF(line.get(i).toRawString());
-                        break;
-                }
+    /**
+     * compare two lines, determine which line to be merged first
+     *
+     * @param left  {@link List}
+     * @param right {@link List}
+     * @return true if left first else right
+     */
+    private boolean cmp(List<PrimitiveValue> left, List<PrimitiveValue> right) throws SQLException {
+        for (int i = 0; i < colIndexList.size(); i++) {
+            boolean isAsc = isAscList.get(i);
+            PrimitiveValue lhs = left.get(colIndexList.get(i));
+            PrimitiveValue rhs = right.get(colIndexList.get(i));
+
+
+            equalsTo.setLeftExpression(lhs);
+            equalsTo.setLeftExpression(rhs);
+            if (eval.eval(equalsTo).toBool()) {
+                continue;
+            }
+
+            if (isAsc) {
+                minorThan.setLeftExpression(lhs);
+                minorThan.setRightExpression(rhs);
+                return eval.eval(minorThan).toBool();
+            } else {
+                greaterThan.setLeftExpression(lhs);
+                greaterThan.setRightExpression(rhs);
+                return eval.eval(greaterThan).toBool();
             }
         }
+        // merge left if all equals
+        return true;
     }
 
-    private void readLine(List<PrimitiveValue> line, DataInputStream dataIn) throws IOException {
+    /**
+     * Write all lines from buffer to disk
+     *
+     * @param dataOut {@link DataOutputStream}
+     */
+    private void writeAll(DataOutputStream dataOut) throws PrimitiveValue.InvalidPrimitive, IOException {
+        for (List<PrimitiveValue> line : buffer) {
+            writeLine(line, dataOut);
+        }
+    }
+
+    /**
+     * Write a line from memory to disk
+     *
+     * @param line    {@link List}
+     * @param dataOut {@link DataOutputStream}
+     */
+    private void writeLine(List<PrimitiveValue> line, DataOutputStream dataOut) throws PrimitiveValue.InvalidPrimitive, IOException {
+        for (int i = 0; i < typeList.size(); i++) {
+            switch (typeList.get(i)) {
+                case "LONG":
+                    dataOut.writeLong(line.get(i).toLong());
+                    break;
+                case "DOUBLE":
+                    dataOut.writeDouble(line.get(i).toDouble());
+                    break;
+                default:
+                    dataOut.writeUTF(line.get(i).toRawString());
+                    break;
+            }
+
+        }
+    }
+
+    /**
+     * readLine from file into line
+     *
+     * @param line   {@link List}
+     * @param dataIn {@link DataOutputStream}
+     * @return true if read succeed else false (already read all lines)
+     */
+    private boolean readLine(List<PrimitiveValue> line, DataInputStream dataIn) throws IOException {
+        // determine if EOF, may have bug here
+        if (dataIn.available() <= 0) return false;
+
         line.clear();
         for (String type : typeList) {
             switch (type) {
@@ -69,18 +139,108 @@ public class OrderbyOP extends Operator {
                     break;
             }
         }
+        return true;
     }
 
-    private void merge(List<String> fileNames) throws IOException {
+    /**
+     * Merge two sorted files into right file
+     *
+     * @param left  {@link String}
+     * @param right {@link String}
+     */
+    private void merge(String left, String right) throws IOException, SQLException {
+        List<PrimitiveValue> lhs = new ArrayList<>();
+        List<PrimitiveValue> rhs;
+
+        FileInputStream leftIn = new FileInputStream(left);
+        FileInputStream rightIn = new FileInputStream(right);
+        FileOutputStream out = new FileOutputStream(right);
+
+        DataInputStream leftData = new DataInputStream(leftIn);
+        DataInputStream rightData = new DataInputStream(rightIn);
+        DataOutputStream outData = new DataOutputStream(out);
+
+        fillBuffer(rightData);
+        Iterator<List<PrimitiveValue>> bufferIterator = buffer.iterator();
+
+        rhs = bufferIterator.next();
+        while (readLine(lhs, leftData)) {
+            if (bufferIterator.hasNext()) {
+                rhs = bufferIterator.next();
+                if (cmp(lhs, rhs)) {
+                    writeLine(lhs, outData);
+                    while (readLine(lhs, leftData)) {
+                        if (cmp(lhs, rhs)) {
+                            writeLine(lhs, outData);
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    writeLine(rhs, outData);
+                    while (bufferIterator.hasNext()) {
+                        rhs = bufferIterator.next();
+                        if (cmp(lhs, rhs)) {
+                            break;
+                        } else {
+                            writeLine(rhs, outData);
+                        }
+                    }
+                }
+            } else {
+
+            }
+        }
+
+        boolean leftWrite = false;
+        boolean rightWrite = false;
+        while (bufferIterator.hasNext()) {
+            rhs = bufferIterator.next();
+            rightWrite = false;
+            if (readLine(lhs, leftData)) {
+                leftWrite = false;
+                if (cmp(lhs, rhs)) {
+                    writeLine(lhs, outData);
+                    leftWrite = true;
+                } else {
+                    writeLine(rhs, outData);
+                }
+            } else {
+
+            }
+            break;
+        }
+
+        buffer.clear();
+        leftIn.close();
+        rightIn.close();
+        out.close();
+        leftData.close();
+        rightData.close();
+        outData.close();
+    }
+
+    /**
+     * Merge all sorted chunks into one file
+     *
+     * @param nameList {@link List}
+     */
+    private void externalSort(List<String> nameList) throws IOException, SQLException {
+        for (int i = 0; i < nameList.size() - 1; i++) {
+            merge(nameList.get(i), nameList.get(i + 1));
+        }
+    }
+
+    private void fillBuffer(DataInputStream dataIn) throws IOException {
+        buffer.clear();
         List<PrimitiveValue> line = new ArrayList<>();
-        FileInputStream in = new FileInputStream(fileNames.get(0));
-        DataInputStream dataIn = new DataInputStream(in);
-        readLine(line, dataIn);
-        System.out.println();
-    }
-
-    private void fillBuffer() {
-
+        for (int i = 0; i < bufferSize; i++) {
+            if (readLine(line, dataIn)) {
+                buffer.add(line);
+            } else {
+                break;
+            }
+        }
     }
 
     private void updateBufferSize() {
@@ -94,8 +254,7 @@ public class OrderbyOP extends Operator {
             Tuple tuple = this.son.result();
             if (tuple == null) return null;
             // TODO get the size of one tuple and available memory => bufferSize
-            List<Integer> colIndexList = new ArrayList<>();
-            List<Boolean> isAscList = new ArrayList<>();
+
             for (OrderByElement ob : this.orderBy) {
                 isAscList.add(ob.isAsc());
                 String colName = ob.getExpression().toString();
@@ -118,7 +277,7 @@ public class OrderbyOP extends Operator {
                 }
 
                 Helper.sort(buffer, colIndexList, isAscList);
-                String path = "data/sort_cache/" + String.valueOf(cnt);
+                String path = cacheFolder + String.valueOf(cnt);
                 File newFile = new File(path);
                 try {
                     newFile.createNewFile();
@@ -129,7 +288,7 @@ public class OrderbyOP extends Operator {
                 try {
                     FileOutputStream out = new FileOutputStream(path);
                     DataOutputStream dataOut = new DataOutputStream(out);
-                    writeLine(dataOut);
+                    writeAll(dataOut);
                     out.close();
                     dataOut.close();
                 } catch (IOException | PrimitiveValue.InvalidPrimitive e) {
@@ -137,15 +296,15 @@ public class OrderbyOP extends Operator {
                 }
 
                 buffer.clear();
-                fileNames.add(path);
+                fileNames.add(String.valueOf(cnt));
                 cnt++;
             }
             this.isReadAll = true;
             // TODO after write all unpacked tuple to disk , recalculate bufferSize
 
             try {
-                merge(fileNames);
-            } catch (IOException e) {
+                externalSort(fileNames);
+            } catch (IOException | SQLException e) {
                 e.printStackTrace();
             }
 
@@ -155,14 +314,14 @@ public class OrderbyOP extends Operator {
         }
     }
 
-	@Override
-	public Operator getSon() {
-		return this.son;
-	}
+    @Override
+    public Operator getSon() {
+        return this.son;
+    }
 
-	@Override
-	public void setSon(Operator son) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void setSon(Operator son) {
+        // TODO Auto-generated method stub
+
+    }
 }
