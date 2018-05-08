@@ -48,8 +48,9 @@ public class Main {
                     Operator RATree = builder.resultTree();
                     Optimizer opt = new Optimizer(sel.getWhere(), RATree);
                     RATree = opt.resultTree();
-                    // try catch out of memory exception
-                    Helper.output(RATree);
+                    try {
+                        Helper.output(RATree);
+                    } catch (OutOfMemoryError ignored) {}
                 }
             }
             if (createTableCount < 8) {
