@@ -24,7 +24,7 @@ public class TableDef {
      *
      * @param def CreateTable instance
      */
-    public TableDef(CreateTable def) {
+    TableDef(CreateTable def) {
         this.tableName = def.getTable().getName();
         this.tablePath = "data/" + this.tableName + ".dat";
 
@@ -81,7 +81,7 @@ public class TableDef {
      *
      * @return relative path
      */
-    public String getTablePath() {
+    String getTablePath() {
         return this.tablePath;
     }
 
@@ -91,11 +91,11 @@ public class TableDef {
      * @param colName column name
      * @return column index
      */
-    public int getColIndex(String colName) {
+    int getColIndex(String colName) {
         return this.colIndex.get(colName);
     }
 
-    public String getColType(int index) {
+    String getColType(int index) {
         return this.colType.get(index);
     }
 
@@ -104,7 +104,7 @@ public class TableDef {
      *
      * @return colIndex
      */
-    public HashMap<String, Integer> getIndexHash() {
+    HashMap<String, Integer> getIndexHash() {
         return this.colIndex;
     }
 

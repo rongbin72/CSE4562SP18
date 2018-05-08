@@ -247,6 +247,7 @@ public class OrderbyOP extends Operator {
 
     }
 
+    // TODO overload List<PrimitiveValue> result()
     @Override
     public Tuple result() {
         if (!this.isReadAll) {
