@@ -33,12 +33,12 @@ public class Main {
         CCJSqlParser parser = new CCJSqlParser(r);
 
         Statement statement = parser.Statement();
-
+        int createTableCount = 0;
         while (statement != null) {
             if (statement instanceof CreateTable) {
                 CreateTable create = (CreateTable) statement;
                 Schema.addTable(create);
-//                Schema.buildIndex();
+                createTableCount ++;
             } else if (statement instanceof Select) {
                 Select select = (Select) statement;
                 SelectBody body = select.getSelectBody();
@@ -52,8 +52,15 @@ public class Main {
                     Helper.output(RATree);
                 }
             }
-            Helper.prompt();
-            statement = parser.Statement();
+            if (createTableCount < 8) {
+                statement = parser.Statement();
+            } else {
+                // 5 min to do pre-process here
+                Schema.buildIndex();
+
+                Helper.prompt();
+                statement = parser.Statement();
+            }
         }
     }
 }
