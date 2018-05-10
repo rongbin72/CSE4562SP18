@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PrimitiveIterator;
 
 public class OrderbyOP extends Operator {
     private Operator son;
@@ -27,6 +28,7 @@ public class OrderbyOP extends Operator {
     private GreaterThan greaterThan = new GreaterThan();
     private MinorThan minorThan = new MinorThan();
     private EqualsTo equalsTo = new EqualsTo();
+    private DataInputStream result;
 
     public OrderbyOP(Operator op, List<OrderByElement> orderBy) {
         this.bufferSize = 10;
@@ -162,53 +164,27 @@ public class OrderbyOP extends Operator {
 
         fillBuffer(rightData);
         Iterator<List<PrimitiveValue>> bufferIterator = buffer.iterator();
-
-        rhs = bufferIterator.next();
-        while (readLine(lhs, leftData)) {
-            if (bufferIterator.hasNext()) {
-                rhs = bufferIterator.next();
-                if (cmp(lhs, rhs)) {
-                    writeLine(lhs, outData);
-                    while (readLine(lhs, leftData)) {
-                        if (cmp(lhs, rhs)) {
-                            writeLine(lhs, outData);
-                        } else {
-                            break;
-                        }
-                    }
-                } else {
-                    writeLine(rhs, outData);
-                    while (bufferIterator.hasNext()) {
-                        rhs = bufferIterator.next();
-                        if (cmp(lhs, rhs)) {
-                            break;
-                        } else {
-                            writeLine(rhs, outData);
-                        }
-                    }
-                }
-            } else {
-
-            }
-        }
-
-        boolean leftWrite = false;
-        boolean rightWrite = false;
-        while (bufferIterator.hasNext()) {
+        while (leftData.available() > 0 && bufferIterator.hasNext()) {
+            readLine(lhs, leftData);
             rhs = bufferIterator.next();
-            rightWrite = false;
-            if (readLine(lhs, leftData)) {
-                leftWrite = false;
-                if (cmp(lhs, rhs)) {
-                    writeLine(lhs, outData);
-                    leftWrite = true;
-                } else {
-                    writeLine(rhs, outData);
-                }
+            if (cmp(lhs, rhs)) {
+                writeLine(lhs, outData);
+                readLine(lhs, leftData);
             } else {
-
+                writeLine(rhs, outData);
+                rhs = bufferIterator.next();
             }
-            break;
+
+            if (leftData.available() > 0) {
+                while (readLine(lhs, leftData)) {
+                    writeLine(lhs, outData);
+                }
+            }
+
+            while (bufferIterator.hasNext()) {
+                writeLine(rhs, outData);
+            }
+
         }
 
         buffer.clear();
@@ -250,6 +226,10 @@ public class OrderbyOP extends Operator {
     // TODO overload List<PrimitiveValue> result()
     @Override
     public Tuple result() {
+        return null;
+    }
+
+    public List<PrimitiveValue> result(boolean _) throws IOException, SQLException {
         if (!this.isReadAll) {
             // In case table has no content
             Tuple tuple = this.son.result();
@@ -280,21 +260,13 @@ public class OrderbyOP extends Operator {
                 Helper.sort(buffer, colIndexList, isAscList);
                 String path = cacheFolder + String.valueOf(cnt);
                 File newFile = new File(path);
-                try {
-                    newFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                newFile.createNewFile();
 
-                try {
-                    FileOutputStream out = new FileOutputStream(path);
-                    DataOutputStream dataOut = new DataOutputStream(out);
-                    writeAll(dataOut);
-                    out.close();
-                    dataOut.close();
-                } catch (IOException | PrimitiveValue.InvalidPrimitive e) {
-                    e.printStackTrace();
-                }
+                FileOutputStream out = new FileOutputStream(path);
+                DataOutputStream dataOut = new DataOutputStream(out);
+                writeAll(dataOut);
+                out.close();
+                dataOut.close();
 
                 buffer.clear();
                 fileNames.add(String.valueOf(cnt));
@@ -303,15 +275,17 @@ public class OrderbyOP extends Operator {
             this.isReadAll = true;
             // TODO after write all unpacked tuple to disk , recalculate bufferSize
 
-            try {
-                externalSort(fileNames);
-            } catch (IOException | SQLException e) {
-                e.printStackTrace();
-            }
+            externalSort(fileNames);
 
-            return null;
+            String sortedFileName = fileNames.get(fileNames.size() - 1);
+            result = new DataInputStream(new FileInputStream(cacheFolder + sortedFileName));
+            List<PrimitiveValue> out = new ArrayList<>();
+
+            return readLine(out, result) ? out : null;
         } else {
-            return null;
+            List<PrimitiveValue> out = new ArrayList<>();
+
+            return readLine(out, result) ? out : null;
         }
     }
 
