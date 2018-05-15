@@ -213,6 +213,13 @@ public class TableDef {
                 this.length++;
             }
             file.close();
+
+            // save index to file
+
         }
+    }
+
+    boolean hasColumn(String colName) {
+        return this.colIndex.keySet().contains(colName);
     }
 }
