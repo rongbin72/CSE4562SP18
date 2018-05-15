@@ -227,7 +227,7 @@ public class OrderbyOP extends Operator {
         return null;
     }
 
-    public List<PrimitiveValue> result(boolean _) throws IOException, SQLException {
+    public List<PrimitiveValue> result(boolean useless) throws IOException, SQLException {
         if (!this.isReadAll) {
             // In case table has no content
             Tuple tuple = this.son.result();

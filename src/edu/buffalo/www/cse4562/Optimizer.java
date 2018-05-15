@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ public class Optimizer implements ExpressionVisitor{
 
     private List<BinaryExpression> filter = new ArrayList<>();
     private Operator tree;
-    private Expression or;
     private Expression exp;
 
     public Optimizer(Expression exp, Operator tree) {
@@ -193,39 +193,27 @@ public class Optimizer implements ExpressionVisitor{
         }
     }
 
-    private void pushOr(Operator tree) {
-        //must have where
-        if (tree instanceof CrossProductOP) {
-            if (tree.getSon() instanceof Read) {
-                Read read = (Read) tree.getSon();
-                if (read.getTableName().equals("LINEITEM")) {
-                    Operator where = new WhereOperator(read, this.or);
-                    tree.setSon(where);
-                }
-            } else if (!(tree.getSon() instanceof RenameOperator)) {
-                this.pushOr(tree.getSon());
-            }
-            if (((CrossProductOP) tree).getRhson() instanceof Read) {
-                Read read = (Read) ((CrossProductOP) tree).getRhson();
-                if (read.getTableName().equals("LINEITEM")) {
-                    Operator where = new WhereOperator(read, this.or);
-                    ((CrossProductOP) tree).setRhS(where);
-                }
-            } else if (!(((CrossProductOP) tree).getRhson() instanceof RenameOperator)) {
-                this.pushOr(((CrossProductOP) tree).getRhson());
-            }
-        } else {
-            if (tree.getSon() instanceof Read) {
-                Read read = (Read) tree.getSon();
-                if (read.getTableName().equals("LINEITEM")) {
-                    Operator where = new WhereOperator(read, this.or);
-                    tree.setSon(where);
-                }
-            } else if (!(tree.getSon() instanceof RenameOperator)) {
-                this.pushOr(tree.getSon());
-            }
-        }
-    }
+//    private void pushOr(Operator tree) {
+//        //must have where
+//        if (tree instanceof CrossProductOP) {
+//            if (!(tree.getSon() instanceof RenameOperator)) {
+//                this.pushOr(tree.getSon());
+//            }
+//            if (!(((CrossProductOP) tree).getRhson() instanceof RenameOperator)) {
+//                this.pushOr(((CrossProductOP) tree).getRhson());
+//            }
+//        } else {
+//            if (tree.getSon() instanceof Read) {
+//                Read read = (Read) tree.getSon();
+//                if (read.getTableName().equals("LINEITEM")) {
+//                    Operator where = new WhereOperator(read, this.or);
+//                    tree.setSon(where);
+//                }
+//            } else if (!(tree.getSon() instanceof RenameOperator)) {
+//                this.pushOr(tree.getSon());
+//            }
+//        }
+//    }
 
     private void cutWhere(Operator tree) {
         //tree is parent of where
@@ -235,9 +223,9 @@ public class Optimizer implements ExpressionVisitor{
             Operator where = tree.getSon();
             if (!(where.getSon() instanceof Read) && !(where.getSon() instanceof RenameOperator)) {
                 tree.setSon(where.getSon());
-                if (this.or != null) {
-                    this.pushOr(this.tree);
-                }
+//                if (this.or != null) {
+//                    this.pushOr(this.tree);
+//                }
             }
         }
 
@@ -374,7 +362,6 @@ public class Optimizer implements ExpressionVisitor{
 
     @Override
     public void visit(OrExpression arg0) {
-        this.or = arg0;
 
     }
 
@@ -386,16 +373,76 @@ public class Optimizer implements ExpressionVisitor{
 
     @Override
     public void visit(EqualsTo equ) {
+    	Expression lhs = equ.getLeftExpression();
+    	Expression rhs = equ.getRightExpression();
+    	if(lhs instanceof Column) {
+    		Column c = (Column)lhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			equ.setLeftExpression(c);
+    		}
+    	}
+    	if(rhs instanceof Column) {
+    		Column c = (Column)rhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			equ.setRightExpression(c);
+    		}
+    	}
         this.filter.add(equ);
     }
 
     @Override
     public void visit(GreaterThan gt) {
+    	Expression lhs = gt.getLeftExpression();
+    	Expression rhs = gt.getRightExpression();
+    	if(lhs instanceof Column) {
+    		Column c = (Column)lhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			gt.setLeftExpression(c);
+    		}
+    	}
+    	if(rhs instanceof Column) {
+    		Column c = (Column)rhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			gt.setRightExpression(c);
+    		}
+    	}
         this.filter.add(gt);
     }
 
     @Override
     public void visit(GreaterThanEquals gte) {
+    	Expression lhs = gte.getLeftExpression();
+    	Expression rhs = gte.getRightExpression();
+    	if(lhs instanceof Column) {
+    		Column c = (Column)lhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			gte.setLeftExpression(c);
+    		}
+    	}
+    	if(rhs instanceof Column) {
+    		Column c = (Column)rhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			gte.setRightExpression(c);
+    		}
+    	}
         this.filter.add(gte);
     }
 
@@ -419,16 +466,76 @@ public class Optimizer implements ExpressionVisitor{
 
     @Override
     public void visit(MinorThan mt) {
+    	Expression lhs = mt.getLeftExpression();
+    	Expression rhs = mt.getRightExpression();
+    	if(lhs instanceof Column) {
+    		Column c = (Column)lhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			mt.setLeftExpression(c);
+    		}
+    	}
+    	if(rhs instanceof Column) {
+    		Column c = (Column)rhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			mt.setRightExpression(c);
+    		}
+    	}
         this.filter.add(mt);
     }
 
     @Override
     public void visit(MinorThanEquals mte) {
+    	Expression lhs = mte.getLeftExpression();
+    	Expression rhs = mte.getRightExpression();
+    	if(lhs instanceof Column) {
+    		Column c = (Column)lhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			mte.setLeftExpression(c);
+    		}
+    	}
+    	if(rhs instanceof Column) {
+    		Column c = (Column)rhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			mte.setRightExpression(c);
+    		}
+    	}
         this.filter.add(mte);
     }
 
     @Override
     public void visit(NotEqualsTo nequ) {
+    	Expression lhs = nequ.getLeftExpression();
+    	Expression rhs = nequ.getRightExpression();
+    	if(lhs instanceof Column) {
+    		Column c = (Column)lhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			nequ.setLeftExpression(c);
+    		}
+    	}
+    	if(rhs instanceof Column) {
+    		Column c = (Column)rhs;
+    		//getColNmaeByTableName(List<String> tableList, String colName)
+    		if(c.getTable().getName() == null) {
+    			String tableName = Schema.getColNmaeByTableName(c.getColumnName());
+    			c.setTable(new Table(tableName));
+    			nequ.setRightExpression(c);
+    		}
+    	}
         this.filter.add(nequ);
     }
 
