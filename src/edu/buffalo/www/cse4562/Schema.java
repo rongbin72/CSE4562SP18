@@ -96,7 +96,7 @@ public class Schema {
         for (String name : schema.keySet()) {
             if (tableAliasMap.get(name) != null) {
                 tableName = tableAliasMap.get(name);
-            }else{
+            } else {
                 tableName = name;
             }
 
@@ -105,5 +105,9 @@ public class Schema {
             }
         }
         return null;
+    }
+
+    int getLength(String tableName) {
+        return schema.get(tableName).getLength();
     }
 }

@@ -5,10 +5,7 @@ import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.create.table.Index;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.*;
 
 public class TableDef {
@@ -114,7 +111,7 @@ public class TableDef {
         return this.indexOn.contains(colName);
     }
 
-    public long getLength() {
+    public int getLength() {
         return length;
     }
 
@@ -122,7 +119,13 @@ public class TableDef {
         return index;
     }
 
-    List<Long> getIndexList(Expression e) {
+    List<Long> getIndexList(Expression e) throws IOException, ClassNotFoundException {
+        FileInputStream in = new FileInputStream("indexes/" + this.tableName);
+        ObjectInputStream ob = new ObjectInputStream(in);
+        this.index = (HashMap<String, TreeMap<PrimitiveValue, ArrayList<Long>>>) ob.readObject();
+        in.close();
+        ob.close();
+
 
         return null;
     }
