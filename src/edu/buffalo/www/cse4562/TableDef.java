@@ -1,6 +1,6 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.create.table.Index;
@@ -15,7 +15,7 @@ public class TableDef {
     private HashMap<String, Integer> colIndex = new HashMap<>();
     private HashMap<Integer, String> colType = new HashMap<>();
     private Set<String> indexOn = new HashSet<>();
-    private HashMap<String, TreeMap<PrimitiveValue, ArrayList<Long>>> index = new HashMap<>();
+    private HashMap<String, TreeMap<String, ArrayList<Long>>> index = new HashMap<>();
 
 
     /**
@@ -115,14 +115,11 @@ public class TableDef {
         return length;
     }
 
-    public HashMap<String, TreeMap<PrimitiveValue, ArrayList<Long>>> getIndex() {
-        return index;
-    }
 
     List<Long> getIndexList(Expression e) throws IOException, ClassNotFoundException {
         FileInputStream in = new FileInputStream("indexes/" + this.tableName);
         ObjectInputStream ob = new ObjectInputStream(in);
-        this.index = (HashMap<String, TreeMap<PrimitiveValue, ArrayList<Long>>>) ob.readObject();
+        this.index = (HashMap<String, TreeMap<String, ArrayList<Long>>>) ob.readObject();
         in.close();
         ob.close();
 
@@ -133,86 +130,24 @@ public class TableDef {
     void buildIndex() throws IOException {
         if (this.indexOn != null) {
             // init
-            for (String on : this.indexOn) {
-                this.index.put(on, new TreeMap<>((o1, o2) -> {
-                    String type = o1.getType().name();
-                    switch (type) {
-                        case "LONG":
-                            try {
-                                Long lhs = o1.toLong();
-                                Long rhs = o2.toLong();
-                                return lhs.compareTo(rhs);
-                            } catch (PrimitiveValue.InvalidPrimitive throwable) {
-                                throwable.printStackTrace();
-                            }
-                        case "DOUBLE":
-                            try {
-                                Double lhs = o1.toDouble();
-                                Double rhs = o2.toDouble();
-                                return lhs.compareTo(rhs);
-                            } catch (PrimitiveValue.InvalidPrimitive throwable) {
-                                throwable.printStackTrace();
-                            }
-                        case "DATE":
-                            Date lhs = ((DateValue) o1).getValue();
-                            Date rhs = ((DateValue) o2).getValue();
-                            return lhs.compareTo(rhs);
-                        case "STRING":
-                            return o1.toString().compareTo(o2.toString());
-                    }
-                    return 0;
-                }));
-            }
             RandomAccessFile file = new RandomAccessFile(this.tablePath, "r");
             this.length = 0;
-            String line, type;
+            String line;
             int index;
             long cursor = 0;
-            PrimitiveValue value;
+            String value;
 
+            for (String on : this.indexOn) this.index.put(on, new TreeMap<>());
             while ((line = file.readLine()) != null) {
                 for (String on : this.indexOn) {
                     index = this.colIndex.get(on);
-                    type = this.colType.get(index);
-                    switch (type) {
-                        case "INTEGER":
-                            value = new LongValue(line.split("\\|")[index]);
-                            if (this.index.get(on).containsKey(value)) {
-                                this.index.get(on).get(value).add(cursor);
-                            } else {
-                                this.index.get(on).put(value, new ArrayList<>());
-                                this.index.get(on).get(value).add(cursor);
-                            }
-                            break;
-                        case "STRING":
-                            value = new StringValue(line.split("\\|")[index]);
-                            if (this.index.get(on).containsKey(value)) {
-                                this.index.get(on).get(value).add(cursor);
-                            } else {
-                                this.index.get(on).put(value, new ArrayList<>());
-                                this.index.get(on).get(value).add(cursor);
-                            }
-                            break;
-                        case "DOUBLE":
-                            value = new DoubleValue(line.split("\\|")[index]);
-                            if (this.index.get(on).containsKey(value)) {
-                                this.index.get(on).get(value).add(cursor);
-                            } else {
-                                this.index.get(on).put(value, new ArrayList<>());
-                                this.index.get(on).get(value).add(cursor);
-                            }
-                            break;
-                        case "DATE":
-                            value = new DateValue(line.split("\\|")[index]);
-                            if (this.index.get(on).containsKey(value)) {
-                                this.index.get(on).get(value).add(cursor);
-                            } else {
-                                this.index.get(on).put(value, new ArrayList<>());
-                                this.index.get(on).get(value).add(cursor);
-                            }
-                            break;
+                    value = line.split("\\|")[index];
+                    if (this.index.get(on).containsKey(value)) {
+                        this.index.get(on).get(value).add(cursor);
+                    } else {
+                        this.index.get(on).put(value, new ArrayList<>());
+                        this.index.get(on).get(value).add(cursor);
                     }
-
                 }
                 cursor = file.getFilePointer();
                 this.length++;
