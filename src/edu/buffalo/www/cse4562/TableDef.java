@@ -5,7 +5,9 @@ import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.create.table.Index;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.*;
 
@@ -213,9 +215,13 @@ public class TableDef {
                 this.length++;
             }
             file.close();
-
             // save index to file
-
+            FileOutputStream out = new FileOutputStream("indexes/" + this.tableName);
+            ObjectOutputStream ob = new ObjectOutputStream(out);
+            ob.writeObject(this.index);
+            out.close();
+            ob.close();
+            this.index.clear();
         }
     }
 

@@ -7,7 +7,6 @@ import net.sf.jsqlparser.statement.create.table.CreateTable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeMap;
 
 public class Schema {
@@ -92,9 +91,9 @@ public class Schema {
         }
     }
 
-    static String getColNmaeByTableName(List<String> tableList, String colName) {
+    static String getColNmaeByTableName(String colName) {
         String tableName;
-        for (String name : tableList) {
+        for (String name : schema.keySet()) {
             if (tableAliasMap.get(name) != null) {
                 tableName = tableAliasMap.get(name);
             }else{

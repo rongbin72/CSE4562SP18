@@ -5,14 +5,12 @@ import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.statement.select.OrderByElement;
-import sun.font.TrueTypeFont;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.PrimitiveIterator;
 
 public class OrderbyOP extends Operator {
     private Operator son;
